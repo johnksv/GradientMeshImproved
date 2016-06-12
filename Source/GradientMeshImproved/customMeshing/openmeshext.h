@@ -11,7 +11,7 @@ namespace OpenMeshExt {
 /*! \brief Struct to customise data for mesh elements.
  *  Custom vertex data is most likely to be needed.
  */
-struct CustomTraits : OpenMesh::DefaultTraits
+struct CustomTraits : public OpenMesh::DefaultTraits
 {
     // Add variables here...
     VertexTraits {
