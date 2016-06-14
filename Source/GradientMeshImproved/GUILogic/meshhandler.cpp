@@ -1,23 +1,23 @@
 #include "GUILogic/meshhandler.h"
 #include <QDebug>
 
-//#include <OpenMesh/Core/IO/MeshIO.hh>
+#include <OpenMesh/Core/IO/MeshIO.hh>
 
 using namespace GUILogic;
 
-typedef subdivMesh::Mesh Mesh;
-//typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
-//typedef OpnMesh::VertexHandle vertexPntr;
+typedef subdivMesh::Mesh sbdvMesh;
+typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
+typedef OpnMesh::VertexHandle vertexPntr;
 
 MeshHandler::MeshHandler()
 {
-    subdMesh = new Mesh();
+    subdMesh = new sbdvMesh();
     subdMesh->loadV3(TEMPFILEPATH); // TEMPORARY TEST CASE. REMOVE ASAP
     subdMesh->build(); // must be called after load
     subdivide();
 
     // test OpenMesh lib
-//    createTwoQuads();
+    createTwoQuads();
 }
 
 MeshHandler::~MeshHandler()
@@ -40,8 +40,8 @@ void MeshHandler::subdivide(signed int steps)
 {
     if(steps==0) return; // not in function domain
 
-    Mesh *currentMsh = new Mesh();
-    Mesh *nextMesh;
+    sbdvMesh *currentMsh = new sbdvMesh();
+    sbdvMesh *nextMesh;
 
     // perform the first step of subdivision (special rules - Lieng et al.)
     subdMesh->LinearTernarySubdiv(currentMsh);
@@ -49,7 +49,7 @@ void MeshHandler::subdivide(signed int steps)
 
     // subdivide steps-1 of CC-subdivision
     for(int i = 0; i < steps-1; i++) {
-        nextMesh = new Mesh();
+        nextMesh = new sbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 
         // delete old mesh from heap and swap
@@ -64,7 +64,7 @@ void MeshHandler::subdivide(signed int steps)
 void MeshHandler::createTwoQuads()
 {
     // create vertices: (quad 1)
-/*    vertexPntr v0 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
+    vertexPntr v0 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
     vertexPntr v1 = guiMesh.add_vertex(OpnMesh::Point(0.5f, .0f, .0f)); // also in quad 2
     vertexPntr v2 = guiMesh.add_vertex(OpnMesh::Point(0.5f, 1.0f, .0f)); // also in quad 2
     vertexPntr v3 = guiMesh.add_vertex(OpnMesh::Point(.0f, 1.0f, .0f));
@@ -98,6 +98,6 @@ void MeshHandler::createTwoQuads()
       catch( std::exception& x )
       {
         std::cerr << x.what() << std::endl;
-      }*/
+      }
 
 }

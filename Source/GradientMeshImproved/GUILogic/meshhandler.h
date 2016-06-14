@@ -42,7 +42,7 @@ private:
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     // mesh for editing gui:
-//    OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
+    OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 
     // TEMPORARY TEST VARIABLE
     const char* const TEMPFILEPATH = "../../testMesh-removeASAP.off";
