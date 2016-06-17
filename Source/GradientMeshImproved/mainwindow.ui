@@ -6,22 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>708</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="GMCanvas" name="openGLWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>20</y>
+      <x>120</x>
+      <y>170</y>
       <width>300</width>
       <height>200</height>
      </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>300</width>
+      <height>200</height>
+     </size>
+    </property>
+    <property name="locale">
+     <locale language="English" country="UnitedStates"/>
     </property>
    </widget>
   </widget>
@@ -30,11 +42,55 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>400</width>
+     <width>708</width>
      <height>21</height>
     </rect>
    </property>
+   <property name="defaultUp">
+    <bool>false</bool>
+   </property>
+   <property name="nativeMenuBar">
+    <bool>false</bool>
+   </property>
+   <widget class="QMenu" name="menuMenu">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="action_New"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionExport"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+   </widget>
+   <widget class="QMenu" name="menuMesh">
+    <property name="title">
+     <string>Mesh</string>
+    </property>
+    <addaction name="actionLine_tool"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_edges"/>
+    <addaction name="actionRemove_edge"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionHow_to"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuMenu"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuMesh"/>
+   <addaction name="menuHelp"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -42,8 +98,106 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionMove"/>
+   <addaction name="separator"/>
+   <addaction name="actionLine_tool"/>
+   <addaction name="actionAdd_Edge"/>
+   <addaction name="actionRemove_Edge"/>
+   <addaction name="separator"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_New">
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="text">
+    <string>Import</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
+   </property>
+   <property name="shortcut">
+    <string/>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionLine_tool">
+   <property name="text">
+    <string>Line tool</string>
+   </property>
+  </action>
+  <action name="actionAdd_edges">
+   <property name="text">
+    <string>Add edge</string>
+   </property>
+  </action>
+  <action name="actionRemove_edge">
+   <property name="text">
+    <string>Remove edge</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionHow_to">
+   <property name="text">
+    <string>How-to</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAdd_Edge">
+   <property name="text">
+    <string>Add Edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Add edge between two vertices</string>
+   </property>
+  </action>
+  <action name="actionRemove_Edge">
+   <property name="text">
+    <string>Remove Edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Reomve an edge between two vertices</string>
+   </property>
+  </action>
+  <action name="actionMove">
+   <property name="text">
+    <string>Move</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
