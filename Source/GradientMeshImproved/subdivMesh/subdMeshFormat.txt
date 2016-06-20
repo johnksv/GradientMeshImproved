@@ -1,0 +1,41 @@
+This text document describes the internal format used in subdivMesh::Mesh.
+The format extends the standard OFF file format. It adds additional data to the
+vertex data. This additional data is placed on the same line as the definition of the vertex.
+
+OFF file format:
+https://en.wikipedia.org/wiki/OFF_(file_format)
+NOTE: the file parser in Mesh does not support comments! Thus, the parser requires the following format:
+
+-------------
+OFF
+number_of_vertices number_of_faces number_of_edges(should be 0)
+vertex_list
+face_list
+
+-------------
+
+Format for vertex data (version 3 of the parser):
+
+x y z r g b valency id_to_neighbour..valence constraint_vec_x constraint_vec_y 0..valency(not in use) 0(not in use)
+
+Description:
+{x, y, z} := Geometric coordinates of the control point
+{r, g, b} := RGB colour coordinates of the control point
+valency := the valency of the control point, that is, how many neighbour control points has
+id_to_neighbour..valence := the ids of the neighbour control points (i.e. list of integer ids). Length of list equal to valence
+{constraint_vec_x, constraint_vec_y} := the colour gradient constraint towards the given neighbour (according to list of ids)
+The remaining data is not in use in this project (currently):
+0..valency(not in use) : list of zeros. Length of list must be equal to valency
+0(not in use): the number 0
+
+Previous versions, which can be used for testing:
+
+Version 2:
+
+x y z r g b valency id_to_neighbour..valence weight..valence 0..valency(not in use) 0
+
+weight..valence: list of floating point weights (from 0 to 1), representing the colour gradient constraint.
+
+Version 1 (use this version in 3D setting):
+
+x y z r g b valency id_to_neighbour..valence weight..valence
