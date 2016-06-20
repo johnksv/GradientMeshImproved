@@ -167,6 +167,7 @@ public:
     void newNC		(unsigned int size, unsigned int deg, unsigned int val);
     bool load(const char *fileName, bool _xyWeights=false);
     bool loadV2(const char *fileName, bool _xyWeights=false);
+    bool loadV3(stringstream& strStream, bool _xyWeights=false);
     bool loadV3(const char *fileName, bool _xyWeights=false);
     bool loadJ(const char *fileName, bool _xyWeights, float height, float width, const int X, const int Y);
     bool loadJiri(const char *fileName, float width, float height, const int X, const int Y);

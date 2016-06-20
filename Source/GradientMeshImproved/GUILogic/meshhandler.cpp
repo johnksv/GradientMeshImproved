@@ -5,17 +5,13 @@
 
 using namespace GUILogic;
 
-typedef subdivMesh::Mesh sbdvMesh;
+typedef subdivMesh::Mesh SbdvMesh;
 typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
 typedef OpnMesh::VertexHandle vertexPntr;
 
-MeshHandler::MeshHandler()
+MeshHandler::MeshHandler() :
+    subdMesh{nullptr}
 {
-    subdMesh = new sbdvMesh();
-    subdMesh->loadV3(TEMPFILEPATH); // TEMPORARY TEST CASE. REMOVE ASAP
-    subdMesh->build(); // must be called after load
-    subdivide();
-
     // test OpenMesh lib
     createTwoQuads();
 }
@@ -27,6 +23,11 @@ MeshHandler::~MeshHandler()
 
 void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 {
+    // draw our two meshes (mesh creation should not happen here of course...)
+    setUpSubdMeshFile();
+    subdMesh->draw(context);
+
+    setUpSubdMeshStream();
     subdMesh->draw(context);
 }
 
@@ -40,8 +41,8 @@ void MeshHandler::subdivide(signed int steps)
 {
     if(steps==0) return; // not in function domain
 
-    sbdvMesh *currentMsh = new sbdvMesh();
-    sbdvMesh *nextMesh;
+    SbdvMesh *currentMsh = new SbdvMesh();
+    SbdvMesh *nextMesh;
 
     // perform the first step of subdivision (special rules - Lieng et al.)
     subdMesh->LinearTernarySubdiv(currentMsh);
@@ -49,7 +50,7 @@ void MeshHandler::subdivide(signed int steps)
 
     // subdivide steps-1 of CC-subdivision
     for(int i = 0; i < steps-1; i++) {
-        nextMesh = new sbdvMesh();
+        nextMesh = new SbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 
         // delete old mesh from heap and swap
@@ -100,4 +101,31 @@ void MeshHandler::createTwoQuads()
         std::cerr << x.what() << std::endl;
       }
 
+}
+
+void MeshHandler::setUpSubdMeshStream()
+{
+    // setup a string stream
+    stringstream strStream;
+    strStream << TESTMESH; // pass string to stream (other types can also be passed -> see stringstream doc
+
+    // delete current mesh object and insert a new one
+    delete subdMesh; // delete from heap
+    subdMesh = new SbdvMesh();
+
+    // insert new mesh using custom OFF format
+    subdMesh->loadV3(strStream);
+    subdMesh->build(); // build mesh topology from data
+    subdivide();
+}
+
+void MeshHandler::setUpSubdMeshFile()
+{
+    // create new mesh object
+    delete subdMesh; // delete from heap (if any)
+    subdMesh = new SbdvMesh();
+
+    subdMesh->loadV3(TEMPFILEPATH);
+    subdMesh->build(); // must be called after load
+    subdivide();
 }

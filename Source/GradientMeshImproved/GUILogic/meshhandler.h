@@ -44,8 +44,13 @@ private:
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 
-    // TEMPORARY TEST VARIABLE
+    // TEMPORARY TEST VARIABLES
     const char* const TEMPFILEPATH = "../../testMesh-removeASAP.off";
+    const string TESTMESH = "OFF\n7 1 0\n362.583 137.229 1 72.4768 19.2033 73.9236 2 1 6 85.417 16.771 1.41699 83.771 0 0 0\n614.075 57 1 51.4831 77.6974 62.9024 2 0 2 -71.075 -4 72.925 -1 0 0 0\n816.259 137.229 1 93.9804 -17.8959 88.7035 2 1 3 -80.259 23.771 -15.259 83.771 0 0 0\n1001 310.095 1 85.3188 -83.5835 78.1661 2 2 4 -31 -75.095 34 100.905 0 0 0\n816.259 616 1 89.3447 -52.4927 -10.7167 2 3 5 171.741 5 -120.259 -134 0 0 0\n362.583 616 1 31.568 76.7502 -109.955 2 4 6 139.417 -154 -160.583 5 0 0 0\n199 310.095 1 56.3779 92.0092 -57.8666 2 5 0 -17 79.905 7 -61.095 0 0 0\n\n7 0 1 2 3 4 5 6\n";
+
+    // TEMPORARY: demo method demonstrating how to set up a subdivision mesh
+    void setUpSubdMeshStream();
+    void setUpSubdMeshFile();
 
     // TEMPORARY: example method for setting up an OpenMesh mesh.
     void createTwoQuads();

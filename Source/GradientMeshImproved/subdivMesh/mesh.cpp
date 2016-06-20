@@ -1077,18 +1077,29 @@ bool Mesh::loadV2(const char *fileName, bool _xyWeights)
 
 bool Mesh::loadV3(const char *fileName, bool _xyWeights)
 {
+    ifstream file (fileName);
+    stringstream strStream;
+
+    strStream << file.rdbuf();
+    loadV3(strStream, _xyWeights);
+
+    file.close();
+    return true;
+}
+
+bool Mesh::loadV3(stringstream &strStream, bool _xyWeights)
+{
     unsigned int	i, j, vn, n, f, v, s;
     PointPrec		x, y, z;
     std::string		file_type, tmp;
     MeshVertex 		vertex;
     MeshFacet 		facet;
-    ifstream 		file (fileName);
 
     my_level = 0;
     xyWeights = _xyWeights;
     v3 = true;
 
-    if(!file.is_open())
+    if(strStream.bad())
     {
         return false;
     }
@@ -1096,11 +1107,11 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
     {
         my_level = 0;
 
-        file >> file_type;
+        strStream >> file_type;
 
         if (file_type == "OFF" || file_type == "off" || file_type == "Off")
         {
-            file >> my_numV >> my_numF >> my_numE;
+            strStream >> my_numV >> my_numF >> my_numE;
             my_numW = 0;
 
         }
@@ -1108,10 +1119,10 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
         {
             do
             {
-                file >> tmp;
+                strStream >> tmp;
             }
             while (tmp != "format");
-            file >> tmp;
+            strStream >> tmp;
             if (tmp != "ascii")
             {
                 cout << "Cannot read binary files!!!" << endl;
@@ -1120,23 +1131,23 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
 
             do
             {
-                file >> tmp;
+                strStream >> tmp;
             }
             while (tmp != "vertex");
 
-            file >> my_numV;
+            strStream >> my_numV;
 
             do
             {
-                file >> tmp;
+                strStream >> tmp;
             }
             while (tmp != "face");
 
-            file >> my_numF;
+            strStream >> my_numF;
 
             do
             {
-                file >> tmp;
+                strStream >> tmp;
             }
             while (tmp != "end_header");
             my_numE = 0;
@@ -1144,7 +1155,7 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
         }
         else if (file_type == "OFFW" || file_type == "offw" || file_type == "Offw")
         {
-            file >> my_numV >> my_numF >> my_numW;
+            strStream >> my_numV >> my_numF >> my_numW;
             my_numE = 0;
         }
         else
@@ -1170,7 +1181,7 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
         // read vertex coordinates
         for (i = 0 ; i < my_numV ; i++)
         {
-            file >> x >> y >> z >> R >> G >> B >> val;
+            strStream >> x >> y >> z >> R >> G >> B >> val;
             if(xyWeights) {
                 vertex.my_point.setX(x*z);
                 vertex.my_point.setY(y*z);
@@ -1208,22 +1219,22 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
             vertex.sharpness.clear();
             vertex.weights_vec.clear();
             for(j = 0; j < val; j++) {
-                file >> wid;
+                strStream >> wid;
                 vertex.weight_ids.append(wid);
             }
             for(j = 0; j < val; j++) {
-                file >> x >> y;
+                strStream >> x >> y;
                 W.setX(x); W.setY(y);
                 vertex.weights_vec.append(W);
             }
             for(j = 0; j < val; j++) {
-                file >> sharp;
+                strStream >> sharp;
                 vertex.sharpness.append(sharp);
             }
-            file >> snapped;
+            strStream >> snapped;
             vertex.snapped = snapped;
             if(snapped) {
-                file >> x >> y;
+                strStream >> x >> y;
                 vertex.my_visPoint.setX(x);
                 vertex.my_visPoint.setY(y);
             }
@@ -1238,7 +1249,7 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
         {
             facet.my_index = i;
             facet.my_vertIndices.clear();
-            file >> n;
+            strStream >> n;
             facet.my_valency = n;
             if (n != 4)
             {
@@ -1246,7 +1257,7 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
             }
             for (j = 0 ; j < n ; j++)
             {
-                file >> vn;
+                strStream >> vn;
                 facet.my_vertIndices.push_back(vn);
                 my_vertices[vn].my_faceIndices.push_back(i);
             }
@@ -1260,20 +1271,16 @@ bool Mesh::loadV3(const char *fileName, bool _xyWeights)
         // read sharp edges
         for (i = 0 ; i < my_numE ; i++)
         {
-            file >> f >> v >> s;
+            strStream >> f >> v >> s;
             my_sFacets.push_back(f);
             my_sVertices.push_back(v);
             my_sValues.push_back(s);
         }
 
-        my_s = fileName;
-        my_save = fileName;
-
         build();
 
     } //end of else
 
-    file.close();
     return true;
 }
 
