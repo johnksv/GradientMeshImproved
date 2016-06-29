@@ -2,6 +2,7 @@ An improved gradient mesh tool (working title)
 =======
 This is a private research project at HiOA.
 Current major goals:
+
 * Implement a basic user interface for creating and manipulating 2D gradient meshes [ ]
 * Implement functionality for creating gradient meshes from photographs [ ]
 * Multi-resolution editing capabilities [ ]
