@@ -20,17 +20,11 @@
    <widget class="GMCanvas" name="openGLWidget">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>170</y>
-      <width>300</width>
-      <height>200</height>
+      <x>10</x>
+      <y>10</y>
+      <width>561</width>
+      <height>471</height>
      </rect>
-    </property>
-    <property name="maximumSize">
-     <size>
-      <width>300</width>
-      <height>200</height>
-     </size>
     </property>
     <property name="locale">
      <locale language="English" country="UnitedStates"/>

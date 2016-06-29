@@ -25,6 +25,9 @@ public:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int, int) override;
+protected:
+    void mousePressEvent(QMouseEvent * event) override;
+    void mouseMoveEvent(QMouseEvent * event) override;
 
 private:
     GUILogic::MeshHandler meshHandler;

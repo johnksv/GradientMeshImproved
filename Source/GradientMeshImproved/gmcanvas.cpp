@@ -1,4 +1,5 @@
 #include "gmcanvas.h"
+#include <QMouseEvent>
 #include <QDebug>
 
 GMCanvas::GMCanvas(QWidget *parent) :
@@ -44,4 +45,18 @@ void GMCanvas::paintGL()
     qPainter.setPen(Qt::blue);
     qPainter.setFont(QFont("Arial", 30));
     qPainter.drawText(rect(), Qt::AlignCenter, "Qt");
+}
+
+void GMCanvas::mousePressEvent(QMouseEvent* event){
+    int x = event->x();
+    int y = event->y();
+
+    qDebug() << "x,y : " << x <<" , "<< y ;
+}
+
+void GMCanvas::mouseMoveEvent(QMouseEvent *event){
+    int x = event->x();
+    int y = event->y();
+
+    qDebug() << "MouseMove: x,y : " << x <<" , "<< y ;
 }
