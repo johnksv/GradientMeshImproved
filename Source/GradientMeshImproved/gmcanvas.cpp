@@ -21,6 +21,10 @@ void GMCanvas::resizeGL(int, int)
     glOrtho(0, glWidth, 0, glHeight, -1.0, 1.0);
 }
 
+void GMCanvas::setRenderingMode(int mode){
+    renderingMode = mode;
+}
+
 void GMCanvas::paintGL()
 {    
     // Qt painter, create object on stack
@@ -36,7 +40,11 @@ void GMCanvas::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw stuff
-    meshHandler.drawGLMesh(this);
+    if(renderingMode == 0){
+        meshHandler.drawVertices(this);
+    }else if(renderingMode == 1){
+        meshHandler.drawGLMesh(this);
+    }
 
     /******* Start painting with Qt ***********/
     qPainter.endNativePainting();
@@ -50,13 +58,17 @@ void GMCanvas::paintGL()
 void GMCanvas::mousePressEvent(QMouseEvent* event){
     int x = event->x();
     int y = event->y();
-
+    if(event->button() == Qt::RightButton){
+        qDebug() << "RightClick";
+    }
+    meshHandler.addVertexFromPoint(event->pos());
     qDebug() << "x,y : " << x <<" , "<< y ;
 }
 
 void GMCanvas::mouseMoveEvent(QMouseEvent *event){
     int x = event->x();
     int y = event->y();
+
 
     qDebug() << "MouseMove: x,y : " << x <<" , "<< y ;
 }

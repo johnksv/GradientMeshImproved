@@ -20,7 +20,7 @@
    <widget class="GMCanvas" name="openGLWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>10</y>
       <width>561</width>
       <height>471</height>
@@ -79,10 +79,18 @@
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuRendering">
+    <property name="title">
+     <string>Rendering</string>
+    </property>
+    <addaction name="actionVertices_only"/>
+    <addaction name="actionFull_render"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuEdit"/>
    <addaction name="menuMesh"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuRendering"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -190,6 +198,16 @@
   <action name="actionZoom_out">
    <property name="text">
     <string>Zoom out</string>
+   </property>
+  </action>
+  <action name="actionVertices_only">
+   <property name="text">
+    <string>Vertices only</string>
+   </property>
+  </action>
+  <action name="actionFull_render">
+   <property name="text">
+    <string>Full render (Change name)</string>
    </property>
   </action>
  </widget>

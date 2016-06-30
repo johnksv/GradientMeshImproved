@@ -1,5 +1,6 @@
 #include "GUILogic/meshhandler.h"
 #include <QDebug>
+#include <QPoint>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
@@ -29,6 +30,18 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 
     setUpSubdMeshStream();
     subdMesh->draw(context);
+}
+void MeshHandler::drawVertices(QOpenGLFunctions_1_0 *context){
+
+}
+
+void MeshHandler::addVertexFromPoint(QPoint& position){
+    //TODO: If vertex exists -> make face
+    float x = static_cast <float> (position.x());
+    float y = static_cast <float> (position.y());
+    guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
+    qDebug() << guiMesh.IsPolyMesh;
+
 }
 
 /********************************************

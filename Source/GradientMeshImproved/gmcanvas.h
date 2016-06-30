@@ -25,6 +25,7 @@ public:
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int, int) override;
+    void setRenderingMode(int);
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;
@@ -35,6 +36,9 @@ private:
     // width and height of openGL canvas.
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
+
+    //0 for verticies only, 1 for "full" for full rendering
+    unsigned char renderingMode = 1;
 };
 
 #endif // GMCANVAS_H
