@@ -8,11 +8,13 @@ NOTE: the file parser in Mesh does not support comments! Thus, the parser requir
 
 -------------
 OFF
-number_of_vertices number_of_faces number_of_edges(should be 0)
+number_of_vertices number_of_faces colour_mode*
 vertex_list
 face_list
 
 -------------
+
+*colour_mode: 0 for Lab colour space, 1 for RGB colour space.
 
 Format for vertex data (version 3 of the parser):
 

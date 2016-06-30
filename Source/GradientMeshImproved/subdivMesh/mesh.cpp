@@ -1112,6 +1112,7 @@ bool Mesh::loadV3(stringstream &strStream, bool _xyWeights)
         if (file_type == "OFF" || file_type == "off" || file_type == "Off")
         {
             strStream >> my_numV >> my_numF >> my_numE;
+            useRGB = my_numE;
             my_numW = 0;
 
         }
@@ -4021,6 +4022,7 @@ void Mesh::CatmullClark(Mesh *smesh)
     smesh->my_maxz = my_maxz;
 
     smesh->isFootBall = isFootBall;
+    smesh->useRGB = useRGB;
 
     cout << "Catmull-Clark end" << endl;
 
@@ -4376,6 +4378,7 @@ void Mesh::CatmullClarkColour(Mesh *smesh)
     smesh->my_minz = my_minz;
     smesh->my_maxz = my_maxz;
     smesh->interpFlat = false;
+    smesh->useRGB = useRGB;
 
     smesh->build();
 }
@@ -5154,6 +5157,7 @@ void Mesh::LinearTernarySubdiv(Mesh *smesh)
     smesh->interpFlat = false;
 
     smesh->isFootBall = isFootBall;
+    smesh->useRGB = useRGB;
 
     smesh->build();
 }
@@ -5482,6 +5486,7 @@ void Mesh::CatmullClarkBounded(Mesh *smesh)
 
     smesh->my_minz = my_minz;
     smesh->my_maxz = my_maxz;
+    smesh->useRGB = useRGB;
 
     cout << "Catmull-Clark end" << endl;
 
