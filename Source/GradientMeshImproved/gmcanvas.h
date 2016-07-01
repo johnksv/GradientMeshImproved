@@ -32,8 +32,9 @@ public:
      */
     void handleFileDialog(QString location, bool import);
 protected:
-    void mousePressEvent(QMouseEvent * event) override;
-    void mouseMoveEvent(QMouseEvent * event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 private:
     GUILogic::MeshHandler meshHandler;
@@ -44,6 +45,8 @@ private:
 
     //0 for verticies only, 3 for "full" for full rendering
     unsigned char renderingMode = 3;
+
+    qreal scale = 1;
 };
 
 #endif // GMCANVAS_H

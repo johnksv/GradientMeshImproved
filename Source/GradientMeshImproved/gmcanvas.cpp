@@ -14,6 +14,7 @@ void GMCanvas::initializeGL()
     initializeOpenGLFunctions();
     glWidth = 1200;
     glHeight = 1000;
+
 }
 
 void GMCanvas::resizeGL(int, int)
@@ -27,12 +28,10 @@ void GMCanvas::setRenderingMode(int mode){
 
 void GMCanvas::paintGL()
 {    
-    // Qt painter, create object on stack
-    // for automatic garbage collection (no need to call end())
     QPainter qPainter;
-
     /******* Start painting with OpenGL ***********/
     qPainter.begin(this);
+    qPainter.scale(scale,scale);
     qPainter.beginNativePainting();
 
     // set background colour and clear framebuffer
@@ -82,4 +81,19 @@ void GMCanvas::mousePressEvent(QMouseEvent* event){
 void GMCanvas::mouseMoveEvent(QMouseEvent *event){
     int x = event->x();
     int y = event->y();
+}
+
+void GMCanvas::wheelEvent(QWheelEvent *event){
+    //TODO: Smooth scaling and zoom on middel of canvas
+    //TODO: "World" pixel-values
+
+    // positive value rotated away from the user
+    int deltaY = event->angleDelta().y();
+    //Check if zooming
+    if(deltaY > 0){
+        scale += deltaY/120;
+    }else{
+        scale += deltaY/120;
+    }
+    update();
 }
