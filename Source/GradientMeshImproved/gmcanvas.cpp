@@ -48,8 +48,6 @@ void GMCanvas::paintGL()
     qPainter.endNativePainting();
 
     // draw other stuff on top of the OpenGL painting
-    int start_s=clock();
-        // the code you wish to time goes here
     if(renderingMode == 0){
         qPainter.setBrush( Qt::black );
         qPainter.setPen( Qt::black );
