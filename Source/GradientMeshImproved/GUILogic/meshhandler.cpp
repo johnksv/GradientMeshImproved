@@ -33,9 +33,26 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     setUpSubdMeshStream();
     subdMesh->draw(context);
 }
-void MeshHandler::drawVertices(QOpenGLFunctions_1_0 *context)
-{
 
+vector<vector<float>> MeshHandler::getVertices()
+{
+    vector<vector<float>> result;
+    for (OpnMesh::VertexIter v_it = guiMesh.vertices_sbegin();
+           v_it != guiMesh.vertices_end(); ++v_it)
+    {
+        vector<float> point;
+        point.push_back(guiMesh.point(v_it)[0]);
+        point.push_back(guiMesh.point(v_it)[1]);
+        point.push_back(guiMesh.point(v_it)[2]);
+
+        //For debugging. TODO: Remove
+        qDebug() << "From Meshhandler:49:  x:" << guiMesh.point(v_it)[0] << ", y:" << guiMesh.point(v_it)[1]
+                 << ",z: " << guiMesh.point(v_it)[2];
+
+        result.push_back(point);
+
+    }
+    return result;
 }
 
 void MeshHandler::addVertexFromPoint(QPoint& position)
@@ -52,12 +69,12 @@ void MeshHandler::makeFace()
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
            v_it != guiMesh.vertices_end(); ++v_it)
     {
-        qDebug("Iterating Vertex");
+
     }
 
     for (OpnMesh::EdgeIter e_it=guiMesh.edges_begin(); e_it!=guiMesh.edges_end(); ++e_it)
     {
-        qDebug("Edges");
+
     }
 }
 

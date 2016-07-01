@@ -35,8 +35,12 @@ public:
      * \param context the OpenGL context that is being used to draw
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
-    void drawVertices(QOpenGLFunctions_1_0 *context);
     void addVertexFromPoint(QPoint& position);
+    /*! Get verticies from the current guiMesh object.
+     * \return a vector of points. Each element contains x, y, z coordiantes respectively
+     *
+     */
+    vector<vector<float>> getVertices();
     void makeFace();
     void saveGuiMeshOff(QString);
 

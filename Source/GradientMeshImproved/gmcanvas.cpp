@@ -40,9 +40,7 @@ void GMCanvas::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw stuff
-    if(renderingMode == 0){
-        meshHandler.drawVertices(this);
-    }else if(renderingMode == 3){
+    if(renderingMode == 3){
         meshHandler.drawGLMesh(this);
     }
 
@@ -50,9 +48,12 @@ void GMCanvas::paintGL()
     qPainter.endNativePainting();
 
     // draw other stuff on top of the OpenGL painting
-    qPainter.setPen(Qt::blue);
-    qPainter.setFont(QFont("Arial", 30));
-    qPainter.drawText(rect(), Qt::AlignCenter, "Qt");
+    if(renderingMode == 0){
+       vector<vector<float>> points = meshHandler.getVertices();
+       for(int i = 0; i < points.size(); i++){
+           qPainter.drawPoint(points[i][0],points[i][1]);
+       }
+    }
 }
 
 void GMCanvas::handleFileDialog(QString location, bool import){
