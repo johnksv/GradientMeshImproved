@@ -48,10 +48,14 @@ void GMCanvas::paintGL()
     qPainter.endNativePainting();
 
     // draw other stuff on top of the OpenGL painting
+    int start_s=clock();
+        // the code you wish to time goes here
     if(renderingMode == 0){
+        qPainter.setBrush( Qt::black );
+        qPainter.setPen( Qt::black );
        vector<vector<float>> points = meshHandler.getVertices();
        for(int i = 0; i < points.size(); i++){
-           qPainter.drawPoint(points[i][0],points[i][1]);
+           qPainter.drawEllipse(QPointF(points[i][0],points[i][1]), 5,5);
        }
     }
 }
@@ -72,13 +76,12 @@ void GMCanvas::mousePressEvent(QMouseEvent* event){
         qDebug() << "RightClick";
     }
     meshHandler.addVertexFromPoint(event->pos());
+    paintGL();
+    update();
     qDebug() << "x,y : " << x <<" , "<< y ;
 }
 
 void GMCanvas::mouseMoveEvent(QMouseEvent *event){
     int x = event->x();
     int y = event->y();
-
-
-    qDebug() << "MouseMove: x,y : " << x <<" , "<< y ;
 }
