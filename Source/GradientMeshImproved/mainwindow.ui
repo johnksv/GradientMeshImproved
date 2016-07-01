@@ -84,6 +84,8 @@
      <string>Rendering</string>
     </property>
     <addaction name="actionVertices_only"/>
+    <addaction name="actionVertices_and_Edges"/>
+    <addaction name="actionPartial_render"/>
     <addaction name="actionFull_render"/>
    </widget>
    <addaction name="menuMenu"/>
@@ -207,7 +209,17 @@
   </action>
   <action name="actionFull_render">
    <property name="text">
-    <string>Full render (Change name)</string>
+    <string>Full render (3 steps)</string>
+   </property>
+  </action>
+  <action name="actionPartial_render">
+   <property name="text">
+    <string>Partial render (1 step)</string>
+   </property>
+  </action>
+  <action name="actionVertices_and_Edges">
+   <property name="text">
+    <string>Vertices and Edges</string>
    </property>
   </action>
  </widget>

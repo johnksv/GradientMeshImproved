@@ -16,6 +16,7 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     // Add variables here...
     VertexTraits {
         double weight;
+        OpenMesh::Vec3d colorPoint;
     };
 };
 

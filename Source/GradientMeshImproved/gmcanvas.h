@@ -26,6 +26,11 @@ public:
     void paintGL() override;
     void resizeGL(int, int) override;
     void setRenderingMode(int);
+    /*! Handel action from File Dialog related to the mesh, such as import and export.
+     * \param location the location of the file to import/export
+     * \param import if the mesh should be imported or exported. True for import. False for export.
+     */
+    void handleFileDialog(QString location, bool import);
 protected:
     void mousePressEvent(QMouseEvent * event) override;
     void mouseMoveEvent(QMouseEvent * event) override;
@@ -37,8 +42,8 @@ private:
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
 
-    //0 for verticies only, 1 for "full" for full rendering
-    unsigned char renderingMode = 1;
+    //0 for verticies only, 3 for "full" for full rendering
+    unsigned char renderingMode = 3;
 };
 
 #endif // GMCANVAS_H

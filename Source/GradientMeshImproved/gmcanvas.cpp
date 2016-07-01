@@ -42,7 +42,7 @@ void GMCanvas::paintGL()
     // draw stuff
     if(renderingMode == 0){
         meshHandler.drawVertices(this);
-    }else if(renderingMode == 1){
+    }else if(renderingMode == 3){
         meshHandler.drawGLMesh(this);
     }
 
@@ -55,10 +55,19 @@ void GMCanvas::paintGL()
     qPainter.drawText(rect(), Qt::AlignCenter, "Qt");
 }
 
+void GMCanvas::handleFileDialog(QString location, bool import){
+    if(import){
+
+    }else{
+        meshHandler.saveGuiMeshOff(location);
+    }
+}
+
 void GMCanvas::mousePressEvent(QMouseEvent* event){
     int x = event->x();
     int y = event->y();
     if(event->button() == Qt::RightButton){
+        meshHandler.makeFace();
         qDebug() << "RightClick";
     }
     meshHandler.addVertexFromPoint(event->pos());

@@ -4,17 +4,19 @@
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
+
 using namespace GUILogic;
 
-typedef subdivMesh::Mesh SbdvMesh;
 typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
 typedef OpnMesh::VertexHandle vertexPntr;
+typedef subdivMesh::Mesh SbdvMesh;
+
 
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
 {
     // test OpenMesh lib
-    createTwoQuads();
+   // createTwoQuads();
 }
 
 MeshHandler::~MeshHandler()
@@ -31,17 +33,32 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     setUpSubdMeshStream();
     subdMesh->draw(context);
 }
-void MeshHandler::drawVertices(QOpenGLFunctions_1_0 *context){
+void MeshHandler::drawVertices(QOpenGLFunctions_1_0 *context)
+{
 
 }
 
-void MeshHandler::addVertexFromPoint(QPoint& position){
+void MeshHandler::addVertexFromPoint(QPoint& position)
+{
     //TODO: If vertex exists -> make face
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
     guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
-    qDebug() << guiMesh.IsPolyMesh;
+}
 
+void MeshHandler::makeFace()
+{
+
+    for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
+           v_it != guiMesh.vertices_end(); ++v_it)
+    {
+        qDebug("Iterating Vertex");
+    }
+
+    for (OpnMesh::EdgeIter e_it=guiMesh.edges_begin(); e_it!=guiMesh.edges_end(); ++e_it)
+    {
+        qDebug("Edges");
+    }
 }
 
 /********************************************
@@ -73,6 +90,17 @@ void MeshHandler::subdivide(signed int steps)
 
     // set the final mesh
     subdMesh = currentMsh;
+}
+
+void MeshHandler::saveGuiMeshOff(QString location){
+    try
+    {
+        if(!OpenMesh::IO::write_mesh(guiMesh, location.toStdString())){
+            qDebug("Cannot write mesh to file..");
+        }
+    }catch (std::exception& x){
+        qDebug(x.what());
+    }
 }
 
 void MeshHandler::createTwoQuads()
@@ -113,7 +141,6 @@ void MeshHandler::createTwoQuads()
       {
         std::cerr << x.what() << std::endl;
       }
-
 }
 
 void MeshHandler::setUpSubdMeshStream()

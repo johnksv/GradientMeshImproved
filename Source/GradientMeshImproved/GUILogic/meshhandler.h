@@ -37,6 +37,8 @@ public:
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
     void drawVertices(QOpenGLFunctions_1_0 *context);
     void addVertexFromPoint(QPoint& position);
+    void makeFace();
+    void saveGuiMeshOff(QString);
 
 private:
     void subdivide(signed int steps = 3);
