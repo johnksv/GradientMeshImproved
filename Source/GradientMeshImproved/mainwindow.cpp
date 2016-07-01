@@ -44,3 +44,15 @@ void MainWindow::on_actionExport_triggered()
                                                     "", tr("OFF file (*.off)"));
     ui->openGLWidget->handleFileDialog(filename, false);
 }
+
+void MainWindow::on_actionLine_tool_triggered()
+{
+    ui->openGLWidget->setDrawingMode(drawModeCanvas::vertAndEdge);
+}
+
+void MainWindow::on_actionImport_triggered()
+{
+    QString filename = QFileDialog::getOpenFileName(this,tr("Import file"),
+                                                    "", tr("OFF file (*.off)"));
+    ui->openGLWidget->handleFileDialog(filename,true);
+}

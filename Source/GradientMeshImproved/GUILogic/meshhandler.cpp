@@ -46,8 +46,8 @@ vector<vector<float>> MeshHandler::getVertices()
         point.push_back(guiMesh.point(v_it)[2]);
 
         //For debugging. TODO: Remove
-        qDebug() << "From Meshhandler:49:  x:" << guiMesh.point(v_it)[0] << ", y:" << guiMesh.point(v_it)[1]
-                 << ",z: " << guiMesh.point(v_it)[2];
+//        qDebug() << "From Meshhandler:49:  x:" << guiMesh.point(v_it)[0] << ", y:" << guiMesh.point(v_it)[1]
+//                 << ",z: " << guiMesh.point(v_it)[2];
 
         result.push_back(point);
 
@@ -65,12 +65,13 @@ void MeshHandler::addVertexFromPoint(QPoint& position)
 
 void MeshHandler::makeFace()
 {
-
+    vector<OpnMesh::VertexHandle> vHandler;
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
            v_it != guiMesh.vertices_end(); ++v_it)
     {
-
+         vHandler.push_back(v_it);
     }
+    guiMesh.add_face(vHandler);
 
     for (OpnMesh::EdgeIter e_it=guiMesh.edges_begin(); e_it!=guiMesh.edges_end(); ++e_it)
     {
@@ -109,24 +110,37 @@ void MeshHandler::subdivide(signed int steps)
     subdMesh = currentMsh;
 }
 
-void MeshHandler::saveGuiMeshOff(QString location){
+bool MeshHandler::saveGuiMeshOff(QString location){
     try
     {
         if(!OpenMesh::IO::write_mesh(guiMesh, location.toStdString())){
             qDebug("Cannot write mesh to file..");
+            return false;
         }
     }catch (std::exception& x){
         qDebug(x.what());
+        return false;
     }
+    return true;
+}
+
+bool MeshHandler::importGuiMesh(QString location)
+{
+    if ( ! OpenMesh::IO::read_mesh(guiMesh, location.toStdString()) )
+      {
+        qDebug() << "Error: Cannot read mesh from " << location;
+        return false;
+      }
+    return true;
 }
 
 void MeshHandler::createTwoQuads()
 {
     // create vertices: (quad 1)
     vertexPntr v0 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
-    vertexPntr v1 = guiMesh.add_vertex(OpnMesh::Point(0.5f, .0f, .0f)); // also in quad 2
+    vertexPntr v1 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f)); // also in quad 2
     vertexPntr v2 = guiMesh.add_vertex(OpnMesh::Point(0.5f, 1.0f, .0f)); // also in quad 2
-    vertexPntr v3 = guiMesh.add_vertex(OpnMesh::Point(.0f, 1.0f, .0f));
+    vertexPntr v3 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
 
     // quad 2
     vertexPntr v4 = guiMesh.add_vertex(OpnMesh::Point(1.0f, .0f, .0f));

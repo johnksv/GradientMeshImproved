@@ -5,7 +5,7 @@
 GMCanvas::GMCanvas(QWidget *parent) :
     QOpenGLWidget{parent}
 {
-
+    setMouseTracking(true);
 }
 
 void GMCanvas::initializeGL()
@@ -24,6 +24,9 @@ void GMCanvas::resizeGL(int, int)
 
 void GMCanvas::setRenderingMode(int mode){
     renderingMode = mode;
+}
+void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
+    this->drawMode = drawMode;
 }
 
 void GMCanvas::paintGL()
@@ -47,7 +50,7 @@ void GMCanvas::paintGL()
     qPainter.endNativePainting();
 
     // draw other stuff on top of the OpenGL painting
-    if(renderingMode == 0){
+    if(renderingMode == 0 || renderingMode == 3){
         qPainter.setBrush( Qt::black );
         qPainter.setPen( Qt::black );
        vector<vector<float>> points = meshHandler.getVertices();
@@ -55,11 +58,17 @@ void GMCanvas::paintGL()
            qPainter.drawEllipse(QPointF(points[i][0],points[i][1]), 5,5);
        }
     }
+
+    if(drawMode == drawModeCanvas::vertAndEdge){
+        if(prevVer.x() != 0 && prevVer.y() != 0){
+            qPainter.drawLine(prevVer, oldMousePos);
+        }
+    }
 }
 
 void GMCanvas::handleFileDialog(QString location, bool import){
     if(import){
-
+        meshHandler.importGuiMesh(location);
     }else{
         meshHandler.saveGuiMeshOff(location);
     }
@@ -70,17 +79,19 @@ void GMCanvas::mousePressEvent(QMouseEvent* event){
     int y = event->y();
     if(event->button() == Qt::RightButton){
         meshHandler.makeFace();
-        qDebug() << "RightClick";
+        qDebug() << "Faces made";
+    }else{
+        prevVer = event->pos();
+        meshHandler.addVertexFromPoint(event->pos());
+        qDebug() << "x,y : " << x <<" , "<< y ;
     }
-    meshHandler.addVertexFromPoint(event->pos());
     paintGL();
     update();
-    qDebug() << "x,y : " << x <<" , "<< y ;
 }
 
 void GMCanvas::mouseMoveEvent(QMouseEvent *event){
-    int x = event->x();
-    int y = event->y();
+    oldMousePos = event->pos();
+    update();
 }
 
 void GMCanvas::wheelEvent(QWheelEvent *event){
@@ -93,7 +104,9 @@ void GMCanvas::wheelEvent(QWheelEvent *event){
     if(deltaY > 0){
         scale += deltaY/120;
     }else{
-        scale += deltaY/120;
+        if (scale > 1){
+            scale += deltaY/120;
+        }
     }
     update();
 }

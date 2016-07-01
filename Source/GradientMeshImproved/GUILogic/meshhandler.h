@@ -42,7 +42,8 @@ public:
      */
     vector<vector<float>> getVertices();
     void makeFace();
-    void saveGuiMeshOff(QString);
+    bool saveGuiMeshOff(QString);
+    bool importGuiMesh(QString);
 
 private:
     void subdivide(signed int steps = 3);

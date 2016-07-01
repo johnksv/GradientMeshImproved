@@ -6,6 +6,10 @@
 #include <QOpenGLFunctions_1_0>
 #include "GUILogic/meshhandler.h"
 
+enum class drawModeCanvas{
+    vertices, vertAndEdge, edge, faces
+};
+
 /*! \brief GMCanvas.
  *         Controller class for managing the canvas
  *         which is used to draw the gradient mesh (GM).
@@ -26,6 +30,7 @@ public:
     void paintGL() override;
     void resizeGL(int, int) override;
     void setRenderingMode(int);
+    void setDrawingMode(drawModeCanvas);
     /*! Handel action from File Dialog related to the mesh, such as import and export.
      * \param location the location of the file to import/export
      * \param import if the mesh should be imported or exported. True for import. False for export.
@@ -45,6 +50,12 @@ private:
 
     //0 for verticies only, 3 for "full" for full rendering
     unsigned char renderingMode = 3;
+    /* 0 for only vertices. 1 for vertices and edges
+     * TODO: implement: 2 for only edges. 3 for connecting verticies to faces
+     */
+    drawModeCanvas drawMode = drawModeCanvas::vertices;
+
+    QPoint prevVer, oldMousePos;
 
     qreal scale = 1;
 };
