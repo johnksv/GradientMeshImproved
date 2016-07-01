@@ -19,7 +19,7 @@ void MainWindow::on_actionVertices_only_triggered()
     ui->openGLWidget-> paintGL();
 }
 
-void MainWindow::on_actionFull_render_Change_name_triggered()
+void MainWindow::on_actionFull_render_triggered()
 {
     ui->openGLWidget-> setRenderingMode(1);
     ui->openGLWidget-> paintGL();

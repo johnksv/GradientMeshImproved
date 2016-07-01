@@ -18,7 +18,7 @@ public:
 private slots:
     void on_actionVertices_only_triggered();
 
-    void on_actionFull_render_Change_name_triggered();
+    void on_actionFull_render_triggered();
 
 private:
     Ui::MainWindow *ui;
