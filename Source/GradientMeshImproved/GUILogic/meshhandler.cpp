@@ -63,7 +63,7 @@ void MeshHandler::addVertexFromPoint(QPoint& position)
     guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
 }
 
-void MeshHandler::makeFace()
+bool MeshHandler::makeFace()
 {
     vector<OpnMesh::VertexHandle> vHandler;
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
@@ -71,12 +71,12 @@ void MeshHandler::makeFace()
     {
          vHandler.push_back(v_it);
     }
-    guiMesh.add_face(vHandler);
-
-    for (OpnMesh::EdgeIter e_it=guiMesh.edges_begin(); e_it!=guiMesh.edges_end(); ++e_it)
-    {
-
+    if(vHandler.size()<=2){
+        return false;
     }
+
+    guiMesh.add_face(vHandler);
+    return true;
 }
 
 /********************************************

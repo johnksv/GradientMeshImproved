@@ -41,7 +41,7 @@ public:
      *
      */
     vector<vector<float>> getVertices();
-    void makeFace();
+    bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 

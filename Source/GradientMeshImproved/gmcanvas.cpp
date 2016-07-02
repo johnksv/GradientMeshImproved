@@ -78,8 +78,11 @@ void GMCanvas::mousePressEvent(QMouseEvent* event){
     int x = event->x();
     int y = event->y();
     if(event->button() == Qt::RightButton){
-        meshHandler.makeFace();
-        qDebug() << "Faces made";
+        if(meshHandler.makeFace()){
+            qDebug() << "Faces made";
+        }else{
+            qDebug() << "Faces not made. Not enough vertices";
+        }
     }else{
         prevVer = event->pos();
         meshHandler.addVertexFromPoint(event->pos());
