@@ -66,10 +66,10 @@
     <property name="title">
      <string>Mesh</string>
     </property>
-    <addaction name="actionLine_tool"/>
+    <addaction name="actionDraw_Line_tool"/>
+    <addaction name="actionDraw_Add_Edge"/>
+    <addaction name="actionDraw_Remove_Edge"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_edges"/>
-    <addaction name="actionRemove_edge"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -83,10 +83,10 @@
     <property name="title">
      <string>Rendering</string>
     </property>
-    <addaction name="actionVertices_only"/>
-    <addaction name="actionVertices_and_Edges"/>
-    <addaction name="actionPartial_render"/>
-    <addaction name="actionFull_render"/>
+    <addaction name="actionRender_Vertices_only"/>
+    <addaction name="actionRender_Vertices_and_Edges"/>
+    <addaction name="actionRender_Partial"/>
+    <addaction name="actionRender_Full"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuEdit"/>
@@ -104,9 +104,9 @@
    </attribute>
    <addaction name="actionMove"/>
    <addaction name="separator"/>
-   <addaction name="actionLine_tool"/>
-   <addaction name="actionAdd_Edge"/>
-   <addaction name="actionRemove_Edge"/>
+   <addaction name="actionDraw_Line_tool"/>
+   <addaction name="actionDraw_Add_Edge"/>
+   <addaction name="actionDraw_Remove_Edge"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_New">
@@ -152,19 +152,9 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="actionLine_tool">
+  <action name="actionDraw_Line_tool">
    <property name="text">
     <string>Line tool</string>
-   </property>
-  </action>
-  <action name="actionAdd_edges">
-   <property name="text">
-    <string>Add edge</string>
-   </property>
-  </action>
-  <action name="actionRemove_edge">
-   <property name="text">
-    <string>Remove edge</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -180,7 +170,7 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="actionAdd_Edge">
+  <action name="actionDraw_Add_Edge">
    <property name="text">
     <string>Add Edge</string>
    </property>
@@ -188,7 +178,7 @@
     <string>Add edge between two vertices</string>
    </property>
   </action>
-  <action name="actionRemove_Edge">
+  <action name="actionDraw_Remove_Edge">
    <property name="text">
     <string>Remove Edge</string>
    </property>
@@ -211,22 +201,37 @@
     <string>Zoom out</string>
    </property>
   </action>
-  <action name="actionVertices_only">
+  <action name="actionRender_Vertices_only">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Vertices only</string>
    </property>
   </action>
-  <action name="actionFull_render">
+  <action name="actionRender_Full">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Full render (3 steps)</string>
    </property>
   </action>
-  <action name="actionPartial_render">
+  <action name="actionRender_Partial">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Partial render (1 step)</string>
    </property>
   </action>
-  <action name="actionVertices_and_Edges">
+  <action name="actionRender_Vertices_and_Edges">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Vertices and Edges</string>
    </property>

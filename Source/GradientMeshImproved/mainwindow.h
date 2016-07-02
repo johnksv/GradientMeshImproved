@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QActionGroup>
 
 namespace Ui {
 class MainWindow;
@@ -16,22 +17,27 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionVertices_only_triggered();
+    void on_actionRender_Vertices_only_triggered();
 
-    void on_actionFull_render_triggered();
+    void on_actionRender_Full_triggered();
 
-    void on_actionVertices_and_Edges_triggered();
+    void on_actionRender_Vertices_and_Edges_triggered();
 
-    void on_actionPartial_render_triggered();
+    void on_actionRender_Partial_triggered();
 
     void on_actionExport_triggered();
 
-    void on_actionLine_tool_triggered();
+    void on_actionDraw_Line_tool_triggered();
 
     void on_actionImport_triggered();
 
+    void handleRenderModeGroup(QAction * action);
+
 private:
     Ui::MainWindow *ui;
+    void initActionGroups();
+    QActionGroup *renderModeGroup;
+    QActionGroup *drawModeGroup;
 };
 
 #endif // MAINWINDOW_H
