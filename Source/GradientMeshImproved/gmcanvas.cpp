@@ -6,21 +6,26 @@
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
+    mainCanvasItem = new GMCanvasItem();
 
 }
 
 GMCanvas::~GMCanvas()
 {
-
+    delete mainCanvasItem;
 }
 
 
 void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Over";
+
 }
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Over" << mouseEvent->scenePos().x() << ","<<mouseEvent->scenePos().y();
+    qDebug() << "Add:" << mouseEvent->scenePos().x() << ","<<mouseEvent->scenePos().y();
+    GMCanvasItem *item = new GMCanvasItem(nullptr, mouseEvent->scenePos());
+    this->addItem(item);
+    update(-1000,-1000,2000,2000);
+    QGraphicsScene::mousePressEvent(mouseEvent);
 }

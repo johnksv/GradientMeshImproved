@@ -1,5 +1,5 @@
-#ifndef GMCANVAS_H
-#define GMCANVAS_H
+#ifndef GMCANVASOLD_H
+#define GMCANVASOLD_H
 
 #include <QOpenGLWidget>
 #include <QPainter>
@@ -60,4 +60,4 @@ private:
     qreal scale = 1;
 };
 
-#endif // GMCANVAS_H
+#endif // GMCANVASOLD_H

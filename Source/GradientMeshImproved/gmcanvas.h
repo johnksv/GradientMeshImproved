@@ -1,5 +1,5 @@
-#ifndef GMCANVASITEM_H
-#define GMCANVASITEM_H
+#ifndef GMCANVAS_H
+#define GMCANVAS_H
 
 #include "gmcanvasitem.h"
 #include <QGraphicsScene>
@@ -15,8 +15,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
-
-
+    GMCanvasItem *mainCanvasItem;
 };
 
-#endif // GMCANVASITEM_H
+#endif // GMCANVAS_H
