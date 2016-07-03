@@ -36,43 +36,43 @@ void MainWindow::handleRenderModeGroup(QAction * action){
 
 void MainWindow::on_actionRender_Vertices_only_triggered()
 {
-    ui->openGLWidget-> setRenderingMode(0);
-    ui->openGLWidget-> paintGL();
+//    ui->openGLWidget-> setRenderingMode(0);
+//    ui->openGLWidget-> paintGL();
 }
 
 void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
 {
-    ui->openGLWidget-> setRenderingMode(1);
-    ui->openGLWidget-> paintGL();
+//    ui->openGLWidget-> setRenderingMode(1);
+//    ui->openGLWidget-> paintGL();
 }
 
 void MainWindow::on_actionRender_Partial_triggered()
 {
-    ui->openGLWidget-> setRenderingMode(2);
-    ui->openGLWidget-> paintGL();
+//    ui->openGLWidget-> setRenderingMode(2);
+//    ui->openGLWidget-> paintGL();
 }
 
 void MainWindow::on_actionRender_Full_triggered()
 {
-    ui->openGLWidget-> setRenderingMode(3);
-    ui->openGLWidget-> paintGL();
+//    ui->openGLWidget-> setRenderingMode(3);
+//    ui->openGLWidget-> paintGL();
 }
 
 void MainWindow::on_actionExport_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
                                                     "", tr("OFF file (*.off)"));
-    ui->openGLWidget->handleFileDialog(filename, false);
+   // ui->openGLWidget->handleFileDialog(filename, false);
 }
 
 void MainWindow::on_actionDraw_Line_tool_triggered()
 {
-    ui->openGLWidget->setDrawingMode(drawModeCanvas::vertAndEdge);
+ //   ui->openGLWidget->setDrawingMode(drawModeCanvas::vertAndEdge);
 }
 
 void MainWindow::on_actionImport_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(this,tr("Import file"),
                                                     "", tr("OFF file (*.off)"));
-    ui->openGLWidget->handleFileDialog(filename,true);
+   // ui->openGLWidget->handleFileDialog(filename,true);
 }
