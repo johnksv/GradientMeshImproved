@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     gmcanvasold.cpp \
     gmcanvas.cpp \
     gmcanvasitem.cpp \
-    gmopenglwidget.cpp
+    gmopenglwidget.cpp \
+    GMView/customgraphicsview.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     gmcanvasold.h \
     gmcanvas.h \
     gmcanvasitem.h \
-    gmopenglwidget.h
+    gmopenglwidget.h \
+    GMView/customgraphicsview.h
 
 FORMS    += mainwindow.ui
 
