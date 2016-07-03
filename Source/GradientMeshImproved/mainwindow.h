@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include "gmcanvas.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +39,7 @@ private:
     void initActionGroups();
     QActionGroup *renderModeGroup;
     QActionGroup *drawModeGroup;
+    GMCanvas *scene;
 };
 
 #endif // MAINWINDOW_H

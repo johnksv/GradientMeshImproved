@@ -2,11 +2,14 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    scene = new GMCanvas(this);
+    ui->graphicsView->setScene(scene);
     initActionGroups();
 }
 

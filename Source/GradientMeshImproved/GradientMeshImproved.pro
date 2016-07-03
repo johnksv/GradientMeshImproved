@@ -18,6 +18,7 @@ SOURCES += main.cpp\
     subdivMesh/point_3d.cpp \
     subdivMesh/spline.cpp \
     GUILogic/meshhandler.cpp \
+    gmcanvasold.cpp \
     gmcanvas.cpp
 
 HEADERS  += mainwindow.h \
@@ -28,8 +29,9 @@ HEADERS  += mainwindow.h \
     subdivMesh/types.h \
     GUILogic/meshhandler.h \
     subdivMesh/utils.h \
-    gmcanvas.h \
-    customMeshing/openmeshext.h
+    customMeshing/openmeshext.h \
+    gmcanvasold.h \
+    gmcanvas.h
 
 FORMS    += mainwindow.ui
 

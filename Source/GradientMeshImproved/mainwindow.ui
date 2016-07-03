@@ -22,12 +22,22 @@
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>561</width>
-      <height>471</height>
+      <width>531</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="locale">
      <locale language="English" country="UnitedStates"/>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>190</y>
+      <width>651</width>
+      <height>261</height>
+     </rect>
     </property>
    </widget>
   </widget>
