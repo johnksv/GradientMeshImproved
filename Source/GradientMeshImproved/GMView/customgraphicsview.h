@@ -9,7 +9,8 @@ public:
     CustomGraphicsView(QWidget *parent = nullptr);
 
 protected:
-    virtual void wheelEvent(QWheelEvent *event);
+    void wheelEvent(QWheelEvent *event) override;
+
 private:
     double scaleFactor = 1.10;
 };

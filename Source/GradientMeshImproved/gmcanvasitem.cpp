@@ -8,19 +8,27 @@
 GMCanvasItem::GMCanvasItem(QGraphicsItem *parent, QPointF pos):
     QGraphicsItem(parent), position(pos)
 {
-
+    setAcceptHoverEvents(true);
 }
 
 QRectF GMCanvasItem::boundingRect() const
 {
-return QRectF(0,0,10,10);
-    return QRectF(position.x()-radius, position.y()-radius,
-                  position.x()+radius,position.y()+radius);
+    return QRectF(position.x()-radius, position.y()-radius,radius*2,radius*2);
 }
 
 void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    if(hovered){
+        painter->setBrush(Qt::blue);
+    }
     painter->drawEllipse(position,radius,radius);
+}
+
+QPainterPath GMCanvasItem::shape() const
+{
+    QPainterPath path;
+    path.addEllipse(position,radius,radius);
+    return path;
 }
 
 void GMCanvasItem::setRadius(int _radius)
@@ -32,12 +40,24 @@ void GMCanvasItem::setRadius(int _radius)
     }
 }
 
+void GMCanvasItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+
+}
+
 void GMCanvasItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    qDebug() <<"hoverEnter";
+    hovered = true;
+    update();
 }
 
 void GMCanvasItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    qDebug() <<"hoverMove";
+
+}
+
+void GMCanvasItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    hovered = false;
+    update();
 }

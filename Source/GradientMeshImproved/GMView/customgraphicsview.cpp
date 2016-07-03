@@ -3,6 +3,7 @@
 #include <QtDebug>
 CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
+    setMouseTracking(true);
 
 }
 

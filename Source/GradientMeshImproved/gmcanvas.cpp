@@ -8,9 +8,9 @@ GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
     opengl = new GMOpenGLWidget();
-    QGraphicsProxyWidget *openGLWidget = addWidget(opengl);
-    openGLWidget->setPos(-300,-300);
-    openGLWidget->setZValue(0);
+  //  QGraphicsProxyWidget *openGLWidget = addWidget(opengl);
+//    openGLWidget->setPos(-300,-300);
+//    openGLWidget->setZValue(0);
 }
 
 
@@ -22,10 +22,7 @@ void GMCanvas::handleFileDialog(QString location, bool import){
     }
 }
 
-void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
 
-}
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
