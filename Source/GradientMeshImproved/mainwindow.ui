@@ -17,7 +17,7 @@
    <locale language="English" country="UnitedStates"/>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="GMCanvas" name="openGLWidget">
+   <widget class="GMCanvasOLD" name="openGLWidget">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -250,9 +250,9 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>GMCanvas</class>
+   <class>GMCanvasOLD</class>
    <extends>QOpenGLWidget</extends>
-   <header location="global">gmcanvas.h</header>
+   <header location="global">gmcanvasold.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

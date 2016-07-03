@@ -1,11 +1,15 @@
 #include "gmcanvas.h"
 #include <QGraphicsSceneMouseEvent>
-#include <QPainter>
 #include <QDebug>
 
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
+{
+
+}
+
+GMCanvas::~GMCanvas()
 {
 
 }
