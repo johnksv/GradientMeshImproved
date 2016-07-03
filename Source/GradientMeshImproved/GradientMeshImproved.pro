@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     GUILogic/meshhandler.cpp \
     gmcanvasold.cpp \
     gmcanvas.cpp \
-    gmcanvasitem.cpp
+    gmcanvasitem.cpp \
+    gmopenglwidget.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     customMeshing/openmeshext.h \
     gmcanvasold.h \
     gmcanvas.h \
-    gmcanvasitem.h
+    gmcanvasitem.h \
+    gmopenglwidget.h
 
 FORMS    += mainwindow.ui
 

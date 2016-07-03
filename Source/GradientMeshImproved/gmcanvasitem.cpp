@@ -8,7 +8,7 @@
 GMCanvasItem::GMCanvasItem(QGraphicsItem *parent, QPointF pos):
     QGraphicsItem(parent), position(pos)
 {
-    qDebug() << position;
+
 }
 
 QRectF GMCanvasItem::boundingRect() const
