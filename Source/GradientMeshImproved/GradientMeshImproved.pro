@@ -19,10 +19,10 @@ SOURCES += main.cpp\
     subdivMesh/spline.cpp \
     GUILogic/meshhandler.cpp \
     gmcanvasold.cpp \
-    gmcanvas.cpp \
-    gmcanvasitem.cpp \
-    gmopenglwidget.cpp \
-    GMView/customgraphicsview.cpp
+    GMView/customgraphicsview.cpp \
+    GMView/canvasitem.cpp \
+    GMView/canvas.cpp \
+    GMView/openglwidget.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -34,10 +34,10 @@ HEADERS  += mainwindow.h \
     subdivMesh/utils.h \
     customMeshing/openmeshext.h \
     gmcanvasold.h \
-    gmcanvas.h \
-    gmcanvasitem.h \
-    gmopenglwidget.h \
-    GMView/customgraphicsview.h
+    GMView/customgraphicsview.h \
+    GMView/canvas.h \
+    GMView/canvasitem.h \
+    GMView/openglwidget.h
 
 FORMS    += mainwindow.ui
 

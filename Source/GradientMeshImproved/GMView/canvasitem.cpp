@@ -1,4 +1,4 @@
-#include "gmcanvasitem.h"
+#include "canvasitem.h"
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>

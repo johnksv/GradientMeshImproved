@@ -2,8 +2,8 @@
 #define GMCANVAS_H
 
 #include <QGraphicsScene>
-#include "gmcanvasitem.h"
-#include "gmopenglwidget.h"
+#include "canvasitem.h"
+#include "openglwidget.h"
 
 enum class drawModeCanvas{
     vertices, vertAndEdge, edge, faces

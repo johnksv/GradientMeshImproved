@@ -1,4 +1,4 @@
-#include "gmcanvas.h"
+#include "canvas.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QGraphicsProxyWidget>

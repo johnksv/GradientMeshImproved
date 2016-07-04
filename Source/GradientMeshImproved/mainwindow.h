@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
-#include "gmcanvas.h"
+#include "GMView/canvas.h"
 
 namespace Ui {
 class MainWindow;

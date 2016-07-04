@@ -1,4 +1,4 @@
-#include "gmopenglwidget.h"
+#include "openglwidget.h"
 #include <QMouseEvent>
 #include <QDebug>
 
