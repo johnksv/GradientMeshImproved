@@ -21,7 +21,13 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 {
     if(import)
     {
+        qDebug() << "scne import";
         meshHandler.importGuiMesh(location);
+        vector<QPointF> vertices = meshHandler.getVertices();
+        for(QPointF point : vertices){
+            CanvasItemPoint *item = new CanvasItemPoint(nullptr,point);
+            addItemPoint(item);
+        }
     }
     else
     {
@@ -37,8 +43,7 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
     if(mouseEvent->button() != Qt::RightButton)
     {
-        qDebug() << "Pos:" << mouseEvent->scenePos().x() << ","<<mouseEvent->scenePos().y();
-        GMCanvasItem *item = new GMCanvasItem(nullptr, mouseEvent->scenePos());
+        CanvasItemPoint *item = new CanvasItemPoint(nullptr, mouseEvent->scenePos());
         for(int i = 0; i < item_points.size();i++)
         {
             if(item->collidesWithItem(item_points[i])){
@@ -48,15 +53,19 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         }
         if(!collide)
         {
-            item->setZValue(1);
-            item_points.push_back(item);
-            addItem(item);
-            update(item->boundingRect());
+            addItemPoint(item);
             qDebug() << "Added point";
         }
     }
-    setSceneRect(itemsBoundingRect());
     QGraphicsScene::mousePressEvent(mouseEvent);
+}
+
+void GMCanvas::addItemPoint(CanvasItemPoint *item)
+{
+    item->setZValue(1);
+    item_points.push_back(item);
+    addItem(item);
+    update(item->boundingRect());
 }
 
 void GMCanvas::setRenderingMode(int mode){

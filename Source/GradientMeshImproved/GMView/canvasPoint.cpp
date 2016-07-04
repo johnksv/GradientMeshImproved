@@ -1,4 +1,4 @@
-#include "canvasitem.h"
+#include "canvasPoint.h"
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -7,19 +7,19 @@
 
 
 
-GMCanvasItem::GMCanvasItem(QGraphicsItem *parent, QPointF pos):
+CanvasItemPoint::CanvasItemPoint(QGraphicsItem *parent, QPointF pos):
     QGraphicsItem(parent), position(pos)
 {
     setAcceptHoverEvents(true);
     setFlags(QGraphicsItem::ItemIsMovable);
 }
 
-QRectF GMCanvasItem::boundingRect() const
+QRectF CanvasItemPoint::boundingRect() const
 {
     return QRectF(position.x()-radius, position.y()-radius,radius*2,radius*2);
 }
 
-void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     painter->setBrush(color);
     if(hovered){
@@ -30,14 +30,14 @@ void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWi
     painter->drawEllipse(position,radius,radius);
 }
 
-QPainterPath GMCanvasItem::shape() const
+QPainterPath CanvasItemPoint::shape() const
 {
     QPainterPath path;
     path.addEllipse(position,radius,radius);
     return path;
 }
 
-void GMCanvasItem::setRadius(int _radius)
+void CanvasItemPoint::setRadius(int _radius)
 {
     if(_radius<=0){
         radius = 1;
@@ -46,29 +46,29 @@ void GMCanvasItem::setRadius(int _radius)
     }
 }
 
-void GMCanvasItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 
 }
 
-void GMCanvasItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     hovered = true;
     update();
 }
 
-void GMCanvasItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+void CanvasItemPoint::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
 
 }
 
-void GMCanvasItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     hovered = false;
     update();
 }
 
-void GMCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
         QAction *choosColorAction = menu.addAction("Choose color");

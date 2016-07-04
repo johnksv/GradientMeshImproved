@@ -18,11 +18,10 @@ SOURCES += main.cpp\
     subdivMesh/point_3d.cpp \
     subdivMesh/spline.cpp \
     GUILogic/meshhandler.cpp \
-    gmcanvasold.cpp \
     GMView/customgraphicsview.cpp \
-    GMView/canvasitem.cpp \
     GMView/canvas.cpp \
-    GMView/openglwidget.cpp
+    GMView/openglwidget.cpp \
+    GMView/canvasPoint.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -33,11 +32,10 @@ HEADERS  += mainwindow.h \
     GUILogic/meshhandler.h \
     subdivMesh/utils.h \
     customMeshing/openmeshext.h \
-    gmcanvasold.h \
     GMView/customgraphicsview.h \
     GMView/canvas.h \
-    GMView/canvasitem.h \
-    GMView/openglwidget.h
+    GMView/openglwidget.h \
+    GMView/canvasPoint.h
 
 FORMS    += mainwindow.ui
 

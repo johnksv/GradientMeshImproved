@@ -8,11 +8,11 @@ enum class drawModeCanv{
     vertices, vertAndEdge, edge, faces
 };
 
-class GMCanvasItem :public QGraphicsItem
+class CanvasItemPoint :public QGraphicsItem
 {
 public:
 
-    GMCanvasItem(QGraphicsItem *parent = Q_NULLPTR, QPointF pos = QPointF(0,0));
+    CanvasItemPoint(QGraphicsItem *parent = Q_NULLPTR, QPointF pos = QPointF(0,0));
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;

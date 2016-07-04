@@ -74,5 +74,5 @@ void MainWindow::on_actionImport_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(this,tr("Import file"),
                                                     "", tr("OFF file (*.off)"));
-   // ui->openGLWidget->handleFileDialog(filename,true);
+    scene->handleFileDialog(filename,true);
 }

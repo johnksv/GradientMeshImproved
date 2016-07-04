@@ -1,6 +1,6 @@
 #include "GUILogic/meshhandler.h"
 #include <QDebug>
-#include <QPoint>
+#include <QPointF>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
@@ -34,20 +34,16 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     subdMesh->draw(context);
 }
 
-vector<vector<float>> MeshHandler::getVertices()
+vector<QPointF> MeshHandler::getVertices()
 {
-    vector<vector<float>> result;
+    vector<QPointF> result;
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_sbegin();
            v_it != guiMesh.vertices_end(); ++v_it)
     {
-        vector<float> point;
-        point.push_back(guiMesh.point(v_it)[0]);
-        point.push_back(guiMesh.point(v_it)[1]);
-        point.push_back(guiMesh.point(v_it)[2]);
+        QPointF point(guiMesh.point(v_it)[0], guiMesh.point(v_it)[1]);
 
         //For debugging. TODO: Remove
-//        qDebug() << "From Meshhandler:49:  x:" << guiMesh.point(v_it)[0] << ", y:" << guiMesh.point(v_it)[1]
-//                 << ",z: " << guiMesh.point(v_it)[2];
+        qDebug() << "From Meshhandler:49: " << point;
 
         result.push_back(point);
 
@@ -55,7 +51,7 @@ vector<vector<float>> MeshHandler::getVertices()
     return result;
 }
 
-void MeshHandler::addVertexFromPoint(QPoint& position)
+void MeshHandler::addVertexFromPoint(QPointF& position)
 {
     //TODO: If vertex exists -> make face
     float x = static_cast <float> (position.x());
