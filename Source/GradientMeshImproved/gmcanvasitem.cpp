@@ -9,6 +9,7 @@ GMCanvasItem::GMCanvasItem(QGraphicsItem *parent, QPointF pos):
     QGraphicsItem(parent), position(pos)
 {
     setAcceptHoverEvents(true);
+    setFlags(QGraphicsItem::ItemIsMovable);
 }
 
 QRectF GMCanvasItem::boundingRect() const
@@ -18,8 +19,11 @@ QRectF GMCanvasItem::boundingRect() const
 
 void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    painter->setBrush(color);
     if(hovered){
-        painter->setBrush(Qt::blue);
+        painter->setOpacity(0.5);
+    }else{
+        painter->setOpacity(1);
     }
     painter->drawEllipse(position,radius,radius);
 }

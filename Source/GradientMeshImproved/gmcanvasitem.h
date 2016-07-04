@@ -35,6 +35,7 @@ private:
     drawModeCanv drawMode = drawModeCanv::vertices;
 
     QPointF  position, oldMousePos;
+    QColor color;
     int radius = 5;
     bool hovered = false;
 

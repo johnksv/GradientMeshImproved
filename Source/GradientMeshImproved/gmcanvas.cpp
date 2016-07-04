@@ -26,12 +26,16 @@ void GMCanvas::handleFileDialog(QString location, bool import){
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    qDebug() << "Add:" << mouseEvent->scenePos().x() << ","<<mouseEvent->scenePos().y();
-    GMCanvasItem *item = new GMCanvasItem(nullptr, mouseEvent->scenePos());
-    prevCanvasItem = item;
-    item->setZValue(10);
-    addItem(item);
-    update(-1000,-1000,2000,2000);
+    if(itemAt(mouseEvent->scenePos(),QTransform()) == 0 ){
+
+
+        qDebug() << "Add:" << mouseEvent->scenePos().x() << ","<<mouseEvent->scenePos().y();
+        GMCanvasItem *item = new GMCanvasItem(nullptr, mouseEvent->scenePos());
+        prevCanvasItem = item;
+        item->setZValue(10);
+        addItem(item);
+        update(-1000,-1000,2000,2000);
+    }
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
