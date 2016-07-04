@@ -2,6 +2,8 @@
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QAction>
+#include <QMenu>
 
 
 
@@ -17,7 +19,7 @@ QRectF GMCanvasItem::boundingRect() const
     return QRectF(position.x()-radius, position.y()-radius,radius*2,radius*2);
 }
 
-void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GMCanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     painter->setBrush(color);
     if(hovered){
@@ -64,4 +66,12 @@ void GMCanvasItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     hovered = false;
     update();
+}
+
+void GMCanvasItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+        QAction *choosColorAction = menu.addAction("Choose color");
+        QAction *selectedAction = menu.exec(event->screenPos());
+
 }

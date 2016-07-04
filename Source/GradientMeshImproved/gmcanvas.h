@@ -29,6 +29,7 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
+    std::vector<GMCanvasItem*> item_points;
     GMCanvasItem *prevCanvasItem;
     GMOpenGLWidget *opengl;
 
@@ -42,7 +43,7 @@ private:
      */
     drawModeCanvas drawMode = drawModeCanvas::vertices;
 
-    QPoint prevVer, oldMousePos;
+    QPoint oldMousePos;
 };
 
 #endif // GMCANVAS_H
