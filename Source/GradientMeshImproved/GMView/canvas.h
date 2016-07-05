@@ -2,7 +2,8 @@
 #define GMCANVAS_H
 
 #include <QGraphicsScene>
-#include "canvasPoint.h"
+#include "canvaspoint.h"
+#include "canvasitemline.h"
 #include "openglwidget.h"
 
 enum class drawModeCanvas{
@@ -29,11 +30,6 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
-    /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
-     * \param CanvasItemPoint position of the item point
-     */
-    void addItemPoint(CanvasItemPoint *item);
-
     std::vector<CanvasItemPoint*> item_points;
     CanvasItemPoint *prevCanvasItem;
     GMOpenGLWidget *opengl;
@@ -49,6 +45,13 @@ private:
     drawModeCanvas drawMode = drawModeCanvas::vertices;
 
     QPoint oldMousePos;
+
+    /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
+     * \param CanvasItemPoint position of the item point
+     */
+    void handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent);
+    void handleMousePressVertAndEdge(QGraphicsSceneMouseEvent *mouseEvent);
+    void addItemPoint(CanvasItemPoint *item);
 };
 
 #endif // GMCANVAS_H

@@ -67,7 +67,7 @@ void MainWindow::on_actionExport_triggered()
 
 void MainWindow::on_actionDraw_Line_tool_triggered()
 {
- //   ui->openGLWidget->setDrawingMode(drawModeCanvas::vertAndEdge);
+    scene->setDrawingMode(drawModeCanvas::vertAndEdge);
 }
 
 void MainWindow::on_actionImport_triggered()

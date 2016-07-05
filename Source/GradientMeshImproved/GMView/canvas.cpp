@@ -25,7 +25,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         meshHandler.importGuiMesh(location);
         vector<QPointF> vertices = meshHandler.getVertices();
         for(QPointF point : vertices){
-            CanvasItemPoint *item = new CanvasItemPoint(nullptr,point);
+            CanvasItemPoint *item = new CanvasItemPoint(point);
             addItemPoint(item);
         }
     }
@@ -39,11 +39,27 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    bool collide = false;
+    switch(drawMode){
+    case drawModeCanvas::vertices:
+        handleMousePressVert(mouseEvent);
+        break;
+    case drawModeCanvas::vertAndEdge:
+        handleMousePressVertAndEdge(mouseEvent);
+        break;
+    case drawModeCanvas::edge:
+        break;
+    case drawModeCanvas::faces:
+        break;
+    }
+    QGraphicsScene::mousePressEvent(mouseEvent);
+}
 
+void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    bool collide = false;
     if(mouseEvent->button() != Qt::RightButton)
     {
-        CanvasItemPoint *item = new CanvasItemPoint(nullptr, mouseEvent->scenePos());
+        CanvasItemPoint *item = new CanvasItemPoint(mouseEvent->scenePos());
         for(int i = 0; i < item_points.size();i++)
         {
             if(item->collidesWithItem(item_points[i])){
@@ -54,10 +70,54 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(item);
-            qDebug() << "Added point";
         }
     }
-    QGraphicsScene::mousePressEvent(mouseEvent);
+}
+
+void GMCanvas::handleMousePressVertAndEdge(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    bool collide = false;
+    int collideWithIndex;
+
+    if(mouseEvent->button() != Qt::RightButton)
+    {
+        CanvasItemPoint *item = new CanvasItemPoint(mouseEvent->scenePos());
+        for(int i = 0; i < item_points.size();i++)
+        {
+            if(item->collidesWithItem(item_points[i])){
+                collide = true;
+                collideWithIndex = i;
+                i = item_points.size();
+            }
+        }
+        if(!collide)
+        {
+            addItemPoint(item);
+        }
+
+        if(item_points.size()>1)
+        {
+            CanvasItemLine *line;
+            CanvasItemPoint* endPoint;
+            CanvasItemPoint* startPoint;
+
+            //TODO: more logic, e.g. save first node, last node
+            if(collide)
+            {
+
+                endPoint = item_points.at(collideWithIndex);
+                startPoint = item_points.back();
+            }
+            else
+            {
+                endPoint = item_points.back();
+                startPoint = item_points.at(item_points.size()-2);
+            }
+
+            line = new CanvasItemLine(startPoint,endPoint);
+            addItem(line);
+        }
+    }
 }
 
 void GMCanvas::addItemPoint(CanvasItemPoint *item)
@@ -67,6 +127,8 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
     addItem(item);
     update(item->boundingRect());
 }
+
+
 
 void GMCanvas::setRenderingMode(int mode){
     renderingMode = mode;

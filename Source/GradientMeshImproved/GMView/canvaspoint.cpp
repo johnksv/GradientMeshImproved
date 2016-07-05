@@ -1,4 +1,4 @@
-#include "canvasPoint.h"
+#include "canvaspoint.h"
 #include <QDebug>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
@@ -7,34 +7,48 @@
 
 
 
-CanvasItemPoint::CanvasItemPoint(QGraphicsItem *parent, QPointF pos):
-    QGraphicsItem(parent), position(pos)
+CanvasItemPoint::CanvasItemPoint(QPointF pos, QGraphicsItem *parent):
+    QGraphicsItem(parent), posit(pos)
 {
     setAcceptHoverEvents(true);
-    setFlags(QGraphicsItem::ItemIsMovable);
+    setFlags(ItemIsMovable |ItemIsSelectable);
 }
 
 QRectF CanvasItemPoint::boundingRect() const
 {
-    return QRectF(position.x()-radius, position.y()-radius,radius*2,radius*2);
+    return QRectF(posit.x()-radius, posit.y()-radius,radius*2,radius*2);
 }
 
 void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    painter->setBrush(color);
+    if(isSelected()){
+        painter->setBrush(QColor(255,100,0));
+    }else{
+        painter->setBrush(color);
+    }
     if(hovered){
         painter->setOpacity(0.5);
     }else{
         painter->setOpacity(1);
     }
-    painter->drawEllipse(position,radius,radius);
+    painter->drawEllipse(posit,radius,radius);
 }
 
 QPainterPath CanvasItemPoint::shape() const
 {
     QPainterPath path;
-    path.addEllipse(position,radius,radius);
+    path.addEllipse(posit,radius,radius);
     return path;
+}
+
+void CanvasItemPoint::setColor(QColor color)
+{
+    this->color = color;
+}
+
+QPointF CanvasItemPoint::position()
+{
+    return posit;
 }
 
 void CanvasItemPoint::setRadius(int _radius)
@@ -71,7 +85,7 @@ void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
-        QAction *choosColorAction = menu.addAction("Choose color");
-        QAction *selectedAction = menu.exec(event->screenPos());
+    QAction *choosColorAction = menu.addAction("Choose color");
+    QAction *selectedAction = menu.exec(event->screenPos());
 
 }

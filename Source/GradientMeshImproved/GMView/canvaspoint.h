@@ -4,18 +4,17 @@
 #include <QRectF>
 #include "GUILogic/meshhandler.h"
 
-enum class drawModeCanv{
-    vertices, vertAndEdge, edge, faces
-};
-
 class CanvasItemPoint :public QGraphicsItem
 {
 public:
 
-    CanvasItemPoint(QGraphicsItem *parent = Q_NULLPTR, QPointF pos = QPointF(0,0));
+    CanvasItemPoint(QPointF pos = QPointF(0,0), QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
+    void setColor(QColor color);
+    //TODO: read on  item and sceen coordinates;
+    QPointF position();
 
     void setRadius(int);
 protected:
@@ -26,21 +25,10 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
-    GUILogic::MeshHandler meshHandler;
-
-    //0 for verticies only, 3 for "full" for full rendering
-    unsigned char renderingMode = 3;
-    /* 0 for only vertices. 1 for vertices and edges
-     * TODO: implement: 2 for only edges. 3 for connecting verticies to faces
-     */
-    drawModeCanv drawMode = drawModeCanv::vertices;
-
-    QPointF  position, oldMousePos;
+    QPointF  posit, oldMousePos;
     QColor color;
     int radius = 5;
     bool hovered = false;
-
-
 };
 
 #endif // GMCANVASITEM_H
