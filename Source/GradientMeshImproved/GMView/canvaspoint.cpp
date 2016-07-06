@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QAction>
 #include <QMenu>
+#include <QVariant>
 
 
 
@@ -11,7 +12,7 @@ CanvasItemPoint::CanvasItemPoint(QPointF pos, QGraphicsItem *parent):
     QGraphicsItem(parent), posit(pos)
 {
     setAcceptHoverEvents(true);
-    setFlags(ItemIsMovable |ItemIsSelectable);
+    setFlags(ItemIsMovable |ItemIsSelectable |ItemSendsScenePositionChanges );
 }
 
 QRectF CanvasItemPoint::boundingRect() const
@@ -41,6 +42,15 @@ QPainterPath CanvasItemPoint::shape() const
     return path;
 }
 
+QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    if(change == ItemScenePositionHasChanged){
+        qDebug() << "CanvasPoint 48:  Item moved";
+    }
+    return QGraphicsItem::itemChange(change, value);
+}
+
+
 void CanvasItemPoint::setColor(QColor color)
 {
     this->color = color;
@@ -65,18 +75,13 @@ void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 }
 
-void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent*)
 {
     hovered = true;
     update();
 }
 
-void CanvasItemPoint::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-
-}
-
-void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent*)
 {
     hovered = false;
     update();
@@ -86,6 +91,6 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *choosColorAction = menu.addAction("Choose color");
+    QAction *setWeightAction = menu.addAction("Set weight");
     QAction *selectedAction = menu.exec(event->screenPos());
-
 }
