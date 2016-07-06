@@ -46,12 +46,16 @@ public:
     bool importGuiMesh(QString);
 
 private:
-    void subdivide(signed int steps = 3);
-
+    //TODO List of Vertex handlers
+    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
+
+    /*METHODS*/
+    void subdivide(signed int steps = 3);
+
 
     // TEMPORARY TEST VARIABLES
     const char* const TEMPFILEPATH = "../../testMesh-removeASAP.off";

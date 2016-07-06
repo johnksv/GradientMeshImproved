@@ -30,6 +30,8 @@ private slots:
 
     void on_actionDraw_Line_tool_triggered();
 
+    void on_actionVertices_triggered();
+
     void on_actionImport_triggered();
 
     void handleRenderModeGroup(QAction * action);

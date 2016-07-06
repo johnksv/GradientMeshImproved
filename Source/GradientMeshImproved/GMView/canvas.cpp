@@ -41,10 +41,8 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     switch(drawMode){
     case drawModeCanvas::vertices:
-        handleMousePressVert(mouseEvent);
-        break;
     case drawModeCanvas::vertAndEdge:
-        handleMousePressVertAndEdge(mouseEvent);
+        handleMousePressVert(mouseEvent);
         break;
     case drawModeCanvas::edge:
         break;
@@ -57,34 +55,13 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
 {
     bool collide = false;
-    if(mouseEvent->button() != Qt::RightButton)
-    {
-        CanvasItemPoint *item = new CanvasItemPoint(mouseEvent->scenePos());
-        for(int i = 0; i < item_points.size();i++)
-        {
-            if(item->collidesWithItem(item_points[i])){
-                collide = true;
-                i = item_points.size();
-            }
-        }
-        if(!collide)
-        {
-            addItemPoint(item);
-        }
-    }
-}
-
-void GMCanvas::handleMousePressVertAndEdge(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    bool collide = false;
     int collideWithIndex;
-
     if(mouseEvent->button() != Qt::RightButton)
     {
-        CanvasItemPoint *item = new CanvasItemPoint(mouseEvent->scenePos());
+        CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos());
         for(int i = 0; i < item_points.size();i++)
         {
-            if(item->collidesWithItem(item_points[i])){
+            if(itemPoint->collidesWithItem(item_points[i])){
                 collide = true;
                 collideWithIndex = i;
                 i = item_points.size();
@@ -92,42 +69,62 @@ void GMCanvas::handleMousePressVertAndEdge(QGraphicsSceneMouseEvent *mouseEvent)
         }
         if(!collide)
         {
-            addItemPoint(item);
+            addItemPoint(itemPoint);
+            meshHandler.addVertexFromPoint(itemPoint->position());
         }
 
-        if(item_points.size()>1)
+        if(drawMode ==drawModeCanvas::vertAndEdge)
         {
             CanvasItemLine *line;
             CanvasItemPoint* endPoint;
             CanvasItemPoint* startPoint;
 
-            //TODO: more logic, e.g. save first node, last node
             if(collide)
             {
+                items_selected.push_back(item_points.at(collideWithIndex));
 
-                endPoint = item_points.at(collideWithIndex);
-                startPoint = item_points.back();
+                if(items_selected.size()<=1)
+                {
+                    startPoint = items_selected.at(0);
+                }
+                else
+                {
+                    startPoint = items_selected.end()[-2];
+                    endPoint = items_selected.back();
+                }
             }
             else
             {
-                endPoint = item_points.back();
-                startPoint = item_points.at(item_points.size()-2);
+                items_selected.push_back(item_points.back());
+                if(items_selected.size() > 1)
+                {
+                    startPoint = items_selected.end()[-2];
+                    endPoint = items_selected.back();
+                }
             }
+            if(items_selected.size() > 1)
+            {
+                line = new CanvasItemLine(startPoint,endPoint);
 
-            line = new CanvasItemLine(startPoint,endPoint);
-            addItem(line);
+                addItem(line);
+            }
         }
+
+        clearSelection();
+    }
+    else
+    {
+        items_selected.clear();
     }
 }
 
-void GMCanvas::addItemPoint(CanvasItemPoint *item)
-{
+void GMCanvas::addItemPoint(CanvasItemPoint *item){
     item->setZValue(1);
     item_points.push_back(item);
     addItem(item);
     update(item->boundingRect());
-}
 
+}
 
 
 void GMCanvas::setRenderingMode(int mode){

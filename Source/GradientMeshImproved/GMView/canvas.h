@@ -30,8 +30,8 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
-    std::vector<CanvasItemPoint*> item_points;
-    CanvasItemPoint *prevCanvasItem;
+    vector<CanvasItemPoint*> item_points;
+    vector<CanvasItemPoint*> items_selected;
     GMOpenGLWidget *opengl;
 
     GUILogic::MeshHandler meshHandler;
@@ -50,7 +50,6 @@ private:
      * \param CanvasItemPoint position of the item point
      */
     void handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent);
-    void handleMousePressVertAndEdge(QGraphicsSceneMouseEvent *mouseEvent);
     void addItemPoint(CanvasItemPoint *item);
 };
 

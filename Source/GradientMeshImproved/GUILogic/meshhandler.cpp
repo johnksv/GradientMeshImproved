@@ -8,7 +8,7 @@
 using namespace GUILogic;
 
 typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
-typedef OpnMesh::VertexHandle vertexPntr;
+typedef OpnMesh::VertexHandle vertexHandle;
 typedef subdivMesh::Mesh SbdvMesh;
 
 
@@ -53,10 +53,10 @@ vector<QPointF> MeshHandler::getVertices()
 
 void MeshHandler::addVertexFromPoint(QPointF& position)
 {
-    //TODO: If vertex exists -> make face
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
-    guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
+    vertexHandle handler= guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
+    vertexHandlers.push_back(handler);
 }
 
 bool MeshHandler::makeFace()
@@ -133,17 +133,17 @@ bool MeshHandler::importGuiMesh(QString location)
 void MeshHandler::createTwoQuads()
 {
     // create vertices: (quad 1)
-    vertexPntr v0 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
-    vertexPntr v1 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f)); // also in quad 2
-    vertexPntr v2 = guiMesh.add_vertex(OpnMesh::Point(0.5f, 1.0f, .0f)); // also in quad 2
-    vertexPntr v3 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
+    vertexHandle v0 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
+    vertexHandle v1 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f)); // also in quad 2
+    vertexHandle v2 = guiMesh.add_vertex(OpnMesh::Point(0.5f, 1.0f, .0f)); // also in quad 2
+    vertexHandle v3 = guiMesh.add_vertex(OpnMesh::Point(.0f, .0f, .0f));
 
     // quad 2
-    vertexPntr v4 = guiMesh.add_vertex(OpnMesh::Point(1.0f, .0f, .0f));
-    vertexPntr v5 = guiMesh.add_vertex(OpnMesh::Point(1.0f, 1.0f, .0f));
+    vertexHandle v4 = guiMesh.add_vertex(OpnMesh::Point(1.0f, .0f, .0f));
+    vertexHandle v5 = guiMesh.add_vertex(OpnMesh::Point(1.0f, 1.0f, .0f));
 
     // create the two quads (two faces)
-    vector<vertexPntr> face;
+    vector<vertexHandle> face;
     face.push_back(v0);
     face.push_back(v1);
     face.push_back(v2);

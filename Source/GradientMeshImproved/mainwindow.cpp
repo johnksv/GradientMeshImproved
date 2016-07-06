@@ -58,16 +58,21 @@ void MainWindow::on_actionRender_Full_triggered()
 //    ui->openGLWidget-> paintGL();
 }
 
+void MainWindow::on_actionDraw_Line_tool_triggered()
+{
+    scene->setDrawingMode(drawModeCanvas::vertAndEdge);
+}
+
+void MainWindow::on_actionVertices_triggered()
+{
+    scene->setDrawingMode(drawModeCanvas::vertices);
+}
+
 void MainWindow::on_actionExport_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
                                                     "", tr("OFF file (*.off)"));
-   // ui->openGLWidget->handleFileDialog(filename, false);
-}
-
-void MainWindow::on_actionDraw_Line_tool_triggered()
-{
-    scene->setDrawingMode(drawModeCanvas::vertAndEdge);
+    scene->handleFileDialog(filename, false);
 }
 
 void MainWindow::on_actionImport_triggered()
@@ -76,3 +81,5 @@ void MainWindow::on_actionImport_triggered()
                                                     "", tr("OFF file (*.off)"));
     scene->handleFileDialog(filename,true);
 }
+
+

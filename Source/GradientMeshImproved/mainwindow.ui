@@ -71,9 +71,8 @@
     <property name="title">
      <string>Mesh</string>
     </property>
+    <addaction name="actionVertices"/>
     <addaction name="actionDraw_Line_tool"/>
-    <addaction name="actionDraw_Add_Edge"/>
-    <addaction name="actionDraw_Remove_Edge"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -109,9 +108,8 @@
    </attribute>
    <addaction name="actionMove"/>
    <addaction name="separator"/>
+   <addaction name="actionVertices"/>
    <addaction name="actionDraw_Line_tool"/>
-   <addaction name="actionDraw_Add_Edge"/>
-   <addaction name="actionDraw_Remove_Edge"/>
    <addaction name="separator"/>
   </widget>
   <action name="action_New">
@@ -175,22 +173,6 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="actionDraw_Add_Edge">
-   <property name="text">
-    <string>Add Edge</string>
-   </property>
-   <property name="toolTip">
-    <string>Add edge between two vertices</string>
-   </property>
-  </action>
-  <action name="actionDraw_Remove_Edge">
-   <property name="text">
-    <string>Remove Edge</string>
-   </property>
-   <property name="toolTip">
-    <string>Reomve an edge between two vertices</string>
-   </property>
-  </action>
   <action name="actionMove">
    <property name="text">
     <string>Move</string>
@@ -241,13 +223,21 @@
     <string>Vertices and Edges</string>
    </property>
   </action>
+  <action name="actionVertices">
+   <property name="text">
+    <string>Vertices</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Vertices</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>CustomGraphicsView</class>
    <extends>QGraphicsView</extends>
-   <header>customgraphicsview.h</header>
+   <header>GMView/customgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

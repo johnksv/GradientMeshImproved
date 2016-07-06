@@ -14,9 +14,12 @@ namespace OpenMeshExt {
 struct CustomTraits : public OpenMesh::DefaultTraits
 {
     // Add variables here...
+    VertexAttributes(OpenMesh::Attributes::Color);
+
+    EdgeAttributes(OpenMesh::Attributes::Color);
+
     VertexTraits {
         double weight;
-        OpenMesh::Vec3d colorPoint;
     };
 };
 
