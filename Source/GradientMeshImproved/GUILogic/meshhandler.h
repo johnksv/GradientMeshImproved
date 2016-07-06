@@ -35,23 +35,27 @@ public:
      * \param context the OpenGL context that is being used to draw
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
-    void addVertexFromPoint(QPoint& position);
+    void addVertexFromPoint(QPointF& position);
     /*! Get verticies from the current guiMesh object.
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
      *
      */
-    vector<vector<float>> getVertices();
+    vector<QPointF> getVertices();
     bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 
 private:
-    void subdivide(signed int steps = 3);
-
+    //TODO List of Vertex handlers
+    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
+
+    /*METHODS*/
+    void subdivide(signed int steps = 3);
+
 
     // TEMPORARY TEST VARIABLES
     const char* const TEMPFILEPATH = "../../testMesh-removeASAP.off";

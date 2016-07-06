@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QActionGroup>
+#include "GMView/canvas.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,8 @@ private slots:
 
     void on_actionDraw_Line_tool_triggered();
 
+    void on_actionVertices_triggered();
+
     void on_actionImport_triggered();
 
     void handleRenderModeGroup(QAction * action);
@@ -38,6 +41,7 @@ private:
     void initActionGroups();
     QActionGroup *renderModeGroup;
     QActionGroup *drawModeGroup;
+    GMCanvas *scene;
 };
 
 #endif // MAINWINDOW_H
