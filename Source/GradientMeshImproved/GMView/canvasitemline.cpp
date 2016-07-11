@@ -5,4 +5,6 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 {
     setLine(QLineF(startPoint->position(), endPoint->position()));
     setZValue(1);
+
+    // setFlags(ItemIsSelectable);
 }

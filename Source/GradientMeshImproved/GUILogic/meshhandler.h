@@ -40,7 +40,11 @@ public:
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
      *
      */
-    vector<QPointF> getVertices();
+    vector<QPointF> vertices();
+    QVector3D color(int index);
+    bool setColor(int index, QVector3D color);
+    double weight(int index);
+    bool setWeight(int index, double weight);
     bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);

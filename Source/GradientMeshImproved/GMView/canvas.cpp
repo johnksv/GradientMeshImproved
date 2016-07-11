@@ -1,4 +1,5 @@
 #include "canvas.h"
+#include "canvasitemface.h"
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
@@ -23,7 +24,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     {
         qDebug() << "scne import";
         meshHandler.importGuiMesh(location);
-        vector<QPointF> vertices = meshHandler.getVertices();
+        vector<QPointF> vertices = meshHandler.vertices();
         for(QPointF point : vertices){
             CanvasItemPoint *item = new CanvasItemPoint(point);
             addItemPoint(item);
@@ -56,17 +57,19 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
 {
     bool collide = false;
     int collideWithIndex;
+
+    CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos());
+    for(int i = 0; i < item_points.size();i++)
+    {
+        if(itemPoint->collidesWithItem(item_points[i])){
+            collide = true;
+            collideWithIndex = i;
+            i = item_points.size();
+        }
+    }
+
     if(mouseEvent->button() != Qt::RightButton)
     {
-        CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos());
-        for(int i = 0; i < item_points.size();i++)
-        {
-            if(itemPoint->collidesWithItem(item_points[i])){
-                collide = true;
-                collideWithIndex = i;
-                i = item_points.size();
-            }
-        }
         if(!collide)
         {
             addItemPoint(itemPoint);
@@ -114,7 +117,19 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     }
     else
     {
-        items_selected.clear();
+        if(collide)
+        {
+
+        }
+        else
+        {
+            qDebug() << meshHandler.makeFace();
+            CanvasItemFace *face = new CanvasItemFace();
+            for(CanvasItemPoint *item : items_selected){
+                face->face.push_back(item->position().toPoint());
+            }
+            items_selected.clear();
+        }
     }
 }
 

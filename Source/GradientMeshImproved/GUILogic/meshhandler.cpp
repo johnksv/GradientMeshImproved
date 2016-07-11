@@ -34,7 +34,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     subdMesh->draw(context);
 }
 
-vector<QPointF> MeshHandler::getVertices()
+vector<QPointF> MeshHandler::vertices()
 {
     vector<QPointF> result;
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_sbegin();
@@ -51,6 +51,48 @@ vector<QPointF> MeshHandler::getVertices()
     return result;
 }
 
+QVector3D MeshHandler::color(int index)
+{
+    if( index <0 || index > vertexHandlers.size())
+    {
+        return QVector3D();
+    }
+
+    return guiMesh.data(vertexHandlers[index]).color();
+
+}
+
+bool MeshHandler::setColor(int index, QVector3D color)
+{
+    if( index <0 || index > vertexHandlers.size())
+    {
+        throw "Fatal error";
+    }
+
+    guiMesh.data(vertexHandlers[index]).setColor(color);
+    return true;
+}
+
+double MeshHandler::weight(int index)
+{
+    if( index <0 || index > vertexHandlers.size())
+    {
+        throw "Fatal error";
+    }
+
+    return guiMesh.data(vertexHandlers[index]).weight();
+}
+
+bool MeshHandler::setWeight(int index, double weight)
+{
+    if( index <0 || index > vertexHandlers.size()){
+        throw "Fatal error";
+    }
+
+    guiMesh.data(vertexHandlers[index]).setWeight(weight);
+    return true;
+}
+
 void MeshHandler::addVertexFromPoint(QPointF& position)
 {
     float x = static_cast <float> (position.x());
@@ -59,19 +101,26 @@ void MeshHandler::addVertexFromPoint(QPointF& position)
     vertexHandlers.push_back(handler);
 }
 
+
+
 bool MeshHandler::makeFace()
 {
-    vector<OpnMesh::VertexHandle> vHandler;
-    for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
-           v_it != guiMesh.vertices_end(); ++v_it)
-    {
-         vHandler.push_back(v_it);
-    }
-    if(vHandler.size()<=2){
+//    vector<OpnMesh::VertexHandle> vHandler;
+//    for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
+//           v_it != guiMesh.vertices_end(); ++v_it)
+//    {
+//         vHandler.push_back(v_it);
+//    }
+    if(vertexHandlers.size()<=2){
         return false;
     }
+    try
+    {
+        guiMesh.add_face(vertexHandlers);
+    }catch(exception& x){
+        qDebug() << x.what();
+    }
 
-    guiMesh.add_face(vHandler);
     return true;
 }
 

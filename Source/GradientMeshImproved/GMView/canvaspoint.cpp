@@ -5,6 +5,9 @@
 #include <QAction>
 #include <QMenu>
 #include <QVariant>
+#include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
+#include <QColorDialog>
 
 
 
@@ -23,7 +26,10 @@ QRectF CanvasItemPoint::boundingRect() const
 void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     if(isSelected()){
-        painter->setBrush(QColor(255,100,0));
+        //TODO: Fix selected color
+        QColor temp = QColor(color);
+        temp.setAlpha(150);
+        painter->setBrush(temp);
     }else{
         painter->setBrush(color);
     }
@@ -48,12 +54,6 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
         qDebug() << "CanvasPoint 48:  Item moved";
     }
     return QGraphicsItem::itemChange(change, value);
-}
-
-
-void CanvasItemPoint::setColor(QColor color)
-{
-    this->color = color;
 }
 
 QPointF CanvasItemPoint::position()
@@ -90,7 +90,21 @@ void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent*)
 void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
-    QAction *choosColorAction = menu.addAction("Choose color");
+    QAction *chooseColorAction = menu.addAction("Choose color");
     QAction *setWeightAction = menu.addAction("Set weight");
     QAction *selectedAction = menu.exec(event->screenPos());
+    if(selectedAction == chooseColorAction)
+    {
+        QColorDialog *colordialog = new QColorDialog(color);
+        colordialog->open();
+
+        QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
+        QObject::connect(colordialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(setColor(QColor)));
+    }
+}
+
+void CanvasItemPoint::setColor(QColor color)
+{
+    this->color = color;
+    update(boundingRect());
 }
