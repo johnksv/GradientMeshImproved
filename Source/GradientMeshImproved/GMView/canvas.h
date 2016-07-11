@@ -24,6 +24,7 @@ public:
 
     void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
+    void updateColorVertex(CanvasItemPoint *item);
 
 protected:
   //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;

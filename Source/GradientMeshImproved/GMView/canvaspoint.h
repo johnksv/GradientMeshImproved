@@ -14,6 +14,7 @@ public:
     QPainterPath shape() const override;
     //TODO: read on  item and sceen coordinates;
     QPointF position();
+    QColor color();
 
     void setRadius(int);
 protected:
@@ -24,10 +25,10 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
-    QPointF  posit, oldMousePos;
-    QColor color;
-    int radius = 5;
-    bool hovered = false;
+    QPointF  position_, oldMousePos_;
+    QColor color_;
+    int radius_ = 5;
+    bool hovered_ = false;
 
 public slots:
     void setColor(QColor color);
