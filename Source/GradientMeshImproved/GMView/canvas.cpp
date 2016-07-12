@@ -141,15 +141,17 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
             qDebug() << meshHandler.makeFace();
             CanvasItemFace *face = new CanvasItemFace();
             for(CanvasItemPoint *item : items_selected){
-                face->face.push_back(item->position().toPoint());
+                face->addCanvasPoint(item);
             }
+            addItem(face);
             items_selected.clear();
+            update();
         }
     }
 }
 
 void GMCanvas::addItemPoint(CanvasItemPoint *item){
-    item->setZValue(1);
+    item->setZValue(2);
     item_points.push_back(item);
     addItem(item);
     update(item->boundingRect());

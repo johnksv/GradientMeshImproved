@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     GMView/canvas.cpp \
     GMView/openglwidget.cpp \
     GMView/canvasitemline.cpp \
-    GMView/canvaspoint.cpp
+    GMView/canvaspoint.cpp \
+    GMView/canvasitemface.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     GMView/canvas.h \
     GMView/openglwidget.h \
     GMView/canvasitemline.h \
-    GMView/canvaspoint.h
+    GMView/canvaspoint.h \
+    GMView/canvasitemface.h
 
 FORMS    += mainwindow.ui
 
