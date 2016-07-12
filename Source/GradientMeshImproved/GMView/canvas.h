@@ -24,7 +24,12 @@ public:
 
     void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
-    void updateColorVertex(CanvasItemPoint *item);
+
+    /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
+     * This function is ment to be called from CanvasItemPoint methods.
+     * \param mode the value to update. 0 for color, 1 for weight.
+     */
+    void updateVertexFromPoint(CanvasItemPoint *item,short mode);
 
 protected:
   //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;

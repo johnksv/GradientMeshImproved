@@ -15,6 +15,7 @@ public:
     //TODO: read on  item and sceen coordinates;
     QPointF position();
     QColor color();
+    double weight();
 
     void setRadius(int);
 protected:
@@ -27,11 +28,13 @@ protected:
 private:
     QPointF  position_, oldMousePos_;
     QColor color_;
+    double weight_;
     int radius_ = 5;
     bool hovered_ = false;
 
 public slots:
     void setColor(QColor color);
+    void setWeight(double);
 };
 
 #endif // GMCANVASITEM_H

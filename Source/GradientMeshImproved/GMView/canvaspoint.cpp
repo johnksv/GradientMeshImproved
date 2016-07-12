@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsProxyWidget>
 #include <QColorDialog>
+#include <QInputDialog>
 #include "canvas.h"
 
 
@@ -66,6 +67,11 @@ QColor CanvasItemPoint::color()
     return color_;
 }
 
+double CanvasItemPoint::weight()
+{
+    return weight_;
+}
+
 void CanvasItemPoint::setRadius(int _radius)
 {
     if(_radius<=0){
@@ -105,12 +111,30 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
         QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
     }
+    else if(selectedAction == setWeightAction)
+    {
+        QInputDialog *weightDialog = new QInputDialog();
+        weightDialog->setInputMode(QInputDialog::DoubleInput);
+        weightDialog->setDoubleMaximum(5);
+        weightDialog->setLabelText("Enter a value (0.00 - 5.00):");
+        weightDialog->open();
+
+        QObject::connect(weightDialog, SIGNAL(doubleValueSelected(double)), this, SLOT(setWeight(double)));
+    }
 }
 
 void CanvasItemPoint::setColor(QColor color)
 {
     this->color_ = color;
     GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateColorVertex(this);
+    parent->updateVertexFromPoint(this, 0);
     update(boundingRect());
+}
+
+void CanvasItemPoint::setWeight(double weight)
+{
+    this->weight_ = weight;
+    GMCanvas* parent = static_cast <GMCanvas*> (scene());
+    parent->updateVertexFromPoint(this, 1);
+
 }

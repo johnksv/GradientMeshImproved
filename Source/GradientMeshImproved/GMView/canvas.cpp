@@ -53,7 +53,7 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
-void GMCanvas::updateColorVertex(CanvasItemPoint *item)
+void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
 {
     int index;
     for (int i =0; i < item_points.size(); i++)
@@ -63,9 +63,15 @@ void GMCanvas::updateColorVertex(CanvasItemPoint *item)
             i = item_points.size();
         }
     }
-
-    QVector3D color = QVector3D(item->color().redF(), item->color().greenF(), item->color().blueF());
-    meshHandler.setColor(index,color);
+    if(mode == 0)
+    {
+        QVector3D color = QVector3D(item->color().redF(), item->color().greenF(), item->color().blueF());
+        meshHandler.setColor(index,color);
+    }
+    else if(mode == 1)
+    {
+        meshHandler.setWeight(index,item->weight());
+    }
 }
 
 void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
@@ -132,11 +138,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     }
     else
     {
-        if(collide)
-        {
-
-        }
-        else
+        if(!collide)
         {
             qDebug() << meshHandler.makeFace();
             CanvasItemFace *face = new CanvasItemFace();
