@@ -113,6 +113,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
                 }
                 else
                 {
+                    qDebug() << "Collide";
                     startPoint = items_selected.end()[-2];
                     endPoint = items_selected.back();
                 }
@@ -128,6 +129,8 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
             }
             if(items_selected.size() > 1)
             {
+                //TODO: Map lines, (start end) so no doubles
+                //Check with discontinutiy edges (how to handle them)
                 line = new CanvasItemLine(startPoint,endPoint);
 
                 addItem(line);
@@ -140,24 +143,29 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     {
         if(!collide)
         {
-            qDebug() << meshHandler.makeFace();
-            CanvasItemFace *face = new CanvasItemFace();
-            for(CanvasItemPoint *item : items_selected){
-                face->addCanvasPoint(item);
-            }
-            addItem(face);
-            items_selected.clear();
-            update();
+            makeFace();
         }
     }
 }
 
-void GMCanvas::addItemPoint(CanvasItemPoint *item){
+void GMCanvas::addItemPoint(CanvasItemPoint *item)
+{
     item->setZValue(2);
     item_points.push_back(item);
     addItem(item);
     update(item->boundingRect());
+}
 
+void GMCanvas::makeFace()
+{
+    qDebug() << meshHandler.makeFace();
+    CanvasItemFace *face = new CanvasItemFace();
+    for(CanvasItemPoint *item : items_selected){
+        face->addCanvasPoint(item);
+    }
+    addItem(face);
+    items_selected.clear();
+    update();
 }
 
 

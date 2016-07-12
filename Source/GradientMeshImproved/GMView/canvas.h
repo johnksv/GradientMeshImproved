@@ -57,6 +57,7 @@ private:
      */
     void handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent);
     void addItemPoint(CanvasItemPoint *item);
+    void makeFace();
 };
 
 #endif // GMCANVAS_H
