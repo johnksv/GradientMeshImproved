@@ -180,7 +180,8 @@ void MeshHandler::prepareGuiMeshForSubd()
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
         tempString.append(to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]) + " " );
-        tempString.append(to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z()));
+        tempString.append(to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z()) + " " );
+        tempString.append(to_string(guiMesh.valence(ite)));
         tempString.append("\n");
     }
 
