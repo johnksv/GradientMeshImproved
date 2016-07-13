@@ -25,13 +25,13 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     VertexTraits
     {
         private:
-            double weight_;
+            float weight_ = 0.5;
             QVector3D color_;
         public:
-            double weight(){
+            float weight(){
                 return weight_;
             }
-            void setWeight(double weight){
+            void setWeight(float weight){
                 if(weight<0){
                     throw "Weight illegal value (must be positive)";
                 }

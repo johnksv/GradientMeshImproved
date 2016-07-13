@@ -25,7 +25,7 @@ void MainWindow::initActionGroups(){
     renderModeGroup->addAction(ui->actionRender_Vertices_and_Edges);
     renderModeGroup->addAction(ui->actionRender_Partial);
     renderModeGroup->addAction(ui->actionRender_Full);
-    connect(renderModeGroup, SIGNAL(triggered(QAction*)), this, SLOT(handleRenderModeGroup));
+    connect(renderModeGroup, SIGNAL(triggered(QAction*)), this, SLOT(handleRenderModeGroup(QAction*)));
 
     drawModeGroup = new QActionGroup(this);
 
