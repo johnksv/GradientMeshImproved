@@ -36,6 +36,7 @@ public:
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
     void addVertexFromPoint(QPointF& position);
+    void removeVertex(int index);
     /*! Get verticies from the current guiMesh object.
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
      *
@@ -50,7 +51,7 @@ public:
     bool importGuiMesh(QString);
 
 private:
-    //TODO List of Vertex handlers
+    //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
     vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;

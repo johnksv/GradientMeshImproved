@@ -83,3 +83,8 @@ void MainWindow::on_actionImport_triggered()
 }
 
 
+
+void MainWindow::on_actionClear_all_triggered()
+{
+    scene->clearAll();
+}

@@ -101,6 +101,12 @@ void MeshHandler::addVertexFromPoint(QPointF& position)
     vertexHandlers.push_back(handler);
 }
 
+void MeshHandler::removeVertex(int index)
+{
+    vertexHandle handle = vertexHandlers.at(index);
+    guiMesh.delete_vertex(handle);
+}
+
 
 
 bool MeshHandler::makeFace()

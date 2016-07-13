@@ -66,6 +66,7 @@
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="actionClear_all"/>
    </widget>
    <widget class="QMenu" name="menuMesh">
     <property name="title">
@@ -229,6 +230,14 @@
    </property>
    <property name="toolTip">
     <string>Add Vertices</string>
+   </property>
+  </action>
+  <action name="actionClear_all">
+   <property name="text">
+    <string>Clear all</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
    </property>
   </action>
  </widget>

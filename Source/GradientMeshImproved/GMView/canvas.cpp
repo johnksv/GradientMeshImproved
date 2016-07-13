@@ -1,10 +1,8 @@
 #include "canvas.h"
-#include "canvasitemface.h"
+
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
-#include <QList>
-#include <QObjectList>
 
 
 GMCanvas::GMCanvas(QObject * parent):
@@ -15,6 +13,34 @@ GMCanvas::GMCanvas(QObject * parent):
     openGLWidget->setPos(0,0);
     openGLWidget->setZValue(0);
     setSceneRect(itemsBoundingRect());
+}
+
+void GMCanvas::clearAll()
+{
+    for(CanvasItemFace* face: item_faces)
+    {
+        removeItem(face);
+        delete face;
+    }
+    item_faces.clear();
+
+    for(CanvasItemLine* line : item_lines)
+    {
+        removeItem(line);
+        delete line;
+    }
+    item_lines.clear();
+
+    for(int i = 0; i <item_points.size(); i++)
+    {
+        removeItem(item_points[i]);
+        meshHandler.removeVertex(i);
+        delete item_points[i];
+    }
+    item_points.clear();
+    items_selected.clear();
+
+    update();
 }
 
 
@@ -132,12 +158,10 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
                 //TODO: Map lines, (start end) so no doubles
                 //Check with discontinutiy edges (how to handle them)
                 line = new CanvasItemLine(startPoint,endPoint);
-
                 addItem(line);
+                item_lines.push_back(line);
             }
         }
-
-        clearSelection();
     }
     else
     {
@@ -164,6 +188,7 @@ void GMCanvas::makeFace()
         face->addCanvasPoint(item);
     }
     addItem(face);
+    item_faces.push_back(face);
     items_selected.clear();
     update();
 }

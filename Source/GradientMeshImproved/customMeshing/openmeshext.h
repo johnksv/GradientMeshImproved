@@ -7,7 +7,8 @@
 /*! Namespace for classes and data structures extending
  *  and customising the OpenMesh library
  */
-namespace OpenMeshExt {
+namespace OpenMeshExt
+{
 
 /*! \brief Struct to customise data for mesh elements.
  *  Custom vertex data is most likely to be needed.
@@ -15,11 +16,14 @@ namespace OpenMeshExt {
 struct CustomTraits : public OpenMesh::DefaultTraits
 {
     // Add variables here...
-    VertexAttributes(OpenMesh::Attributes::Color);
+    VertexAttributes(OpenMesh::Attributes::Status);
 
-    EdgeAttributes(OpenMesh::Attributes::Color);
+    EdgeAttributes(OpenMesh::Attributes::Status);
 
-    VertexTraits {
+    FaceAttributes(OpenMesh::Attributes::Status);
+
+    VertexTraits
+    {
         private:
             double weight_;
             QVector3D color_;
@@ -40,6 +44,11 @@ struct CustomTraits : public OpenMesh::DefaultTraits
             void setColor(QVector3D color_){
                 this->color_ = color_;
             }
+    };
+
+    EdgeTraits
+    {
+
     };
 };
 

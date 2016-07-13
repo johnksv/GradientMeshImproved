@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include "canvaspoint.h"
 #include "canvasitemline.h"
+#include "canvasitemface.h"
 #include "openglwidget.h"
 
 enum class drawModeCanvas{
@@ -15,6 +16,8 @@ class GMCanvas : public QGraphicsScene
     Q_OBJECT
 public:
     GMCanvas(QObject * parent = 0);
+
+    void clearAll();
 
     /*! Handel action from File Dialog related to the mesh, such as import and export.
      * \param location the location of the file to import/export
@@ -38,6 +41,8 @@ protected:
 private:
     vector<CanvasItemPoint*> item_points;
     vector<CanvasItemPoint*> items_selected;
+    vector<CanvasItemLine*> item_lines;
+    vector<CanvasItemFace*> item_faces;
     GMOpenGLWidget *opengl;
 
     GUILogic::MeshHandler meshHandler;

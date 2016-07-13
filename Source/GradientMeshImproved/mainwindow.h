@@ -36,6 +36,8 @@ private slots:
 
     void handleRenderModeGroup(QAction * action);
 
+    void on_actionClear_all_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
