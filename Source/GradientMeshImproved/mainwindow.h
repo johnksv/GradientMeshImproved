@@ -30,13 +30,15 @@ private slots:
 
     void on_actionDraw_Line_tool_triggered();
 
-    void on_actionVertices_triggered();
+    void on_actionMove_triggered();
 
     void on_actionImport_triggered();
 
     void handleRenderModeGroup(QAction * action);
 
     void on_actionClear_all_triggered();
+
+    void on_actionColor_Choose_triggered();
 
 private:
     Ui::MainWindow *ui;

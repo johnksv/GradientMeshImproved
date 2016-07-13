@@ -8,7 +8,7 @@
 #include "openglwidget.h"
 
 enum class drawModeCanvas{
-    vertices, vertAndEdge, edge, faces
+    move, vertAndEdge, edge, faces
 };
 
 class GMCanvas : public QGraphicsScene
@@ -34,6 +34,9 @@ public:
      */
     void updateVertexFromPoint(CanvasItemPoint *item,short mode);
 
+public slots:
+    void setDrawColorVertex(QColor pointColor);
+
 protected:
   //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
@@ -44,18 +47,17 @@ private:
     vector<CanvasItemLine*> item_lines;
     vector<CanvasItemFace*> item_faces;
     GMOpenGLWidget *opengl;
+    QColor pointColor_;
 
-    GUILogic::MeshHandler meshHandler;
+    GUILogic::MeshHandler meshHandler_;
 
     //0 for verticies only, 3 for "full" for full rendering
-    unsigned char renderingMode = 3;
+    unsigned char renderingMode_ = 3;
 
-    /* 0 for only vertices. 1 for vertices and edges
+    /* 0 for move and select. 1 for vertices and edges
      * TODO: implement: 2 for only edges. 3 for connecting verticies to faces
      */
-    drawModeCanvas drawMode = drawModeCanvas::vertices;
-
-    QPoint oldMousePos;
+    drawModeCanvas drawMode_ = drawModeCanvas::vertAndEdge;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point

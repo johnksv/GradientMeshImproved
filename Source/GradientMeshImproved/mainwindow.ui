@@ -72,7 +72,7 @@
     <property name="title">
      <string>Mesh</string>
     </property>
-    <addaction name="actionVertices"/>
+    <addaction name="actionMove"/>
     <addaction name="actionDraw_Line_tool"/>
     <addaction name="separator"/>
    </widget>
@@ -107,11 +107,11 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionMove"/>
    <addaction name="separator"/>
-   <addaction name="actionVertices"/>
+   <addaction name="actionMove"/>
    <addaction name="actionDraw_Line_tool"/>
    <addaction name="separator"/>
+   <addaction name="actionColor_Choose"/>
   </widget>
   <action name="action_New">
    <property name="text">
@@ -174,11 +174,6 @@
     <string>F1</string>
    </property>
   </action>
-  <action name="actionMove">
-   <property name="text">
-    <string>Move</string>
-   </property>
-  </action>
   <action name="actionZoom_in">
    <property name="text">
     <string>Zoom in</string>
@@ -224,12 +219,12 @@
     <string>Vertices and Edges</string>
    </property>
   </action>
-  <action name="actionVertices">
+  <action name="actionMove">
    <property name="text">
-    <string>Vertices</string>
+    <string>Move and select</string>
    </property>
    <property name="toolTip">
-    <string>Add Vertices</string>
+    <string>Move and select elements</string>
    </property>
   </action>
   <action name="actionClear_all">
@@ -238,6 +233,11 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
+   </property>
+  </action>
+  <action name="actionColor_Choose">
+   <property name="text">
+    <string>Pick Color</string>
    </property>
   </action>
  </widget>

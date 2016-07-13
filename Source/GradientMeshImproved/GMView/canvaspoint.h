@@ -8,7 +8,7 @@ class CanvasItemPoint : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    CanvasItemPoint(QPointF pos = QPointF(0,0), QGraphicsItem *parent = Q_NULLPTR);
+    CanvasItemPoint(QPointF pos = QPointF(0,0),QColor color = QColor(Qt::black), QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include <QColorDialog>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -63,9 +64,9 @@ void MainWindow::on_actionDraw_Line_tool_triggered()
     scene->setDrawingMode(drawModeCanvas::vertAndEdge);
 }
 
-void MainWindow::on_actionVertices_triggered()
+void MainWindow::on_actionMove_triggered()
 {
-    scene->setDrawingMode(drawModeCanvas::vertices);
+    scene->setDrawingMode(drawModeCanvas::move);
 }
 
 void MainWindow::on_actionExport_triggered()
@@ -87,4 +88,12 @@ void MainWindow::on_actionImport_triggered()
 void MainWindow::on_actionClear_all_triggered()
 {
     scene->clearAll();
+}
+
+void MainWindow::on_actionColor_Choose_triggered()
+{
+    QColorDialog *colordialog = new QColorDialog();
+    colordialog->open();
+
+    QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), scene, SLOT(setDrawColorVertex(QColor)));
 }

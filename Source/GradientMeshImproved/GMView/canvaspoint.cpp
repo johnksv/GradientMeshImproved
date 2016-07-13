@@ -12,8 +12,8 @@
 #include "canvas.h"
 
 
-CanvasItemPoint::CanvasItemPoint(QPointF pos, QGraphicsItem *parent):
-    QGraphicsItem(parent), position_(pos)
+CanvasItemPoint::CanvasItemPoint(QPointF pos, QColor color, QGraphicsItem *parent):
+    QGraphicsItem(parent), position_(pos), color_(color)
 {
     setAcceptHoverEvents(true);
     setFlags(ItemIsMovable |ItemIsSelectable |ItemSendsScenePositionChanges );

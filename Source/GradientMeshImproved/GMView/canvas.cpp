@@ -34,7 +34,7 @@ void GMCanvas::clearAll()
     for(int i = 0; i <item_points.size(); i++)
     {
         removeItem(item_points[i]);
-        meshHandler.removeVertex(i);
+        meshHandler_.removeVertex(i);
         delete item_points[i];
     }
     item_points.clear();
@@ -49,8 +49,8 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     if(import)
     {
         qDebug() << "scne import";
-        meshHandler.importGuiMesh(location);
-        vector<QPointF> vertices = meshHandler.vertices();
+        meshHandler_.importGuiMesh(location);
+        vector<QPointF> vertices = meshHandler_.vertices();
         for(QPointF point : vertices){
             CanvasItemPoint *item = new CanvasItemPoint(point);
             addItemPoint(item);
@@ -58,7 +58,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     }
     else
     {
-        meshHandler.saveGuiMeshOff(location);
+        meshHandler_.saveGuiMeshOff(location);
     }
 }
 
@@ -66,8 +66,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
-    switch(drawMode){
-    case drawModeCanvas::vertices:
+    switch(drawMode_){
     case drawModeCanvas::vertAndEdge:
         handleMousePressVert(mouseEvent);
         break;
@@ -92,12 +91,17 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
     if(mode == 0)
     {
         QVector3D color = QVector3D(item->color().redF(), item->color().greenF(), item->color().blueF());
-        meshHandler.setColor(index,color);
+        meshHandler_.setColor(index,color);
     }
     else if(mode == 1)
     {
-        meshHandler.setWeight(index,item->weight());
+        meshHandler_.setWeight(index,item->weight());
     }
+}
+
+void GMCanvas::setDrawColorVertex(QColor pointColor)
+{
+    pointColor_ = pointColor;
 }
 
 void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
@@ -105,7 +109,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     bool collide = false;
     int collideWithIndex;
 
-    CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos());
+    CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos(), pointColor_);
     for(int i = 0; i < item_points.size();i++)
     {
         if(itemPoint->collidesWithItem(item_points[i])){
@@ -120,10 +124,10 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandler.addVertexFromPoint(itemPoint->position());
+            meshHandler_.addVertexFromPoint(itemPoint->position());
         }
 
-        if(drawMode ==drawModeCanvas::vertAndEdge)
+        if(drawMode_ ==drawModeCanvas::vertAndEdge)
         {
             CanvasItemLine *line;
             CanvasItemPoint* endPoint;
@@ -169,6 +173,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         {
             makeFace();
         }
+        delete itemPoint;
     }
 }
 
@@ -182,7 +187,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 
 void GMCanvas::makeFace()
 {
-    qDebug() << meshHandler.makeFace();
+    qDebug() << meshHandler_.makeFace();
     CanvasItemFace *face = new CanvasItemFace();
     for(CanvasItemPoint *item : items_selected){
         face->addCanvasPoint(item);
@@ -195,8 +200,8 @@ void GMCanvas::makeFace()
 
 
 void GMCanvas::setRenderingMode(int mode){
-    renderingMode = mode;
+    renderingMode_ = mode;
 }
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
-    this->drawMode = drawMode;
+    this->drawMode_ = drawMode;
 }
