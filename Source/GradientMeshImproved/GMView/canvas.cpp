@@ -8,7 +8,7 @@
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
-    opengl = new GMOpenGLWidget();
+    opengl = new GMOpenGLWidget(&meshHandler_);
     QGraphicsProxyWidget *openGLWidget = addWidget(opengl);
     openGLWidget->setPos(0,0);
     openGLWidget->setZValue(0);
@@ -101,6 +101,7 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
 void GMCanvas::prepareRendering()
 {
     meshHandler_.prepareGuiMeshForSubd();
+    opengl->paintGL();
 }
 
 void GMCanvas::setDrawColorVertex(QColor pointColor)

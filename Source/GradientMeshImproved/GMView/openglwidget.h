@@ -11,7 +11,7 @@ class GMOpenGLWidget : public QOpenGLWidget, public QOpenGLFunctions_1_0
     Q_OBJECT
 
 public:
-    GMOpenGLWidget(QWidget *parent = nullptr);
+    GMOpenGLWidget(GUILogic::MeshHandler *meshHandler, QWidget *parent = nullptr);
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int, int) override;
@@ -20,7 +20,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    GUILogic::MeshHandler meshHandler;
+    GUILogic::MeshHandler *meshHandler;
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
 };

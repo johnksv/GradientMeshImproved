@@ -26,12 +26,17 @@ MeshHandler::~MeshHandler()
 
 void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 {
-    // draw our two meshes (mesh creation should not happen here of course...)
-    setUpSubdMeshFile();
-    subdMesh->draw(context);
+    if(subdMesh != nullptr)
+    {
+        subdMesh->draw(context);
+    }
 
-    setUpSubdMeshStream();
-    subdMesh->draw(context);
+    // draw our two meshes (mesh creation should not happen here of course...)
+//    setUpSubdMeshFile();
+//    subdMesh->draw(context);
+
+//    setUpSubdMeshStream();
+//    subdMesh->draw(context);
 }
 
 vector<QPointF> MeshHandler::vertices()
@@ -172,6 +177,8 @@ void MeshHandler::prepareGuiMeshForSubd()
     size_t edges = guiMesh.n_edges();
     //0 for Lab, 1 for RGB.
     short colormode = 1;
+
+    //Metadata
     tempString.append(to_string(vertices) + " " + to_string(edges) + " " + to_string(colormode) + "\n");
 
     for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin();
@@ -179,27 +186,63 @@ void MeshHandler::prepareGuiMeshForSubd()
     {
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
-        tempString.append(to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]) + " " );
-        tempString.append(to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z()) + " " );
-        tempString.append(to_string(guiMesh.valence(ite)));
-        tempString.append("\n");
+        //x y z
+        tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]);
+        tempString += " ";
+
+        //r g b
+        tempString += to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z());
+        tempString += " ";
+
+        //valence
+        unsigned int valence = guiMesh.valence(ite);
+        tempString += to_string(valence);
+        tempString += " ";
+
+            //id_to_neighbour..valence
+            for(OpnMesh::VertexVertexIter vv_ite = guiMesh.vv_begin(ite);
+                vv_ite != guiMesh.vv_end(ite); vv_ite++)
+            {
+                for(int i = 0; i < vertexHandlers.size(); i++)
+                {
+                    if(*vv_ite == vertexHandlers[i])
+                    {
+                        tempString += to_string(i);
+                        tempString += " ";
+                        i = vertexHandlers.size();
+                    }
+                }
+            }
+
+            //weight..valence
+            tempString += to_string(guiMesh.data(ite).weight());
+            tempString += " ";
+
+        //0..valency(not in use)
+        for(unsigned int i = 0; i < valence; i++)
+        {
+            tempString += "0";
+            tempString += " ";
+        }
+
+        //0
+        tempString += "0";
+        //New point
+        tempString += "\n";
     }
 
-
-//    // setup a string stream
-//    stringstream strStream;
-//    strStream << TESTMESH; // pass string to stream (other types can also be passed -> see stringstream doc
-
-//    // delete current mesh object and insert a new one
-//    delete subdMesh; // delete from heap
-//    subdMesh = new SbdvMesh();
-
-//    // insert new mesh using custom OFF format
-//    subdMesh->loadV3(strStream);
-//    subdMesh->build(); // build mesh topology from data
-//    subdivide();
+    //TODO: Add edges
 
     qDebug() << QString::fromUtf8(tempString.c_str());
+
+    // delete current mesh object and insert a new one
+    delete subdMesh; // delete from heap
+    subdMesh = new SbdvMesh();
+
+    //Convert stringstream for support with V2
+    qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2(tempString.c_str());
+    subdMesh->build(); // build mesh topology from data
+    subdivide();
 }
 
 bool MeshHandler::saveGuiMeshOff(QString location)
