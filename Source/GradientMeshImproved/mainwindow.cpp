@@ -97,3 +97,8 @@ void MainWindow::on_actionColor_Choose_triggered()
 
     QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), scene, SLOT(setDrawColorVertex(QColor)));
 }
+
+void MainWindow::on_actionExecuteRender_triggered()
+{
+    scene->prepareRendering();
+}

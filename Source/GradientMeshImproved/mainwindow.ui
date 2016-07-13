@@ -112,6 +112,7 @@
    <addaction name="actionDraw_Line_tool"/>
    <addaction name="separator"/>
    <addaction name="actionColor_Choose"/>
+   <addaction name="actionExecuteRender"/>
   </widget>
   <action name="action_New">
    <property name="text">
@@ -238,6 +239,14 @@
   <action name="actionColor_Choose">
    <property name="text">
     <string>Pick Color</string>
+   </property>
+  </action>
+  <action name="actionExecuteRender">
+   <property name="text">
+    <string>executeRender</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

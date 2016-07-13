@@ -8,6 +8,7 @@
 #include "subdivMesh/mesh.h"
 #include "customMeshing/openmeshext.h"
 #include <QOpenGLFunctions_1_0>
+#include <QColor>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -35,7 +36,7 @@ public:
      * \param context the OpenGL context that is being used to draw
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
-    void addVertexFromPoint(QPointF& position);
+    void addVertexFromPoint(QPointF& position, QColor color = QColor(0,0,0));
     void removeVertex(int index);
     /*! Get verticies from the current guiMesh object.
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
@@ -43,12 +44,14 @@ public:
      */
     vector<QPointF> vertices();
     QVector3D color(int index);
-    bool setColor(int index, QVector3D color);
+    void setColor(int index, QColor color);
     double weight(int index);
     bool setWeight(int index, double weight);
     bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
+
+    void prepareGuiMeshForSubd();
 
 private:
     //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
@@ -69,9 +72,6 @@ private:
     // TEMPORARY: demo method demonstrating how to set up a subdivision mesh
     void setUpSubdMeshStream();
     void setUpSubdMeshFile();
-
-    // TEMPORARY: example method for setting up an OpenMesh mesh.
-    void createTwoQuads();
 };
 
 } // end of namespace GUILogic

@@ -12,7 +12,6 @@ public:
 
 private:
     CanvasItemPoint *startPoint, *endPoint;
-
 };
 
 #endif // CANVASITEMLINE_H

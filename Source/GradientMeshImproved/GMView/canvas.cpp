@@ -90,13 +90,17 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
     }
     if(mode == 0)
     {
-        QVector3D color = QVector3D(item->color().redF(), item->color().greenF(), item->color().blueF());
-        meshHandler_.setColor(index,color);
+        meshHandler_.setColor(index,item->color());
     }
     else if(mode == 1)
     {
         meshHandler_.setWeight(index,item->weight());
     }
+}
+
+void GMCanvas::prepareRendering()
+{
+    meshHandler_.prepareGuiMeshForSubd();
 }
 
 void GMCanvas::setDrawColorVertex(QColor pointColor)
@@ -124,7 +128,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandler_.addVertexFromPoint(itemPoint->position());
+            meshHandler_.addVertexFromPoint(itemPoint->position(), pointColor_);
         }
 
         if(drawMode_ ==drawModeCanvas::vertAndEdge)

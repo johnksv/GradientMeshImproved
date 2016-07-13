@@ -34,6 +34,9 @@ public:
      */
     void updateVertexFromPoint(CanvasItemPoint *item,short mode);
 
+    //Temp. Should be moved when split-view
+    void prepareRendering();
+
 public slots:
     void setDrawColorVertex(QColor pointColor);
 

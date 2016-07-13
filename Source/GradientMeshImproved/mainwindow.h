@@ -40,6 +40,8 @@ private slots:
 
     void on_actionColor_Choose_triggered();
 
+    void on_actionExecuteRender_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

@@ -31,24 +31,40 @@ struct CustomTraits : public OpenMesh::DefaultTraits
             double weight(){
                 return weight_;
             }
-            void setWeight(double weight_){
-                if(weight_<0){
+            void setWeight(double weight){
+                if(weight<0){
                     throw "Weight illegal value (must be positive)";
                 }
-                this->weight_ = weight_;
+                this->weight_ = weight;
             }
 
             QVector3D color(){
                 return color_;
             }
-            void setColor(QVector3D color_){
-                this->color_ = color_;
+            void setColor(QVector3D color){
+                this->color_ = color;
             }
     };
 
     EdgeTraits
     {
+        private:
+            bool discontinuate_;
+            QVector3D color_;
+        public:
+            double discontinuate(){
+                return discontinuate_;
+            }
+            void setDiscontinuate(bool discontinuate){
+                this->discontinuate_ = discontinuate;
+            }
 
+            QVector3D color(){
+                return color_;
+            }
+            void setColor(QVector3D color){
+                this->color_ = color;
+            }
     };
 };
 
