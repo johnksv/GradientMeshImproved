@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QPointF>
 #include <QColor>
+#include "subdivMesh/utils.h"
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
@@ -32,6 +33,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 
     // draw our two meshes (mesh creation should not happen here of course...)
+    //Causes Second Chance Assertion Failed: File C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE\vector, Line 1236. probably something wrong with .off-file
 //    setUpSubdMeshFile();
 //    subdMesh->draw(context);
 
@@ -118,18 +120,12 @@ void MeshHandler::removeVertex(int index)
 
 bool MeshHandler::makeFace()
 {
-//    vector<OpnMesh::VertexHandle> vHandler;
-//    for (OpnMesh::VertexIter v_it = guiMesh.vertices_begin();
-//           v_it != guiMesh.vertices_end(); ++v_it)
-//    {
-//         vHandler.push_back(v_it);
-//    }
     if(vertexHandlers.size()<=2){
         return false;
     }
     try
     {
-        guiMesh.add_face(vertexHandlers);
+        faceHandlers.push_back(guiMesh.add_face(vertexHandlers));
     }catch(exception& x){
         qDebug() << x.what();
     }
@@ -174,12 +170,12 @@ void MeshHandler::prepareGuiMeshForSubd()
     tempString +="OFF\n";
 
     size_t vertices = guiMesh.n_vertices();
-    size_t edges = guiMesh.n_edges();
+    size_t faces = guiMesh.n_faces();
     //0 for Lab, 1 for RGB.
-    short colormode = 1;
+    short colormode = 0;
 
     //Metadata
-    tempString.append(to_string(vertices) + " " + to_string(edges) + " " + to_string(colormode) + "\n");
+    tempString.append(to_string(vertices) + " " + to_string(faces) + " " + to_string(colormode) + "\n");
 
     for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin();
         ite != guiMesh.vertices_end(); ite++ )
@@ -187,11 +183,14 @@ void MeshHandler::prepareGuiMeshForSubd()
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
         //x y z
+
         tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]);
         tempString += " ";
 
-        //r g b
-        tempString += to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z());
+        //l a b
+        double l, a, b;
+        subdivMesh::RGB2LAB(color.x(), color.y(), color.z(), l, a, b);
+        tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
         tempString += " ";
 
         //valence
@@ -199,24 +198,27 @@ void MeshHandler::prepareGuiMeshForSubd()
         tempString += to_string(valence);
         tempString += " ";
 
-            //id_to_neighbour..valence
-            for(OpnMesh::VertexVertexIter vv_ite = guiMesh.vv_begin(ite);
-                vv_ite != guiMesh.vv_end(ite); vv_ite++)
+        //id_to_neighbour..valence
+        for(OpnMesh::VertexVertexIter vv_ite = guiMesh.vv_begin(ite);
+            vv_ite != guiMesh.vv_end(ite); vv_ite++)
+        {
+            for(int i = 0; i < vertexHandlers.size(); i++)
             {
-                for(int i = 0; i < vertexHandlers.size(); i++)
+                if(*vv_ite == vertexHandlers[i])
                 {
-                    if(*vv_ite == vertexHandlers[i])
-                    {
-                        tempString += to_string(i);
-                        tempString += " ";
-                        i = vertexHandlers.size();
-                    }
+                    tempString += to_string(i);
+                    tempString += " ";
+                    i = vertexHandlers.size();
                 }
             }
+        }
 
-            //weight..valence
+        //weight..valence
+        for(unsigned int i = 0; i < valence; i++)
+        {
             tempString += to_string(guiMesh.data(ite).weight());
             tempString += " ";
+        }
 
         //0..valency(not in use)
         for(unsigned int i = 0; i < valence; i++)
@@ -231,7 +233,27 @@ void MeshHandler::prepareGuiMeshForSubd()
         tempString += "\n";
     }
 
-    //TODO: Add edges
+    //Faces:
+    for(int i = 0; i < faceHandlers.size(); i++)
+    {
+        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers[i]);
+            fv_ite != guiMesh.fv_end(faceHandlers[i]); fv_ite++)
+        {
+
+            for(int i = 0; i < vertexHandlers.size(); i++)
+            {
+                if(*fv_ite == vertexHandlers[i])
+                {
+                    tempString += to_string(i);
+                    tempString += " ";
+                    qDebug()<<"index: " << i;
+                    i = vertexHandlers.size();
+                }
+            }
+        }
+        tempString += "\n";
+    }
+
 
     qDebug() << QString::fromUtf8(tempString.c_str());
 
@@ -293,8 +315,8 @@ void MeshHandler::setUpSubdMeshFile()
     // create new mesh object
     delete subdMesh; // delete from heap (if any)
     subdMesh = new SbdvMesh();
-
-    subdMesh->loadV3(TEMPFILEPATH);
+    qDebug() << "Loading";
+    subdMesh->loadV2(TEMPFILEPATH2);
     subdMesh->build(); // must be called after load
     subdivide();
 }
