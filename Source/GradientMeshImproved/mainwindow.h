@@ -42,6 +42,10 @@ private slots:
 
     void on_actionExecuteRender_triggered();
 
+    void on_layerToogleView_clicked();
+
+    void on_layerDelete_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

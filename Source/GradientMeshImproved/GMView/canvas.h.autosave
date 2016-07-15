@@ -30,6 +30,8 @@ public:
     void setDrawingMode(drawModeCanvas);
     void setActiveLayer(int index);
     void deleteLayer(int index);
+    void toogleLayerVisibility(int index);
+    void layerChangeIndex(int index, int newIndex);
 
     /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
      * This function is ment to be called from CanvasItemPoint methods.

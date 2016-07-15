@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new GMCanvas(this);
     ui->graphicsView->setScene(scene);
     initActionGroups();
+    ui->layerListWidget->addItem("Layer 1");
 }
 
 MainWindow::~MainWindow()
@@ -101,4 +102,14 @@ void MainWindow::on_actionColor_Choose_triggered()
 void MainWindow::on_actionExecuteRender_triggered()
 {
     scene->prepareRendering();
+}
+
+void MainWindow::on_layerToogleView_clicked()
+{
+
+}
+
+void MainWindow::on_layerDelete_clicked()
+{
+
 }

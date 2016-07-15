@@ -3,7 +3,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
-
+#include <QList>
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
@@ -12,7 +12,14 @@ GMCanvas::GMCanvas(QObject * parent):
     QGraphicsProxyWidget *openGLWidget = addWidget(opengl);
     openGLWidget->setPos(0,0);
     openGLWidget->setZValue(0);
+
+    CanvasItemGroup *layer = new CanvasItemGroup();
+    layers.push_back(layer);
+    addItem(layer);
+
+    //TODO: Change sceneRect(?)
     setSceneRect(itemsBoundingRect());
+
 }
 
 void GMCanvas::clearAll()
@@ -186,7 +193,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 {
     item->setZValue(2);
     item_points.push_back(item);
-    addItem(item);
+    layers[activeLayerIndex_]->addToGroup(item);
     update(item->boundingRect());
 }
 
@@ -197,7 +204,7 @@ void GMCanvas::makeFace()
     for(CanvasItemPoint *item : items_selected){
         face->addCanvasPoint(item);
     }
-    addItem(face);
+    layers[activeLayerIndex_]->addToGroup(face);
     item_faces.push_back(face);
     items_selected.clear();
     update();
@@ -209,4 +216,46 @@ void GMCanvas::setRenderingMode(int mode){
 }
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
     this->drawMode_ = drawMode;
+}
+
+void GMCanvas::setActiveLayer(int index)
+{
+    if(index < 0 || index >= layers.size())
+    {
+        index = 0;
+    }
+    else
+    {
+        activeLayerIndex_ = index;
+    }
+}
+
+void GMCanvas::deleteLayer(int index)
+{
+    CanvasItemGroup *group = layers.at(index);
+    QList<QGraphicsItem*> children = group->childItems();
+    for(int i = 0; i < children.size(); i++)
+    {
+        removeItem(children.at(i));
+    }
+    layers.erase(layers.begin()+index);
+    removeItem(group);
+}
+
+void GMCanvas::toogleLayerVisibility(int index)
+{
+    CanvasItemGroup layer = layers.at(index);
+    if(layer.isVisible())
+    {
+        layer.hide();
+    }
+    else
+    {
+        layer.show();
+    }
+}
+
+void GMCanvas::layerChangeIndex(int index, int newIndex)
+{
+
 }
