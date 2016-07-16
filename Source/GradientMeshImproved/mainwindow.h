@@ -46,12 +46,17 @@ private slots:
 
     void on_layerDelete_clicked();
 
+    void on_layerNew_clicked();
+
+    void on_layer_listView_clicked(const QModelIndex &index);
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
-    QActionGroup *renderModeGroup;
-    QActionGroup *drawModeGroup;
-    GMCanvas *scene;
+    QActionGroup *renderModeGroup_;
+    QActionGroup *drawModeGroup_;
+    GMCanvas *scene_;
+    QStandardItemModel *layerModel_;
 };
 
 #endif // MAINWINDOW_H

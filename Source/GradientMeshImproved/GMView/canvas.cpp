@@ -174,7 +174,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
                 //TODO: Map lines, (start end) so no doubles
                 //Check with discontinutiy edges (how to handle them)
                 line = new CanvasItemLine(startPoint,endPoint);
-                addItem(line);
+                layers_.at(activeLayerIndex_)->addToGroup(line);
                 item_lines.push_back(line);
             }
         }
@@ -193,7 +193,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 {
     item->setZValue(2);
     item_points.push_back(item);
-    layers_[activeLayerIndex_]->addToGroup(item);
+    layers_.at(activeLayerIndex_)->addToGroup(item);
     update(item->boundingRect());
 }
 
@@ -204,7 +204,7 @@ void GMCanvas::makeFace()
     for(CanvasItemPoint *item : items_selected){
         face->addCanvasPoint(item);
     }
-    layers_[activeLayerIndex_]->addToGroup(face);
+    layers_.at(activeLayerIndex_)->addToGroup(face);
     item_faces.push_back(face);
     items_selected.clear();
     update();
@@ -243,7 +243,7 @@ void GMCanvas::addLayer(QString name)
 
 void GMCanvas::changeLayerName(int index, QString newName)
 {
-    layers_.at(index)->setLayerName(newName);
+    layers_.at(index)->setText(newName);
 }
 
 void GMCanvas::deleteLayer(int index)

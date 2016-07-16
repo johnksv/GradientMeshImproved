@@ -2,18 +2,14 @@
 #define CANVASITEMGROUP_H
 
 #include <QGraphicsItemGroup>
+#include <QStandardItem>
 #include <QString>
 
-class CanvasItemGroup : public QGraphicsItemGroup
+class CanvasItemGroup : public QGraphicsItemGroup, public QStandardItem
 {
 public:
     CanvasItemGroup(QString layername, QGraphicsItem *parent = Q_NULLPTR);
-    QString layerName();
-    void setLayerName(QString layerName_);
 
-
-private:
-    QString layerName_;
 };
 
 #endif // CANVASITEMGROUP_H

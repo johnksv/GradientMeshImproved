@@ -3,6 +3,8 @@
 #include <QFileDialog>
 #include <QColorDialog>
 #include "GMView/canvasitemgroup.h"
+#include <QStandardItemModel>
+#include <QMessageBox>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -10,32 +12,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    scene = new GMCanvas(this);
-    ui->graphicsView->setScene(scene);
+    scene_ = new GMCanvas(this);
+    ui->graphicsView->setScene(scene_);
     initActionGroups();
 
+    layerModel_ = new QStandardItemModel;
+    ui->layer_listView->setModel(layerModel_);
+    ui->layer_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    vector<CanvasItemGroup *> canvasLayers = scene->layers();
-    for(auto item : canvasLayers)
+    vector<CanvasItemGroup *> canvasLayers = scene_->layers();
+    for(CanvasItemGroup *item : canvasLayers)
     {
-        ui->layerListWidget->addItem(item->layerName());
+        layerModel_->appendRow(item);
     }
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
 void MainWindow::initActionGroups(){
-    renderModeGroup = new QActionGroup(this);
-    renderModeGroup->addAction(ui->actionRender_Vertices_only);
-    renderModeGroup->addAction(ui->actionRender_Vertices_and_Edges);
-    renderModeGroup->addAction(ui->actionRender_Partial);
-    renderModeGroup->addAction(ui->actionRender_Full);
-    connect(renderModeGroup, SIGNAL(triggered(QAction*)), this, SLOT(handleRenderModeGroup(QAction*)));
+    renderModeGroup_ = new QActionGroup(this);
+    renderModeGroup_->addAction(ui->actionRender_Vertices_only);
+    renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
+    renderModeGroup_->addAction(ui->actionRender_Partial);
+    renderModeGroup_->addAction(ui->actionRender_Full);
+    connect(renderModeGroup_, SIGNAL(triggered(QAction*)), this, SLOT(handleRenderModeGroup(QAction*)));
 
-    drawModeGroup = new QActionGroup(this);
+    drawModeGroup_ = new QActionGroup(this);
 
 }
 
@@ -69,33 +73,33 @@ void MainWindow::on_actionRender_Full_triggered()
 
 void MainWindow::on_actionDraw_Line_tool_triggered()
 {
-    scene->setDrawingMode(drawModeCanvas::vertAndEdge);
+    scene_->setDrawingMode(drawModeCanvas::vertAndEdge);
 }
 
 void MainWindow::on_actionMove_triggered()
 {
-    scene->setDrawingMode(drawModeCanvas::move);
+    scene_->setDrawingMode(drawModeCanvas::move);
 }
 
 void MainWindow::on_actionExport_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
                                                     "", tr("OFF file (*.off)"));
-    scene->handleFileDialog(filename, false);
+    scene_->handleFileDialog(filename, false);
 }
 
 void MainWindow::on_actionImport_triggered()
 {
     QString filename = QFileDialog::getOpenFileName(this,tr("Import file"),
                                                     "", tr("OFF file (*.off)"));
-    scene->handleFileDialog(filename,true);
+    scene_->handleFileDialog(filename,true);
 }
 
 
 
 void MainWindow::on_actionClear_all_triggered()
 {
-    scene->clearAll();
+    scene_->clearAll();
 }
 
 void MainWindow::on_actionColor_Choose_triggered()
@@ -103,20 +107,66 @@ void MainWindow::on_actionColor_Choose_triggered()
     QColorDialog *colordialog = new QColorDialog();
     colordialog->open();
 
-    QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), scene, SLOT(setDrawColorVertex(QColor)));
+    QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), scene_, SLOT(setDrawColorVertex(QColor)));
 }
 
 void MainWindow::on_actionExecuteRender_triggered()
 {
-    scene->prepareRendering();
+    scene_->prepareRendering();
 }
 
 void MainWindow::on_layerToogleView_clicked()
 {
-
+    if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
+    {
+        QModelIndex currentIndex  = ui->layer_listView->selectionModel()->currentIndex();
+        scene_->toogleLayerVisibility(currentIndex.row());
+        //TODO: Change name on layer / feedback that it is hidden/visible
+    }
+    else
+    {
+        QMessageBox msgBox;
+        msgBox.setText("No layers are selected. ");
+        msgBox.exec();
+    }
 }
 
 void MainWindow::on_layerDelete_clicked()
 {
+    //TODO: If only one layer
+    //TODO: Update List.
+    if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
+    {
+        if(layerModel_->rowCount() == 1 )
+        {
+            QMessageBox msgBox;
+            msgBox.setText("Can not delete base layer");
+            msgBox.exec();
+        }
+        else
+        {
+            int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
+            scene_->deleteLayer(currentIndex);
+            layerModel_->removeRow(currentIndex);
+        }
+    }
+    else
+    {
+        QMessageBox msgBox;
+            msgBox.setText("No layers are selected. ");
+            msgBox.exec();
+    }
+}
 
+void MainWindow::on_layerNew_clicked()
+{
+    scene_->addLayer(QString("Layer " + QString::number(layerModel_->rowCount() + 1)));
+    layerModel_->appendRow(scene_->layers().back());
+
+
+}
+
+void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
+{
+    scene_->setActiveLayer(index.row());
 }
