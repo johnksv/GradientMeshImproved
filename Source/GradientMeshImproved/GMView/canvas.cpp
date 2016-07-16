@@ -8,13 +8,13 @@
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
-    opengl = new GMOpenGLWidget(&meshHandler_);
-    QGraphicsProxyWidget *openGLWidget = addWidget(opengl);
+    opengl_ = new GMOpenGLWidget(&meshHandler_);
+    QGraphicsProxyWidget *openGLWidget = addWidget(opengl_);
     openGLWidget->setPos(0,0);
     openGLWidget->setZValue(0);
 
-    CanvasItemGroup *layer = new CanvasItemGroup();
-    layers.push_back(layer);
+    CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
+    layers_.push_back(layer);
     addItem(layer);
 
     //TODO: Change sceneRect(?)
@@ -108,7 +108,7 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
 void GMCanvas::prepareRendering()
 {
     meshHandler_.prepareGuiMeshForSubd();
-    opengl->paintGL();
+    opengl_->paintGL();
 }
 
 void GMCanvas::setDrawColorVertex(QColor pointColor)
@@ -193,7 +193,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 {
     item->setZValue(2);
     item_points.push_back(item);
-    layers[activeLayerIndex_]->addToGroup(item);
+    layers_[activeLayerIndex_]->addToGroup(item);
     update(item->boundingRect());
 }
 
@@ -204,7 +204,7 @@ void GMCanvas::makeFace()
     for(CanvasItemPoint *item : items_selected){
         face->addCanvasPoint(item);
     }
-    layers[activeLayerIndex_]->addToGroup(face);
+    layers_[activeLayerIndex_]->addToGroup(face);
     item_faces.push_back(face);
     items_selected.clear();
     update();
@@ -218,9 +218,14 @@ void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
     this->drawMode_ = drawMode;
 }
 
+vector<CanvasItemGroup *> GMCanvas::layers()
+{
+    return layers_;
+}
+
 void GMCanvas::setActiveLayer(int index)
 {
-    if(index < 0 || index >= layers.size())
+    if(index < 0 || index >= layers_.size())
     {
         index = 0;
     }
@@ -230,32 +235,56 @@ void GMCanvas::setActiveLayer(int index)
     }
 }
 
+void GMCanvas::addLayer(QString name)
+{
+    layers_.push_back(new CanvasItemGroup(name));
+    addItem(layers_.back());
+}
+
+void GMCanvas::changeLayerName(int index, QString newName)
+{
+    layers_.at(index)->setLayerName(newName);
+}
+
 void GMCanvas::deleteLayer(int index)
 {
-    CanvasItemGroup *group = layers.at(index);
+    CanvasItemGroup *group = layers_.at(index);
     QList<QGraphicsItem*> children = group->childItems();
     for(int i = 0; i < children.size(); i++)
     {
         removeItem(children.at(i));
     }
-    layers.erase(layers.begin()+index);
+    layers_.erase(layers_.begin()+index);
     removeItem(group);
 }
 
 void GMCanvas::toogleLayerVisibility(int index)
 {
-    CanvasItemGroup layer = layers.at(index);
-    if(layer.isVisible())
+    CanvasItemGroup *selectedLayer = layers_.at(index);
+    if(selectedLayer->isVisible())
     {
-        layer.hide();
+        selectedLayer->hide();
     }
     else
     {
-        layer.show();
+        selectedLayer->show();
     }
 }
 
-void GMCanvas::layerChangeIndex(int index, int newIndex)
+void GMCanvas::layerChangeIndex(int index, bool moveDown)
 {
-
+    if(moveDown)
+    {
+        if(! (index >= layers_.size()))
+        {
+            std::swap(layers_[index], layers_[index+1]);
+        }
+    }
+    else
+    {
+        if(! (index <= 0))
+        {
+            std::swap(layers_.at(index), layers_.at(index-1));
+        }
+    }
 }

@@ -1,6 +1,6 @@
 #include "canvasitemgroup.h"
 
-CanvasItemGroup::CanvasItemGroup(QGraphicsItem *parent) : QGraphicsItemGroup(parent)
+CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) : QGraphicsItemGroup(parent), layerName_(layername)
 {
 
 }

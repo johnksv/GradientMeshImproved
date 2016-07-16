@@ -7,7 +7,7 @@
 class CanvasItemGroup : public QGraphicsItemGroup
 {
 public:
-    CanvasItemGroup(QGraphicsItem *parent = Q_NULLPTR);
+    CanvasItemGroup(QString layername, QGraphicsItem *parent = Q_NULLPTR);
     QString layerName();
     void setLayerName(QString layerName_);
 

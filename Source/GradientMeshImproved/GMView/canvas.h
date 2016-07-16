@@ -28,8 +28,14 @@ public:
 
     void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
+    vector<CanvasItemGroup *> layers();
     void setActiveLayer(int index);
+    void addLayer(QString name);
+    void changeLayerName(int index, QString newName);
     void deleteLayer(int index);
+    void toogleLayerVisibility(int index);
+    //Move down -> move towards last element
+    void layerChangeIndex(int index, bool moveDown);
 
     /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
      * This function is ment to be called from CanvasItemPoint methods.
@@ -48,12 +54,12 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
-    vector<CanvasItemGroup*> layers;
+    vector<CanvasItemGroup*> layers_;
     vector<CanvasItemPoint*> item_points;
     vector<CanvasItemPoint*> items_selected;
     vector<CanvasItemLine*> item_lines;
     vector<CanvasItemFace*> item_faces;
-    GMOpenGLWidget *opengl;
+    GMOpenGLWidget *opengl_;
     QColor pointColor_;
 
     //Referces to the index in the layers vector. 0 index is first element

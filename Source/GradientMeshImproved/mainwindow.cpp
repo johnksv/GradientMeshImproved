@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QColorDialog>
+#include "GMView/canvasitemgroup.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -12,7 +13,13 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new GMCanvas(this);
     ui->graphicsView->setScene(scene);
     initActionGroups();
-    ui->layerListWidget->addItem("Layer 1");
+
+
+    vector<CanvasItemGroup *> canvasLayers = scene->layers();
+    for(auto item : canvasLayers)
+    {
+        ui->layerListWidget->addItem(item->layerName());
+    }
 }
 
 MainWindow::~MainWindow()
