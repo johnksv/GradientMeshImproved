@@ -4,7 +4,6 @@
 #include <QGraphicsScene>
 #include "openglwidget.h"
 #include "canvasitemgroup.h"
-#include <deque>
 
 enum class drawModeCanvas{
     move, vertAndEdge, edge, faces
