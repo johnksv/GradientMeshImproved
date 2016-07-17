@@ -2,8 +2,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 
-GMOpenGLWidget::GMOpenGLWidget(GUILogic::MeshHandler *meshHandler, QWidget *parent) :
-    meshHandler(meshHandler), QOpenGLWidget{parent}
+GMOpenGLWidget::GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers, QWidget *parent) :
+    meshHandlers(meshHandlers), QOpenGLWidget{parent}
 {
 
 }
@@ -34,7 +34,10 @@ void GMOpenGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT);
 
     // draw stuff
-    meshHandler->drawGLMesh(this);
+    for(auto layer : *meshHandlers)
+    {
+        layer->drawGLMesh(this);
+    }
 
     /******* Start painting with Qt ***********/
     qPainter.endNativePainting();

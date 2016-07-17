@@ -2,11 +2,9 @@
 #define GMCANVAS_H
 
 #include <QGraphicsScene>
-#include "canvaspoint.h"
-#include "canvasitemline.h"
-#include "canvasitemface.h"
 #include "openglwidget.h"
 #include "canvasitemgroup.h"
+#include <deque>
 
 enum class drawModeCanvas{
     move, vertAndEdge, edge, faces
@@ -29,13 +27,12 @@ public:
     void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
     vector<CanvasItemGroup *> layers();
-    void setActiveLayer(int index);
+    void setActiveLayer(unsigned char index);
     void addLayer(QString name);
-    void changeLayerName(int index, QString newName);
     void deleteLayer(int index);
     void toogleLayerVisibility(int index);
     //Move down -> move towards last element
-    void layerChangeIndex(int index, bool moveDown);
+    void layerMoveIndex(int index, bool moveDown);
 
     /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
      * This function is ment to be called from CanvasItemPoint methods.
@@ -54,18 +51,14 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
+    vector<GUILogic::MeshHandler*> meshHandlers_;
     vector<CanvasItemGroup*> layers_;
-    vector<CanvasItemPoint*> item_points;
-    vector<CanvasItemPoint*> items_selected;
-    vector<CanvasItemLine*> item_lines;
-    vector<CanvasItemFace*> item_faces;
     GMOpenGLWidget *opengl_;
     QColor pointColor_;
 
     //Referces to the index in the layers vector. 0 index is first element
-    unsigned char activeLayerIndex_ = 0;
+    unsigned char currLayerIndex_ = 0;
 
-    GUILogic::MeshHandler meshHandler_;
 
     //0 for verticies only, 3 for "full" for full rendering
     unsigned char renderingMode_ = 3;

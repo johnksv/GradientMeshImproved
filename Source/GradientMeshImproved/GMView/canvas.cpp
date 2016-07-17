@@ -8,7 +8,8 @@
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
-    opengl_ = new GMOpenGLWidget(&meshHandler_);
+    meshHandlers_.push_back(new GUILogic::MeshHandler);
+    opengl_ = new GMOpenGLWidget(&meshHandlers_);
     QGraphicsProxyWidget *openGLWidget = addWidget(opengl_);
     openGLWidget->setPos(0,0);
     openGLWidget->setZValue(0);
@@ -19,33 +20,32 @@ GMCanvas::GMCanvas(QObject * parent):
 
     //TODO: Change sceneRect(?)
     setSceneRect(itemsBoundingRect());
-
 }
 
 void GMCanvas::clearAll()
 {
-    for(CanvasItemFace* face: item_faces)
+    for(CanvasItemFace* face: layers_.at(currLayerIndex_)->faces)
     {
         removeItem(face);
         delete face;
     }
-    item_faces.clear();
+    layers_.at(currLayerIndex_)->faces.clear();
 
-    for(CanvasItemLine* line : item_lines)
+    for(CanvasItemLine* line :  layers_.at(currLayerIndex_)->lines)
     {
         removeItem(line);
         delete line;
     }
-    item_lines.clear();
+     layers_.at(currLayerIndex_)->lines.clear();
 
-    for(int i = 0; i <item_points.size(); i++)
+    for(int i = 0; i < layers_.at(currLayerIndex_)->points.size(); i++)
     {
-        removeItem(item_points[i]);
-        meshHandler_.removeVertex(i);
-        delete item_points[i];
+        removeItem( layers_.at(currLayerIndex_)->points.at(i));
+        meshHandlers_.at(currLayerIndex_)->removeVertex(i);
+        delete  layers_.at(currLayerIndex_)->points.at(i);
     }
-    item_points.clear();
-    items_selected.clear();
+     layers_.at(currLayerIndex_)->points.clear();
+     layers_.at(currLayerIndex_)->points_selected.clear();
 
     update();
 }
@@ -56,8 +56,8 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     if(import)
     {
         qDebug() << "scne import";
-        meshHandler_.importGuiMesh(location);
-        vector<QPointF> vertices = meshHandler_.vertices();
+        meshHandlers_.at(currLayerIndex_)->importGuiMesh(location);
+        vector<QPointF> vertices = meshHandlers_.at(currLayerIndex_)->vertices();
         for(QPointF point : vertices){
             CanvasItemPoint *item = new CanvasItemPoint(point);
             addItemPoint(item);
@@ -65,7 +65,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     }
     else
     {
-        meshHandler_.saveGuiMeshOff(location);
+        meshHandlers_.at(currLayerIndex_)->saveGuiMeshOff(location);
     }
 }
 
@@ -88,26 +88,26 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
 {
     int index;
-    for (int i =0; i < item_points.size(); i++)
+    for (int i =0; i < layers_.at(currLayerIndex_)->points.size(); i++)
     {
-        if(item_points[i] == item){
+        if(layers_.at(currLayerIndex_)->points.at(i) == item){
             index = i;
-            i = item_points.size();
+            i = layers_.at(currLayerIndex_)->points.size();
         }
     }
     if(mode == 0)
     {
-        meshHandler_.setColor(index,item->color());
+        meshHandlers_.at(currLayerIndex_)->setColor(index,item->color());
     }
     else if(mode == 1)
     {
-        meshHandler_.setWeight(index,item->weight());
+        meshHandlers_.at(currLayerIndex_)->setWeight(index,item->weight());
     }
 }
 
 void GMCanvas::prepareRendering()
 {
-    meshHandler_.prepareGuiMeshForSubd();
+    meshHandlers_.at(currLayerIndex_)->prepareGuiMeshForSubd();
     opengl_->paintGL();
 }
 
@@ -122,12 +122,13 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     int collideWithIndex;
 
     CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos(), pointColor_);
-    for(int i = 0; i < item_points.size();i++)
+
+    for(int i = 0; i < layers_.at(currLayerIndex_)->points.size();i++)
     {
-        if(itemPoint->collidesWithItem(item_points[i])){
+        if(itemPoint->collidesWithItem(layers_.at(currLayerIndex_)->points.at(i))){
             collide = true;
             collideWithIndex = i;
-            i = item_points.size();
+            i = layers_.at(currLayerIndex_)->points.size();
         }
     }
 
@@ -136,7 +137,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandler_.addVertexFromPoint(itemPoint->position(), pointColor_);
+            meshHandlers_.at(currLayerIndex_)->addVertexFromPoint(itemPoint->position(), pointColor_);
         }
 
         if(drawMode_ ==drawModeCanvas::vertAndEdge)
@@ -147,35 +148,35 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
 
             if(collide)
             {
-                items_selected.push_back(item_points.at(collideWithIndex));
+                layers_.at(currLayerIndex_)->points_selected.push_back(layers_.at(currLayerIndex_)->points.at(collideWithIndex));
 
-                if(items_selected.size()<=1)
+                if(layers_.at(currLayerIndex_)->points_selected.size()<=1)
                 {
-                    startPoint = items_selected.at(0);
+                    startPoint = layers_.at(currLayerIndex_)->points_selected.at(0);
                 }
                 else
                 {
                     qDebug() << "Collide";
-                    startPoint = items_selected.end()[-2];
-                    endPoint = items_selected.back();
+                    startPoint = layers_.at(currLayerIndex_)->points_selected.end()[-2];
+                    endPoint = layers_.at(currLayerIndex_)->points_selected.back();
                 }
             }
             else
             {
-                items_selected.push_back(item_points.back());
-                if(items_selected.size() > 1)
+                layers_.at(currLayerIndex_)->points_selected.push_back(layers_.at(currLayerIndex_)->points.back());
+                if(layers_.at(currLayerIndex_)->points_selected.size() > 1)
                 {
-                    startPoint = items_selected.end()[-2];
-                    endPoint = items_selected.back();
+                    startPoint = layers_.at(currLayerIndex_)->points_selected.end()[-2];
+                    endPoint = layers_.at(currLayerIndex_)->points_selected.back();
                 }
             }
-            if(items_selected.size() > 1)
+            if(layers_.at(currLayerIndex_)->points_selected.size() > 1)
             {
                 //TODO: Map lines, (start end) so no doubles
                 //Check with discontinutiy edges (how to handle them)
                 line = new CanvasItemLine(startPoint,endPoint);
-                layers_.at(activeLayerIndex_)->addToGroup(line);
-                item_lines.push_back(line);
+                layers_.at(currLayerIndex_)->addToGroup(line);
+                layers_.at(currLayerIndex_)->lines.push_back(line);
             }
         }
     }
@@ -192,21 +193,21 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
 void GMCanvas::addItemPoint(CanvasItemPoint *item)
 {
     item->setZValue(2);
-    item_points.push_back(item);
-    layers_.at(activeLayerIndex_)->addToGroup(item);
+    layers_.at(currLayerIndex_)->points.push_back(item);
+    layers_.at(currLayerIndex_)->addToGroup(item);
     update(item->boundingRect());
 }
 
 void GMCanvas::makeFace()
 {
-    qDebug() << meshHandler_.makeFace();
+    qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace();
     CanvasItemFace *face = new CanvasItemFace();
-    for(CanvasItemPoint *item : items_selected){
+    for(CanvasItemPoint *item : layers_.at(currLayerIndex_)->points_selected){
         face->addCanvasPoint(item);
     }
-    layers_.at(activeLayerIndex_)->addToGroup(face);
-    item_faces.push_back(face);
-    items_selected.clear();
+    layers_.at(currLayerIndex_)->addToGroup(face);
+    layers_.at(currLayerIndex_)->faces.push_back(face);
+    layers_.at(currLayerIndex_)->points_selected.clear();
     update();
 }
 
@@ -223,15 +224,15 @@ vector<CanvasItemGroup *> GMCanvas::layers()
     return layers_;
 }
 
-void GMCanvas::setActiveLayer(int index)
+void GMCanvas::setActiveLayer(unsigned char index)
 {
     if(index < 0 || index >= layers_.size())
     {
-        index = 0;
+        currLayerIndex_ = 0;
     }
     else
     {
-        activeLayerIndex_ = index;
+        currLayerIndex_ = index;
     }
 }
 
@@ -239,23 +240,27 @@ void GMCanvas::addLayer(QString name)
 {
     layers_.push_back(new CanvasItemGroup(name));
     addItem(layers_.back());
-}
-
-void GMCanvas::changeLayerName(int index, QString newName)
-{
-    layers_.at(index)->setText(newName);
+    meshHandlers_.push_back(new GUILogic::MeshHandler);
 }
 
 void GMCanvas::deleteLayer(int index)
 {
-    CanvasItemGroup *group = layers_.at(index);
-    QList<QGraphicsItem*> children = group->childItems();
-    for(int i = 0; i < children.size(); i++)
+    if(layers_.size() > 1)
     {
-        removeItem(children.at(i));
+        CanvasItemGroup *group = layers_.at(index);
+        QList<QGraphicsItem*> children = group->childItems();
+        for(int i = 0; i < children.size(); i++)
+        {
+            removeItem(children.at(i));
+        }
+        layers_.erase(layers_.begin()+index);
+        removeItem(group);
+
+        delete meshHandlers_.at(index);
+        meshHandlers_.erase(meshHandlers_.begin()+index);
+
+        setActiveLayer(layers_.size()-1);
     }
-    layers_.erase(layers_.begin()+index);
-    removeItem(group);
 }
 
 void GMCanvas::toogleLayerVisibility(int index)
@@ -271,7 +276,7 @@ void GMCanvas::toogleLayerVisibility(int index)
     }
 }
 
-void GMCanvas::layerChangeIndex(int index, bool moveDown)
+void GMCanvas::layerMoveIndex(int index, bool moveDown)
 {
     if(moveDown)
     {
