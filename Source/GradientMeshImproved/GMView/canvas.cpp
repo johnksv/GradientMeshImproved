@@ -132,7 +132,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         }
     }
 
-    if(mouseEvent->button() != Qt::RightButton)
+    if(mouseEvent->button() == Qt::LeftButton)
     {
         if(!collide)
         {
@@ -180,7 +180,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
             }
         }
     }
-    else
+    else if(mouseEvent->button() == Qt::RightButton)
     {
         if(!collide)
         {
@@ -234,6 +234,7 @@ void GMCanvas::setActiveLayer(unsigned char index)
     {
         currLayerIndex_ = index;
     }
+    layers_.at(currLayerIndex_)->points_selected.clear();
 }
 
 void GMCanvas::addLayer(QString name)
