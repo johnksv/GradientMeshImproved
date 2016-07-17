@@ -50,6 +50,8 @@ private slots:
 
     void on_layer_listView_clicked(const QModelIndex &index);
 
+    void on_colorRepresentation_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
@@ -57,6 +59,7 @@ private:
     QActionGroup *drawModeGroup_;
     GMCanvas *scene_;
     QStandardItemModel *layerModel_;
+    void initLayoutContainer();
 };
 
 #endif // MAINWINDOW_H

@@ -131,48 +131,103 @@
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QGroupBox" name="layerContainer">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>163</width>
-       <height>83</height>
+       <x>5</x>
+       <y>10</y>
+       <width>171</width>
+       <height>181</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="layerButtonContainer">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="layerToogleView">
-        <property name="text">
-         <string>Toggle View</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="layerNew">
-        <property name="text">
-         <string>New Layer</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QPushButton" name="layerDelete">
-        <property name="text">
-         <string>Delete Layer</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="title">
+      <string>Layers</string>
+     </property>
+     <widget class="QListView" name="layer_listView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>20</y>
+        <width>171</width>
+        <height>71</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>171</width>
+        <height>83</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="layerButtonContainer">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="layerToogleView">
+         <property name="text">
+          <string>Toggle View</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="layerNew">
+         <property name="text">
+          <string>New Layer</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="layerDelete">
+         <property name="text">
+          <string>Delete Layer</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-    <widget class="QListView" name="layer_listView">
+    <widget class="QGroupBox" name="colorContainer">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>161</width>
-       <height>71</height>
+       <x>5</x>
+       <y>200</y>
+       <width>171</width>
+       <height>80</height>
       </rect>
      </property>
+     <property name="title">
+      <string>Color</string>
+     </property>
+     <widget class="QLabel" name="colorActiveLabel">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>15</y>
+        <width>81</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Active color:</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="colorRepresentation">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>15</y>
+        <width>51</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

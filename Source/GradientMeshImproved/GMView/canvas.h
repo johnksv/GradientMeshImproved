@@ -25,8 +25,11 @@ public:
 
     void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
-    vector<CanvasItemGroup *> layers();
     void setActiveLayer(unsigned char index);
+    void setDrawColorVertex(QColor pointColor);
+
+    vector<CanvasItemGroup *> layers();
+
     void addLayer(QString name);
     void deleteLayer(int index);
     void toogleLayerVisibility(int index);
@@ -42,8 +45,7 @@ public:
     //Temp. Should be moved when split-view
     void prepareRendering();
 
-public slots:
-    void setDrawColorVertex(QColor pointColor);
+
 
 protected:
   //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;

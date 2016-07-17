@@ -16,22 +16,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setScene(scene_);
     initActionGroups();
 
-    layerModel_ = new QStandardItemModel;
-    ui->layer_listView->setModel(layerModel_);
-    ui->layer_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    initLayoutContainer();
 
-    vector<CanvasItemGroup *> canvasLayers = scene_->layers();
-    for(CanvasItemGroup *item : canvasLayers)
-    {
-        layerModel_->appendRow(item);
-    }
+    ui->colorRepresentation->setFlat(true);
+    ui->colorRepresentation->setStyleSheet(QString("QPushButton {"
+    "background-color: #000000}"));
+    ui->colorRepresentation->setAutoFillBackground(true);
 }
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::initActionGroups(){
+void MainWindow::initActionGroups()
+{
     renderModeGroup_ = new QActionGroup(this);
     renderModeGroup_->addAction(ui->actionRender_Vertices_only);
     renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
@@ -43,7 +41,21 @@ void MainWindow::initActionGroups(){
 
 }
 
-void MainWindow::handleRenderModeGroup(QAction * action){
+void MainWindow::initLayoutContainer()
+{
+    layerModel_ = new QStandardItemModel;
+    ui->layer_listView->setModel(layerModel_);
+    ui->layer_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    vector<CanvasItemGroup *> canvasLayers = scene_->layers();
+    for(CanvasItemGroup *item : canvasLayers)
+    {
+        layerModel_->appendRow(item);
+    }
+}
+
+void MainWindow::handleRenderModeGroup(QAction * action)
+{
     action->setChecked(true);
 }
 
@@ -105,9 +117,15 @@ void MainWindow::on_actionClear_all_triggered()
 void MainWindow::on_actionColor_Choose_triggered()
 {
     QColorDialog *colordialog = new QColorDialog();
-    colordialog->open();
+    QColor chosenColor = QColorDialog::getColor();
+    if(chosenColor.isValid())
+    {
+        scene_->setDrawColorVertex(chosenColor);
 
-    QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), scene_, SLOT(setDrawColorVertex(QColor)));
+        QString css = QString("QPushButton {background-color: %1}").arg(chosenColor.name());
+        ui->colorRepresentation->setStyleSheet(css);
+        ui->colorRepresentation->setAutoFillBackground(true);
+    }
 }
 
 void MainWindow::on_actionExecuteRender_triggered()
@@ -167,4 +185,9 @@ void MainWindow::on_layerNew_clicked()
 void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
 {
     scene_->setActiveLayer(index.row());
+}
+
+void MainWindow::on_colorRepresentation_clicked()
+{
+    on_actionColor_Choose_triggered();
 }
