@@ -37,8 +37,8 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 //    setUpSubdMeshFile();
 //    subdMesh->draw(context);
 
-//    setUpSubdMeshStream();
-//    subdMesh->draw(context);
+    setUpSubdMeshStream();
+    subdMesh->draw(context);
 }
 
 vector<QPointF> MeshHandler::vertices()

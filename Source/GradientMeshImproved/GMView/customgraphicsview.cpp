@@ -4,6 +4,7 @@
 CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
     setMouseTracking(true);
+    setRenderHints(QPainter::Antialiasing);
 
 }
 
