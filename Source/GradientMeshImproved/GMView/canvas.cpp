@@ -226,6 +226,7 @@ vector<CanvasItemGroup *> GMCanvas::layers()
 
 void GMCanvas::setActiveLayer(unsigned char index)
 {
+    makeFace();
     if(index < 0 || index >= layers_.size())
     {
         currLayerIndex_ = 0;
