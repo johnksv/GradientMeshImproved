@@ -99,11 +99,18 @@
     <addaction name="actionRender_Partial"/>
     <addaction name="actionRender_Full"/>
    </widget>
+   <widget class="QMenu" name="menuWindow">
+    <property name="title">
+     <string>Window</string>
+    </property>
+    <addaction name="actionToolsWidget"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuEdit"/>
    <addaction name="menuMesh"/>
    <addaction name="menuHelp"/>
    <addaction name="menuRendering"/>
+   <addaction name="menuWindow"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="mainToolBar">
@@ -120,7 +127,7 @@
    <addaction name="actionColor_Choose"/>
    <addaction name="actionExecuteRender"/>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="toolsWidget">
    <property name="minimumSize">
     <size>
      <width>180</width>
@@ -364,6 +371,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionToolsWidget">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tools</string>
    </property>
   </action>
  </widget>

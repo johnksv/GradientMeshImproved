@@ -191,3 +191,20 @@ void MainWindow::on_colorRepresentation_clicked()
 {
     on_actionColor_Choose_triggered();
 }
+
+void MainWindow::on_toolsWidget_visibilityChanged(bool visible)
+{
+        ui->actionToolsWidget->setChecked(visible);
+}
+
+void MainWindow::on_actionToolsWidget_changed()
+{
+    if( ui->actionToolsWidget->isChecked())
+    {
+         ui->toolsWidget->setVisible(true);
+    }
+    else
+    {
+        ui->toolsWidget->setVisible(false);
+    }
+}

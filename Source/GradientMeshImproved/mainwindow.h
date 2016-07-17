@@ -52,6 +52,10 @@ private slots:
 
     void on_colorRepresentation_clicked();
 
+    void on_toolsWidget_visibilityChanged(bool visible);
+
+    void on_actionToolsWidget_changed();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
