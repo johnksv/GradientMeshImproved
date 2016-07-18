@@ -54,7 +54,14 @@ private slots:
 
     void on_toolsWidget_visibilityChanged(bool visible);
 
-    void on_actionToolsWidget_changed();
+    void on_actionWindow_ToolsWidget_changed();
+
+    void on_splitWidget_visibilityChanged(bool visible);
+
+    void on_actionRender_in_split_window_changed();
+
+    void on_actionWindow_SplitWidget_changed();
+
 
 private:
     Ui::MainWindow *ui;
@@ -64,6 +71,7 @@ private:
     GMCanvas *scene_;
     QStandardItemModel *layerModel_;
     void initLayoutContainer();
+    void initColorSelector();
 };
 
 #endif // MAINWINDOW_H

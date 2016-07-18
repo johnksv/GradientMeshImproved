@@ -2,8 +2,12 @@
 #include <QMouseEvent>
 #include <QDebug>
 
+GMOpenGLWidget::GMOpenGLWidget(QWidget *parent) : QOpenGLWidget{parent}
+{
+}
+
 GMOpenGLWidget::GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers, QWidget *parent) :
-    meshHandlers(meshHandlers), QOpenGLWidget{parent}
+    meshHandlers_(meshHandlers), QOpenGLWidget{parent}
 {
 
 }
@@ -22,26 +26,34 @@ void GMOpenGLWidget::resizeGL(int, int)
     glOrtho(-10, glWidth, -10, glHeight, -1.0, 1.0);
 }
 
+void GMOpenGLWidget::setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
+{
+    meshHandlers_ = meshHandlers;
+}
+
 void GMOpenGLWidget::paintGL()
 {
-    QPainter qPainter;
-    /******* Start painting with OpenGL ***********/
-    qPainter.begin(this);
-    qPainter.beginNativePainting();
-
-    // set background colour and clear framebuffer
-    glClearColor(1.0f,1.0f,1.0f,1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    // draw stuff
-    for(auto layer : *meshHandlers)
+    if(meshHandlers_ != nullptr)
     {
-        layer->drawGLMesh(this);
-    }
+        QPainter qPainter;
+        /******* Start painting with OpenGL ***********/
+        qPainter.begin(this);
+        qPainter.beginNativePainting();
 
-    /******* Start painting with Qt ***********/
-    qPainter.endNativePainting();
-    qPainter.fillRect(rect(),Qt::blue);
+        // set background colour and clear framebuffer
+        glClearColor(1.0f,1.0f,1.0f,1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // draw stuff
+        for(GUILogic::MeshHandler *layer : *meshHandlers_)
+        {
+            layer->drawGLMesh(this);
+        }
+
+        /******* Start painting with Qt ***********/
+        qPainter.endNativePainting();
+        qPainter.fillRect(rect(),Qt::blue);
+    }
 }
 
 void GMOpenGLWidget::mousePressEvent(QMouseEvent* event){

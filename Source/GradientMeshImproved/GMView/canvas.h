@@ -29,6 +29,7 @@ public:
     void setDrawColorVertex(QColor pointColor);
 
     vector<CanvasItemGroup *> layers();
+    vector<GUILogic::MeshHandler *> *meshHandlers();
 
     void addLayer(QString name);
     void deleteLayer(int index);

@@ -14,14 +14,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     scene_ = new GMCanvas(this);
     ui->graphicsView->setScene(scene_);
-    initActionGroups();
 
+    ui->splitWidget->setVisible(false);
+    ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
+
+    initActionGroups();
     initLayoutContainer();
 
-    ui->colorRepresentation->setFlat(true);
-    ui->colorRepresentation->setStyleSheet(QString("QPushButton {"
-    "background-color: #000000}"));
-    ui->colorRepresentation->setAutoFillBackground(true);
+    initColorSelector();
 }
 MainWindow::~MainWindow()
 {
@@ -52,6 +52,14 @@ void MainWindow::initLayoutContainer()
     {
         layerModel_->appendRow(item);
     }
+}
+
+void MainWindow::initColorSelector()
+{
+    ui->colorRepresentation->setFlat(true);
+    ui->colorRepresentation->setStyleSheet(QString("QPushButton {"
+    "background-color: #000000}"));
+    ui->colorRepresentation->setAutoFillBackground(true);
 }
 
 void MainWindow::handleRenderModeGroup(QAction * action)
@@ -193,12 +201,12 @@ void MainWindow::on_colorRepresentation_clicked()
 
 void MainWindow::on_toolsWidget_visibilityChanged(bool visible)
 {
-        ui->actionToolsWidget->setChecked(visible);
+    ui->actionWindow_ToolsWidget->setChecked(visible);
 }
 
-void MainWindow::on_actionToolsWidget_changed()
+void MainWindow::on_actionWindow_ToolsWidget_changed()
 {
-    if( ui->actionToolsWidget->isChecked())
+    if( ui->actionWindow_ToolsWidget->isChecked())
     {
          ui->toolsWidget->setVisible(true);
     }
@@ -206,4 +214,26 @@ void MainWindow::on_actionToolsWidget_changed()
     {
         ui->toolsWidget->setVisible(false);
     }
+}
+
+void MainWindow::on_splitWidget_visibilityChanged(bool visible)
+{
+    ui->actionWindow_SplitWidget->setChecked(visible);
+}
+
+void MainWindow::on_actionWindow_SplitWidget_changed()
+{
+    if( ui->actionWindow_SplitWidget->isChecked())
+    {
+         ui->splitWidget->setVisible(true);
+    }
+    else
+    {
+        ui->splitWidget->setVisible(false);
+    }
+}
+
+void MainWindow::on_actionRender_in_split_window_changed()
+{
+
 }

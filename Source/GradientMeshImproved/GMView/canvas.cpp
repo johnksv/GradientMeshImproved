@@ -224,6 +224,11 @@ vector<CanvasItemGroup *> GMCanvas::layers()
     return layers_;
 }
 
+vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
+{
+    return &meshHandlers_;
+}
+
 void GMCanvas::setActiveLayer(unsigned char index)
 {
     makeFace();
