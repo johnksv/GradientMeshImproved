@@ -235,5 +235,6 @@ void MainWindow::on_actionWindow_SplitWidget_changed()
 
 void MainWindow::on_actionRender_in_split_window_changed()
 {
-
+    bool checked = ui->actionRender_in_split_window->isChecked();
+    scene_->drawOpenGlOnCanvas(!checked);
 }

@@ -105,6 +105,11 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
     }
 }
 
+void GMCanvas::drawOpenGlOnCanvas(bool drawOnCanvas)
+{
+        opengl_->setVisible(drawOnCanvas);
+}
+
 void GMCanvas::prepareRendering()
 {
     meshHandlers_.at(currLayerIndex_)->prepareGuiMeshForSubd();

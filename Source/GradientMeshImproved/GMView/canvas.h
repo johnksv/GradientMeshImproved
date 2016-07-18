@@ -43,6 +43,8 @@ public:
      */
     void updateVertexFromPoint(CanvasItemPoint *item,short mode);
 
+    void drawOpenGlOnCanvas(bool drawOnCanvas);
+
     //Temp. Should be moved when split-view
     void prepareRendering();
 
