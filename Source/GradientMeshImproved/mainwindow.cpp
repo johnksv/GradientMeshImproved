@@ -116,7 +116,6 @@ void MainWindow::on_actionClear_all_triggered()
 
 void MainWindow::on_actionColor_Choose_triggered()
 {
-    QColorDialog *colordialog = new QColorDialog();
     QColor chosenColor = QColorDialog::getColor();
     if(chosenColor.isValid())
     {
