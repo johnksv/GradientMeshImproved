@@ -60,6 +60,18 @@ void MainWindow::initColorSelector()
     ui->colorRepresentation->setStyleSheet(QString("QPushButton {"
     "background-color: #000000}"));
     ui->colorRepresentation->setAutoFillBackground(true);
+
+    ui->colorSec->setFlat(true);
+    ui->colorSec->setStyleSheet(QString("QPushButton {"
+    "background-color: #000000}"));
+    ui->colorSec->setAutoFillBackground(true);
+
+    ui->colorTert->setFlat(true);
+    ui->colorTert->setStyleSheet(QString("QPushButton {"
+    "background-color: #000000}"));
+    ui->colorTert->setAutoFillBackground(true);
+
+
 }
 
 void MainWindow::handleRenderModeGroup(QAction * action)
@@ -237,4 +249,30 @@ void MainWindow::on_actionRender_in_split_window_changed()
 {
     bool checked = ui->actionRender_in_split_window->isChecked();
     scene_->drawOpenGlOnCanvas(!checked);
+}
+
+void MainWindow::on_colorSec_clicked()
+{
+    QColor chosenColor = QColorDialog::getColor();
+    if(chosenColor.isValid())
+    {
+        scene_->setDrawColorVertex(chosenColor);
+
+        QString css = QString("QPushButton {background-color: %1}").arg(chosenColor.name());
+        ui->colorSec->setStyleSheet(css);
+        ui->colorSec->setAutoFillBackground(true);
+    }
+}
+
+void MainWindow::on_colorTert_clicked()
+{
+    QColor chosenColor = QColorDialog::getColor();
+    if(chosenColor.isValid())
+    {
+        scene_->setDrawColorVertex(chosenColor);
+
+        QString css = QString("QPushButton {background-color: %1}").arg(chosenColor.name());
+        ui->colorTert->setStyleSheet(css);
+        ui->colorTert->setAutoFillBackground(true);
+    }
 }

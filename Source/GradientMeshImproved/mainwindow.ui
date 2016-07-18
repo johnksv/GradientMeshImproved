@@ -140,7 +140,7 @@
    <property name="maximumSize">
     <size>
      <width>180</width>
-     <height>350</height>
+     <height>600</height>
     </size>
    </property>
    <property name="floating">
@@ -218,41 +218,59 @@
        <x>5</x>
        <y>200</y>
        <width>171</width>
-       <height>80</height>
+       <height>121</height>
       </rect>
      </property>
      <property name="title">
       <string>Color</string>
      </property>
-     <widget class="QLabel" name="colorActiveLabel">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>15</y>
-        <width>81</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Active color:</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="colorRepresentation">
-      <property name="geometry">
-       <rect>
-        <x>100</x>
-        <y>15</y>
-        <width>51</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <widget class="QLabel" name="colorSecLabel">
+        <property name="text">
+         <string>Secondary (2):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="colorRepresentation">
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="colorPrimLabel">
+        <property name="text">
+         <string>Primary (1):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="colorSec">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="colorTertLabel">
+        <property name="text">
+         <string>Tertiary (3):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="colorTert">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
   </widget>

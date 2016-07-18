@@ -63,6 +63,10 @@ private slots:
     void on_actionWindow_SplitWidget_changed();
 
 
+    void on_colorSec_clicked();
+
+    void on_colorTert_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
