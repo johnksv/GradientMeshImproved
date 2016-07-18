@@ -218,7 +218,7 @@
        <x>5</x>
        <y>200</y>
        <width>171</width>
-       <height>121</height>
+       <height>131</height>
       </rect>
      </property>
      <property name="title">
@@ -242,17 +242,17 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="colorPrimLabel">
-        <property name="text">
-         <string>Primary (1):</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
        <widget class="QPushButton" name="colorSec">
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="colorPrimLabel">
+        <property name="text">
+         <string>Primary (1):</string>
         </property>
        </widget>
       </item>
@@ -267,6 +267,19 @@
        <widget class="QPushButton" name="colorTert">
         <property name="text">
          <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0" colspan="2">
+       <widget class="QCheckBox" name="colorLockMode">
+        <property name="layoutDirection">
+         <enum>Qt::RightToLeft</enum>
+        </property>
+        <property name="text">
+         <string>Colors in lock mode (4)</string>
+        </property>
+        <property name="tristate">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

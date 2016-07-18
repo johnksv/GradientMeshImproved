@@ -76,6 +76,8 @@ private:
     QStandardItemModel *layerModel_;
     void initLayoutContainer();
     void initColorSelector();
+    // 1 for pirmary, 2 for secondary, 3 for tertiary
+    void handleColorButtonClick(int color);
 };
 
 #endif // MAINWINDOW_H
