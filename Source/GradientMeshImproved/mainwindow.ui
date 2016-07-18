@@ -364,6 +364,9 @@
    <property name="text">
     <string>Pick Color</string>
    </property>
+   <property name="shortcut">
+    <string>C</string>
+   </property>
   </action>
   <action name="actionExecuteRender">
    <property name="text">
