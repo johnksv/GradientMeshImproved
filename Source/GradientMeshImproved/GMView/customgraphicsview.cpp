@@ -1,27 +1,40 @@
 #include "customgraphicsview.h"
 #include <QWheelEvent>
+#include <QtMath>
+#include <QDateTime>
 #include <QtDebug>
 CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
     setMouseTracking(true);
     setRenderHints(QPainter::Antialiasing);
+    setDragMode(QGraphicsView::RubberBandDrag);
+    //Zoom in on mouse
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
 }
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 {
-    if(event->modifiers() == Qt::AltModifier ||
-           event->modifiers() == Qt::ControlModifier ){
+    //Move scrollbars with alt and ctrl
+    if(event->modifiers() != Qt::ControlModifier ){
         QGraphicsView::wheelEvent(event);
         return;
     }
-    //Zoom in on mouse
-    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
-    if(event->delta()>0){
-        scale(scaleFactor, scaleFactor);
-    }else{
-        //Zoom out
-        scale(1/scaleFactor, 1/scaleFactor);
+    event->accept();
+    if (event->delta() > 0)
+    {
+        if(zoomValue_ <= 300) zoomValue_ += 5;
     }
+    else
+    {
+        if(zoomValue_  >= 5.1)zoomValue_ -= 5;
+    }
+
+    qreal scale = qExp(zoomValue_ / 150);
+
+    QMatrix matrix;
+    matrix.scale(scale, scale);
+    setMatrix(matrix);
 }

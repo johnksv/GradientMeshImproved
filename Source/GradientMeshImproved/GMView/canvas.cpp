@@ -59,7 +59,8 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         meshHandlers_.at(currLayerIndex_)->importGuiMesh(location);
         vector<QPointF> vertices = meshHandlers_.at(currLayerIndex_)->vertices();
         for(QPointF point : vertices){
-            CanvasItemPoint *item = new CanvasItemPoint(point);
+            CanvasItemPoint *item = new CanvasItemPoint();
+            item->setPos(point);
             addItemPoint(item);
         }
     }
@@ -126,7 +127,8 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
     bool collide = false;
     int collideWithIndex;
 
-    CanvasItemPoint *itemPoint = new CanvasItemPoint(mouseEvent->scenePos(), pointColor_);
+    CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
+    itemPoint->setPos(mouseEvent->scenePos());
 
     for(int i = 0; i < layers_.at(currLayerIndex_)->points.size();i++)
     {
@@ -142,7 +144,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandlers_.at(currLayerIndex_)->addVertexFromPoint(itemPoint->position(), pointColor_);
+            meshHandlers_.at(currLayerIndex_)->addVertexFromPoint(itemPoint->pos(), pointColor_);
         }
 
         if(drawMode_ ==drawModeCanvas::vertAndEdge)

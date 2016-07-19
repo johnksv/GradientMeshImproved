@@ -8,12 +8,11 @@ class CanvasItemPoint : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    CanvasItemPoint(QPointF pos = QPointF(0,0),QColor color = QColor(Qt::black), QGraphicsItem *parent = Q_NULLPTR);
+    CanvasItemPoint(QColor color = QColor(Qt::black), QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
     //TODO: read on  item and sceen coordinates;
-    QPointF position();
     QColor color();
     double weight();
 
@@ -26,7 +25,6 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
-    QPointF  position_, oldMousePos_;
     QColor color_;
     double weight_;
     int radius_ = 5;

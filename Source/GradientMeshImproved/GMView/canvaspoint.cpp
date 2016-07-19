@@ -12,16 +12,17 @@
 #include "canvas.h"
 
 
-CanvasItemPoint::CanvasItemPoint(QPointF pos, QColor color, QGraphicsItem *parent):
-    QGraphicsItem(parent), position_(pos), color_(color)
+CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
+    QGraphicsItem(parent), color_(color)
 {
     setAcceptHoverEvents(true);
-    setFlags(ItemIsMovable |ItemIsSelectable |ItemSendsScenePositionChanges );
+    setFlags(ItemIsMovable |ItemIsSelectable);
+
 }
 
 QRectF CanvasItemPoint::boundingRect() const
 {
-    return QRectF(position_.x()-radius_, position_.y()-radius_,radius_*2,radius_*2);
+    return QRectF(-radius_, -radius_,radius_*2,radius_*2);
 }
 
 void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
@@ -39,28 +40,17 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
     }else{
         painter->setOpacity(1);
     }
-    painter->drawEllipse(position_,radius_,radius_);
+    //painter->drawEllipse(boundingRect());
+    painter->drawPath(shape());
 }
 
 QPainterPath CanvasItemPoint::shape() const
 {
     QPainterPath path;
-    path.addEllipse(position_,radius_,radius_);
+    path.addEllipse(boundingRect());
     return path;
 }
 
-QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
-{
-    if(change == ItemScenePositionHasChanged){
-        qDebug() << "CanvasPoint 48:  Item moved";
-    }
-    return QGraphicsItem::itemChange(change, value);
-}
-
-QPointF CanvasItemPoint::position()
-{
-    return position_;
-}
 
 QColor CanvasItemPoint::color()
 {
@@ -79,6 +69,12 @@ void CanvasItemPoint::setRadius(int _radius)
     }else{
         radius_ = _radius;
     }
+}
+
+QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
+{
+    update();
+    return QGraphicsItem::itemChange(change, value);
 }
 
 void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)

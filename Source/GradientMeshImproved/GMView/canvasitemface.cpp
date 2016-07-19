@@ -18,7 +18,7 @@ QRectF CanvasItemFace::boundingRect() const
 
     for(CanvasItemPoint *item : pointsInFace_)
     {
-        QPointF pos = item->position();
+        QPointF pos = item->pos();
         if(pos.x() < left)
         {
             left = pos.x();
@@ -45,7 +45,7 @@ void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem*, Q
     QPolygonF temp;
     for(CanvasItemPoint *item : pointsInFace_)
     {
-        temp.push_back(item->position());
+        temp.push_back(item->pos());
     }
     painter->drawPolygon(temp);
 }
