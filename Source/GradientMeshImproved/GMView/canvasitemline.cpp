@@ -5,6 +5,11 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
     setZValue(1);
+    //setFlags(ItemIsSelectable);
+}
 
-    // setFlags(ItemIsSelectable);
+void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    setLine(QLineF(startPoint->pos(), endPoint->pos()));
+    QGraphicsLineItem::paint(painter,option,widget);
 }

@@ -16,7 +16,7 @@ CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
     QGraphicsItem(parent), color_(color)
 {
     setAcceptHoverEvents(true);
-    setFlags(ItemIsMovable |ItemIsSelectable);
+    setFlags(ItemIsMovable | ItemIsSelectable);
 
 }
 
@@ -40,8 +40,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
     }else{
         painter->setOpacity(1);
     }
-    //painter->drawEllipse(boundingRect());
-    painter->drawPath(shape());
+    painter->drawEllipse(boundingRect());
 }
 
 QPainterPath CanvasItemPoint::shape() const

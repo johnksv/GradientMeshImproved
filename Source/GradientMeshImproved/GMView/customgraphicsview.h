@@ -12,7 +12,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    qreal zoomValue_ = 200;
+    qreal zoomValue_ = 0;
 };
 
 #endif // CUSTOMGRAPHICSVIEW_H
