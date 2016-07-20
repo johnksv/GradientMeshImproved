@@ -124,7 +124,6 @@ void MeshHandler::setVertexPoint(int index, const QPointF &position)
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
     guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x,y, .0f));
-    qDebug() << "updated Point position" << position;
 }
 
 bool MeshHandler::makeFace()
