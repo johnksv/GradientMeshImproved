@@ -34,8 +34,11 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 
     // draw our two meshes (mesh creation should not happen here of course...)
     //Causes Second Chance Assertion Failed: File C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE\vector, Line 1236. probably something wrong with .off-file
-//    setUpSubdMeshFile();
-//    subdMesh->draw(context);
+    //Error on line (ca) 8150 with: vertex->my_facets[0]
+    //Call stack: setUpSubdMeshFile -> LoadV2 -> build() -> CatmullClarkLimit()
+    // vertex->my_valency equals 0
+    //setUpSubdMeshFile();
+    //subdMesh->draw(context);
 
     setUpSubdMeshStream();
     subdMesh->draw(context);
