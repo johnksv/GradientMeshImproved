@@ -229,14 +229,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 void GMCanvas::makeFace()
 {
     qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace();
-    CanvasItemFace *face = new CanvasItemFace();
-    for(CanvasItemPoint *item : layers_.at(currLayerIndex_)->points_selected){
-        face->addCanvasPoint(item);
-    }
-    layers_.at(currLayerIndex_)->addToGroup(face);
-    layers_.at(currLayerIndex_)->faces.push_back(face);
-    layers_.at(currLayerIndex_)->points_selected.clear();
-    update();
+
 }
 
 
