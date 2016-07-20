@@ -13,3 +13,15 @@ void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
     QGraphicsLineItem::paint(painter,option,widget);
 }
+
+bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
+{
+    if((*this).startPoint == lineA.startPoint)
+    {
+        if((*this).endPoint == lineA.endPoint)
+        {
+            return true;
+        }
+    }
+    return false;
+}

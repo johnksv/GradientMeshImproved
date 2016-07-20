@@ -59,6 +59,7 @@ private:
     vector<CanvasItemGroup*> layers_;
     GMOpenGLWidget *opengl_;
     QColor pointColor_;
+    CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
 
     //Referces to the index in the layers vector. 0 index is first element
     unsigned char currLayerIndex_ = 0;
@@ -75,7 +76,7 @@ private:
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point
      */
-    void handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent);
+    void handleMousePressVert(QGraphicsSceneMouseEvent *event);
     void addItemPoint(CanvasItemPoint *item);
     void makeFace();
 };

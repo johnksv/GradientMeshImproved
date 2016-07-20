@@ -131,13 +131,13 @@ void GMCanvas::setDrawColorVertex(QColor pointColor)
     pointColor_ = pointColor;
 }
 
-void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
+void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
 {
     bool collide = false;
     int collideWithIndex;
 
     CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
-    itemPoint->setPos(mouseEvent->scenePos());
+    itemPoint->setPos(event->scenePos());
 
     for(int i = 0; i < layers_.at(currLayerIndex_)->points.size();i++)
     {
@@ -148,7 +148,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         }
     }
 
-    if(mouseEvent->button() == Qt::LeftButton)
+    if(event->button() == Qt::LeftButton)
     {
         if(!collide)
         {
@@ -156,54 +156,66 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
             meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
         }
 
-        if(drawMode_ ==drawModeCanvas::vertAndEdge)
-        {
-            CanvasItemLine *line;
-            CanvasItemPoint* endPoint;
-            CanvasItemPoint* startPoint;
+       if(lineStartPoint_ == nullptr)
+       {
+           if(collide)
+           {
+                lineStartPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
+           }
+           else
+           {
+               lineStartPoint_ = itemPoint;
+           }
+       }
+       else
+       {
+           if(collide)
+           {
+                lineEndPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
+           }
+           else
+           {
+               lineEndPoint_ = itemPoint;
+           }
+       }
 
-            if(collide)
-            {
-                layers_.at(currLayerIndex_)->points_selected.push_back(layers_.at(currLayerIndex_)->points.at(collideWithIndex));
+       if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr)
+       {
+           CanvasItemLine *line = new CanvasItemLine(lineStartPoint_, lineEndPoint_);
+           bool exists = false;
+           int size = layers_.at(currLayerIndex_)->lines.size();
+           for(int i = 0; i < size; i++ )
+           {
+               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line )
+               {
+                    exists = true;
+                    i = size;
+               }
+           }
+           if(exists)
+           {
+              delete line;
+           }
+           else
+           {
+               layers_.at(currLayerIndex_)->addToGroup(line);
+               layers_.at(currLayerIndex_)->lines.push_back(line);
+           }
 
-                if(layers_.at(currLayerIndex_)->points_selected.size()<=1)
-                {
-                    startPoint = layers_.at(currLayerIndex_)->points_selected.at(0);
-                }
-                else
-                {
-                    qDebug() << "Collide";
-                    startPoint = layers_.at(currLayerIndex_)->points_selected.end()[-2];
-                    endPoint = layers_.at(currLayerIndex_)->points_selected.back();
-                }
-            }
-            else
-            {
-                layers_.at(currLayerIndex_)->points_selected.push_back(layers_.at(currLayerIndex_)->points.back());
-                if(layers_.at(currLayerIndex_)->points_selected.size() > 1)
-                {
-                    startPoint = layers_.at(currLayerIndex_)->points_selected.end()[-2];
-                    endPoint = layers_.at(currLayerIndex_)->points_selected.back();
-                }
-            }
-            if(layers_.at(currLayerIndex_)->points_selected.size() > 1)
-            {
-                //TODO: Map lines, (start end) so no doubles
-                //Check with discontinutiy edges (how to handle them)
-                line = new CanvasItemLine(startPoint,endPoint);
-                layers_.at(currLayerIndex_)->addToGroup(line);
-                layers_.at(currLayerIndex_)->lines.push_back(line);
-            }
-        }
+           lineStartPoint_ = lineEndPoint_;
+           lineEndPoint_ = nullptr;
+       }
+
+        return;
     }
-    else if(mouseEvent->button() == Qt::RightButton)
+    else if(event->button() == Qt::RightButton)
     {
         if(!collide)
         {
             makeFace();
         }
-        delete itemPoint;
     }
+    delete itemPoint;
 }
 
 void GMCanvas::addItemPoint(CanvasItemPoint *item)
