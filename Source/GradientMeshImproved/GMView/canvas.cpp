@@ -238,7 +238,8 @@ vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
 
 void GMCanvas::setActiveLayer(unsigned char index)
 {
-    makeFace();
+    if(currLayerIndex_ < layers_.size()) makeFace();
+
     if(index < 0 || index >= layers_.size())
     {
         currLayerIndex_ = 0;
@@ -272,7 +273,6 @@ void GMCanvas::deleteLayer(int index)
 
         delete meshHandlers_.at(index);
         meshHandlers_.erase(meshHandlers_.begin()+index);
-
         setActiveLayer(layers_.size()-1);
     }
 }
