@@ -39,9 +39,9 @@ public:
 
     /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
      * This function is ment to be called from CanvasItemPoint methods.
-     * \param mode the value to update. 0 for color, 1 for weight.
+     * \param mode the value to update. 0 for position, 1 for color, 2 for weight.
      */
-    void updateVertexFromPoint(CanvasItemPoint *item,short mode);
+    void updateVertexFromPoint(CanvasItemPoint &item, short mode);
 
     void drawOpenGlOnCanvas(bool drawOnCanvas);
 

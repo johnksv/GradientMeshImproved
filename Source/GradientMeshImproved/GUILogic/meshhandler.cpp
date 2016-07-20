@@ -61,7 +61,7 @@ vector<QPointF> MeshHandler::vertices()
     return result;
 }
 
-QVector3D MeshHandler::color(int index)
+QVector3D MeshHandler::vertexColor(int index)
 {
     if( index <0 || index > vertexHandlers.size())
     {
@@ -72,7 +72,7 @@ QVector3D MeshHandler::color(int index)
 
 }
 
-void MeshHandler::setColor(int index, QColor color)
+void MeshHandler::setVertexColor(int index, QColor color)
 {
     if( index <0 || index > vertexHandlers.size())
     {
@@ -83,7 +83,7 @@ void MeshHandler::setColor(int index, QColor color)
     guiMesh.data(vertexHandlers[index]).setColor(color_);
 }
 
-double MeshHandler::weight(int index)
+double MeshHandler::vertexWeight(int index)
 {
     if( index <0 || index > vertexHandlers.size())
     {
@@ -93,7 +93,7 @@ double MeshHandler::weight(int index)
     return guiMesh.data(vertexHandlers[index]).weight();
 }
 
-bool MeshHandler::setWeight(int index, double weight)
+bool MeshHandler::setVertexWeight(int index, double weight)
 {
     if( index <0 || index > vertexHandlers.size()){
         throw "Fatal error";
@@ -103,14 +103,14 @@ bool MeshHandler::setWeight(int index, double weight)
     return true;
 }
 
-void MeshHandler::addVertexFromPoint(QPointF& position, QColor color)
+void MeshHandler::addVertex(const QPointF &position, const QColor color)
 {
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
     vertexHandle handler= guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
     vertexHandlers.push_back(handler);
 
-    setColor(vertexHandlers.size()-1, color);
+    setVertexColor(vertexHandlers.size()-1, color);
 }
 
 void MeshHandler::removeVertex(int index)
@@ -119,7 +119,13 @@ void MeshHandler::removeVertex(int index)
     guiMesh.delete_vertex(handle);
 }
 
-
+void MeshHandler::setVertexPoint(int index, const QPointF &position)
+{
+    float x = static_cast <float> (position.x());
+    float y = static_cast <float> (position.y());
+    guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x,y, .0f));
+    qDebug() << "updated Point position" << position;
+}
 
 bool MeshHandler::makeFace()
 {

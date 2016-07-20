@@ -86,23 +86,32 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     QGraphicsScene::mousePressEvent(mouseEvent);
 }
 
-void GMCanvas::updateVertexFromPoint(CanvasItemPoint *item, short mode)
+void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
 {
     int index;
     for (int i =0; i < layers_.at(currLayerIndex_)->points.size(); i++)
     {
-        if(layers_.at(currLayerIndex_)->points.at(i) == item){
+        if(layers_.at(currLayerIndex_)->points.at(i) == &item){
             index = i;
             i = layers_.at(currLayerIndex_)->points.size();
         }
     }
+
     if(mode == 0)
     {
-        meshHandlers_.at(currLayerIndex_)->setColor(index,item->color());
+        meshHandlers_.at(currLayerIndex_)->setVertexPoint(index, item.pos());
     }
     else if(mode == 1)
     {
-        meshHandlers_.at(currLayerIndex_)->setWeight(index,item->weight());
+        meshHandlers_.at(currLayerIndex_)->setVertexColor(index,item.color());
+    }
+    else if(mode == 2)
+    {
+        meshHandlers_.at(currLayerIndex_)->setVertexWeight(index,item.weight());
+    }
+    else
+    {
+        qDebug() << "Canvas.cpp UpdateVertexFromPoint: Illegal mode. No changes made.";
     }
 }
 
@@ -144,7 +153,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *mouseEvent)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandlers_.at(currLayerIndex_)->addVertexFromPoint(itemPoint->pos(), pointColor_);
+            meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
         }
 
         if(drawMode_ ==drawModeCanvas::vertAndEdge)

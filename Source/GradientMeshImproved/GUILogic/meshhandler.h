@@ -36,17 +36,18 @@ public:
      * \param context the OpenGL context that is being used to draw
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
-    void addVertexFromPoint(QPointF& position, QColor color = QColor(0,0,0));
-    void removeVertex(int index);
     /*! Get verticies from the current guiMesh object.
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
      *
      */
     vector<QPointF> vertices();
-    QVector3D color(int index);
-    void setColor(int index, QColor color);
-    double weight(int index);
-    bool setWeight(int index, double weight);
+    void addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
+    void removeVertex(int index);
+    void setVertexPoint(int index, const QPointF& position);
+    QVector3D vertexColor(int index);
+    void setVertexColor(int index, QColor vertexColor);
+    double vertexWeight(int index);
+    bool setVertexWeight(int index, double vertexWeight);
     bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);

@@ -16,7 +16,7 @@ CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
     QGraphicsItem(parent), color_(color)
 {
     setAcceptHoverEvents(true);
-    setFlags(ItemIsMovable | ItemIsSelectable);
+    setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
 
 }
 
@@ -72,7 +72,11 @@ void CanvasItemPoint::setRadius(int _radius)
 
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
-    update();
+    if(change == ItemScenePositionHasChanged)
+    {
+        GMCanvas* parent = static_cast <GMCanvas*> (scene());
+        parent->updateVertexFromPoint(*this, 0);
+    }
     return QGraphicsItem::itemChange(change, value);
 }
 
@@ -98,6 +102,8 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QMenu menu;
     QAction *chooseColorAction = menu.addAction("Choose color");
     QAction *setWeightAction = menu.addAction("Set weight");
+    menu.addSeparator();
+    QAction *deletePointAction = menu.addAction("Delete");
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == chooseColorAction)
     {
@@ -110,11 +116,15 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         QInputDialog *weightDialog = new QInputDialog();
         weightDialog->setInputMode(QInputDialog::DoubleInput);
-        weightDialog->setDoubleMaximum(5);
-        weightDialog->setLabelText("Enter a value (0.00 - 5.00):");
+        weightDialog->setDoubleMaximum(1);
+        weightDialog->setLabelText("Enter a value (0.00 - 1.00):");
         weightDialog->open();
 
         QObject::connect(weightDialog, SIGNAL(doubleValueSelected(double)), this, SLOT(setWeight(double)));
+    }
+    else if(selectedAction == deletePointAction)
+    {
+        //TODO Implement delete point
     }
 }
 
@@ -122,7 +132,7 @@ void CanvasItemPoint::setColor(QColor color)
 {
     this->color_ = color;
     GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(this, 0);
+    parent->updateVertexFromPoint(*this, 1);
     update(boundingRect());
 }
 
@@ -130,6 +140,5 @@ void CanvasItemPoint::setWeight(double weight)
 {
     this->weight_ = weight;
     GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(this, 1);
-
+    parent->updateVertexFromPoint(*this, 2);
 }
