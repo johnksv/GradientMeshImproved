@@ -13,6 +13,7 @@ class CanvasItemGroup : public QGraphicsItem, public QStandardItem
 public:
     CanvasItemGroup(QString layername, QGraphicsItem *parent = Q_NULLPTR);
     QRectF boundingRect() const override;
+    QPainterPath shape() const override;
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override;
     void addToGroup(QGraphicsItem *item);
     void removeFromGroup(QGraphicsItem *item);

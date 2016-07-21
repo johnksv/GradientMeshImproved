@@ -1,4 +1,5 @@
 #include "canvasitemgroup.h"
+#include <QPainter>
 #include <QDebug>
 
 CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
@@ -14,7 +15,19 @@ QRectF CanvasItemGroup::boundingRect() const
     return childrenBoundingRect();
 }
 
-void CanvasItemGroup::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
+QPainterPath CanvasItemGroup::shape() const
+{
+    QPainterPath result;
+    QPolygon poly;
+    for (int i = 0; i < points.size(); i++)
+    {
+        poly << points.at(i)->pos().toPoint();
+    }
+    result.addPolygon(poly);
+    return result;
+}
+
+void CanvasItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 }
 
