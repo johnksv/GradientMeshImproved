@@ -26,9 +26,7 @@ namespace GUILogic {
  *
  * Version: 0 (class in development)
  */
-typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
-typedef OpnMesh::VertexHandle OpnMeshVertHandle;
-typedef OpnMesh::EdgeHandle OpnMeshEdgeHandle;
+
 class MeshHandler
 {
 public:
@@ -43,21 +41,14 @@ public:
      *
      */
     vector<QPointF> vertices();
-    OpnMeshVertHandle addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
-    void removeVertex(OpnMeshVertHandle vertHandle);
-    void setVertexPoint(OpnMeshVertHandle vertHandle, const QPointF& position);
-    QVector3D vertexColor(OpnMeshVertHandle vertHandle);
-    void setVertexColor(OpnMeshVertHandle vertHandle, QColor vertexColor);
-    double vertexWeight(OpnMeshVertHandle vertHandle);
-    void setVertexWeight(OpnMeshVertHandle vertHandle, double vertexWeight);
-
-    OpnMeshEdgeHandle addEdge(OpnMeshVertHandle startVertex, OpnMeshVertHandle endVertex);
-	void addFace(OpnMeshVertHandle startVertex);
+    void addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
+    void removeVertex(int index);
+    void setVertexPoint(int index, const QPointF& position);
+    QVector3D vertexColor(int index);
+    void setVertexColor(int index, QColor vertexColor);
+    double vertexWeight(int index);
+    bool setVertexWeight(int index, double vertexWeight);
     bool makeFace();
-
-    //
-    void setEdgeDiscontinuity(OpnMeshEdgeHandle edge);
-
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 

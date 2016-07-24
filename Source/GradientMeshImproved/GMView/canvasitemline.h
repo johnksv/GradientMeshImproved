@@ -12,12 +12,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     bool operator ==(const CanvasItemLine &lineA);
 
-    GUILogic::OpnMeshEdgeHandle edgeHandle();
-    void setEdgeHandle(GUILogic::OpnMeshEdgeHandle edgeHandle);
-
 private:
-    CanvasItemPoint *startPoint_, *endPoint_;
-    GUILogic::OpnMeshEdgeHandle edge_;
+    CanvasItemPoint *startPoint, *endPoint;
 };
 
 #endif // CANVASITEMLINE_H

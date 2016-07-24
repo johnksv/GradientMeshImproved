@@ -12,14 +12,11 @@ public:
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
-
+    //TODO: read on  item and sceen coordinates;
     QColor color();
     double weight();
 
     void setRadius(int);
-    GUILogic::OpnMeshVertHandle vertexHandle();
-    void setVertexHandle(GUILogic::OpnMeshVertHandle vertexHandle);
-
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -32,7 +29,6 @@ private:
     double weight_;
     int radius_ = 5;
     bool hovered_ = false;
-    GUILogic::OpnMeshVertHandle vertexHandle_;
 
 public slots:
     void setColor(QColor color);

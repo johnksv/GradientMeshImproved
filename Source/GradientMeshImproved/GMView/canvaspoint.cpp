@@ -70,16 +70,6 @@ void CanvasItemPoint::setRadius(int _radius)
     }
 }
 
-GUILogic::OpnMeshVertHandle CanvasItemPoint::vertexHandle()
-{
-    return vertexHandle_;
-}
-
-void CanvasItemPoint::setVertexHandle(GUILogic::OpnMeshVertHandle vertexHandle)
-{
-    vertexHandle_ = vertexHandle;
-}
-
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if(change == ItemScenePositionHasChanged)

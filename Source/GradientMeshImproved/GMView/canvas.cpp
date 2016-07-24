@@ -40,10 +40,9 @@ void GMCanvas::clearAll()
 
     for(int i = 0; i < layers_.at(currLayerIndex_)->points.size(); i++)
     {
-        CanvasItemPoint *point = layers_.at(currLayerIndex_)->points.at(i);
-        removeItem(point);
-        meshHandlers_.at(currLayerIndex_)->removeVertex(point->vertexHandle());
-        delete  point;
+        removeItem( layers_.at(currLayerIndex_)->points.at(i));
+        meshHandlers_.at(currLayerIndex_)->removeVertex(i);
+        delete  layers_.at(currLayerIndex_)->points.at(i);
     }
      layers_.at(currLayerIndex_)->points.clear();
      layers_.at(currLayerIndex_)->points_selected.clear();
@@ -89,17 +88,26 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
 {
+    int index;
+    for (int i =0; i < layers_.at(currLayerIndex_)->points.size(); i++)
+    {
+        if(layers_.at(currLayerIndex_)->points.at(i) == &item){
+            index = i;
+            i = layers_.at(currLayerIndex_)->points.size();
+        }
+    }
+
     if(mode == 0)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexPoint(item.vertexHandle(), item.pos());
+        meshHandlers_.at(currLayerIndex_)->setVertexPoint(index, item.pos());
     }
     else if(mode == 1)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexColor(item.vertexHandle(),item.color());
+        meshHandlers_.at(currLayerIndex_)->setVertexColor(index,item.color());
     }
     else if(mode == 2)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexWeight(item.vertexHandle(),item.weight());
+        meshHandlers_.at(currLayerIndex_)->setVertexWeight(index,item.weight());
     }
     else
     {
@@ -145,7 +153,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            itemPoint->setVertexHandle(meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_));
+            meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
         }
 
        if(lineStartPoint_ == nullptr)
@@ -192,7 +200,6 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
            {
                layers_.at(currLayerIndex_)->addToGroup(line);
                layers_.at(currLayerIndex_)->lines.push_back(line);
-               line->setEdgeHandle(meshHandlers()->at(currLayerIndex_)->addEdge(lineStartPoint_->vertexHandle(), lineEndPoint_->vertexHandle()));
            }
 
            lineStartPoint_ = lineEndPoint_;
@@ -205,7 +212,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
     {
         if(!collide)
         {
-            addFace();
+            makeFace();
         }
     }
     delete itemPoint;
@@ -219,9 +226,9 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
     update(item->boundingRect());
 }
 
-void GMCanvas::addFace()
+void GMCanvas::makeFace()
 {
-	meshHandlers_.at(currLayerIndex_)->addFace(lineStartPoint_->vertexHandle());
+    qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace();
 
 }
 
@@ -245,7 +252,7 @@ vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
 
 void GMCanvas::setActiveLayer(unsigned char index)
 {
-    if(currLayerIndex_ < layers_.size()) addFace();
+    if(currLayerIndex_ < layers_.size()) makeFace();
 
     if(index < 0 || index >= layers_.size())
     {

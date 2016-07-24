@@ -9,12 +9,15 @@
 
 using namespace GUILogic;
 
+typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
+typedef OpnMesh::VertexHandle vertexHandle;
 typedef subdivMesh::Mesh SbdvMesh;
 
 
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
 {
+
 }
 
 MeshHandler::~MeshHandler()
@@ -36,6 +39,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     // vertex->my_valency equals 0
     //setUpSubdMeshFile();
     //subdMesh->draw(context);
+
     setUpSubdMeshStream();
     subdMesh->draw(context);
 }
@@ -57,88 +61,79 @@ vector<QPointF> MeshHandler::vertices()
     return result;
 }
 
-QVector3D MeshHandler::vertexColor(OpnMeshVertHandle vertHandle)
+QVector3D MeshHandler::vertexColor(int index)
 {
-    return guiMesh.data(vertHandle).color();
+    if( index <0 || index > vertexHandlers.size())
+    {
+        return QVector3D();
+    }
+
+    return guiMesh.data(vertexHandlers[index]).color();
 
 }
 
-void MeshHandler::setVertexColor(OpnMeshVertHandle vertHandle, QColor color)
+void MeshHandler::setVertexColor(int index, QColor color)
 {
+    if( index <0 || index > vertexHandlers.size())
+    {
+        throw "Index out of bounds";
+    }
+
     QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
-    guiMesh.data(vertHandle).setColor(color_);
+    guiMesh.data(vertexHandlers[index]).setColor(color_);
 }
 
-double MeshHandler::vertexWeight(OpnMeshVertHandle vertHandle)
+double MeshHandler::vertexWeight(int index)
 {
-    return guiMesh.data(vertHandle).weight();
+    if( index <0 || index > vertexHandlers.size())
+    {
+        throw "Fatal error";
+    }
+
+    return guiMesh.data(vertexHandlers[index]).weight();
 }
 
-void MeshHandler::setVertexWeight(OpnMeshVertHandle vertHandle, double weight)
+bool MeshHandler::setVertexWeight(int index, double weight)
 {
-    guiMesh.data(vertHandle).setWeight(weight);
+    if( index <0 || index > vertexHandlers.size()){
+        throw "Fatal error";
+    }
+
+    guiMesh.data(vertexHandlers[index]).setWeight(weight);
+    return true;
 }
 
-OpnMeshEdgeHandle MeshHandler::addEdge(OpnMeshVertHandle startVertex, OpnMeshVertHandle endVertex)
-{
-    OpnMesh::Point startPoint = guiMesh.point(startVertex);
-    OpnMesh::Point endPoint = guiMesh.point(endVertex);
-
-    //TODO: Direction of edge, so it matches face orientation
-    OpnMesh::HalfedgeHandle heh = guiMesh.new_edge(startVertex,endVertex);
-
-    return guiMesh.edge_handle(heh);
-}
-
-void MeshHandler::addFace(OpnMeshVertHandle startVertex)
-{
-	//TODO: Implement
-//	vector<OpnMeshVertHandle> vertexHandlers;
-//	vertexHandlers.push_back(startVertex);
-
-//	OpnMesh::HalfedgeHandle heh_start = guiMesh.opposite_halfedge_handle(guiMesh.halfedge_handle(startVertex));
-//	OpnMesh::HalfedgeHandle heh = heh_start;
-//	while (heh != heh_start)
-//	{
-//		vertexHandlers.push_back(guiMesh.to_vertex_handle(heh));
-//		heh = guiMesh.next_halfedge_handle(heh);
-//	}
-	
-	
-//	OpnMesh::FaceHandle fh = guiMesh.add_face(vertexHandlers);
-}
-
-OpnMeshVertHandle MeshHandler::addVertex(const QPointF &position, const QColor color)
+void MeshHandler::addVertex(const QPointF &position, const QColor color)
 {
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
-    OpnMeshVertHandle handler= guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
-    setVertexColor(handler, color);
+    vertexHandle handler= guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
     vertexHandlers.push_back(handler);
-    return handler;
+
+    setVertexColor(vertexHandlers.size()-1, color);
 }
 
-void MeshHandler::removeVertex(OpnMeshVertHandle vertHandle)
+void MeshHandler::removeVertex(int index)
 {
-    guiMesh.delete_vertex(vertHandle);
+    vertexHandle handle = vertexHandlers.at(index);
+    guiMesh.delete_vertex(handle);
 }
 
-void MeshHandler::setVertexPoint(OpnMeshVertHandle vertHandle, const QPointF &position)
+void MeshHandler::setVertexPoint(int index, const QPointF &position)
 {
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
-    guiMesh.set_point(vertHandle, OpnMesh::Point(x,y, .0f));
+    guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x,y, .0f));
 }
 
 bool MeshHandler::makeFace()
 {
-    if(guiMesh.n_vertices() <=2){
+    if(vertexHandlers.size()<=2){
         return false;
     }
     try
     {
-        //TODO Reimplement make face
-        //faceHandlers.push_back(guiMesh.add_face(vertexHandlers));
+        faceHandlers.push_back(guiMesh.add_face(vertexHandlers));
     }catch(exception& x){
         qDebug() << x.what();
     }
@@ -278,11 +273,6 @@ void MeshHandler::prepareGuiMeshForSubd()
     qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2(tempString.c_str());
     subdMesh->build(); // build mesh topology from data
     subdivide();
-}
-
-void GUILogic::MeshHandler::setEdgeDiscontinuity(OpnMeshEdgeHandle edge)
-{
-	//TODO: Make new small face, so interpolation will be correct.
 }
 
 bool MeshHandler::saveGuiMeshOff(QString location)
