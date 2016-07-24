@@ -61,6 +61,16 @@ double CanvasItemPoint::weight()
     return weight_;
 }
 
+int CanvasItemPoint::vertexHandleIdx()
+{
+	return vertexHandleIdx_;
+}
+
+void CanvasItemPoint::setVertexHandleIdx(int idx)
+{
+	vertexHandleIdx_ = idx;
+}
+
 void CanvasItemPoint::setRadius(int _radius)
 {
     if(_radius<=0){

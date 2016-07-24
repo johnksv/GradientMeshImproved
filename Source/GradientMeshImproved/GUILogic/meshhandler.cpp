@@ -61,69 +61,56 @@ vector<QPointF> MeshHandler::vertices()
     return result;
 }
 
-QVector3D MeshHandler::vertexColor(int index)
+int MeshHandler::addVertex(const QPointF &position, const QColor color)
 {
-    if( index <0 || index > vertexHandlers.size())
-    {
-        return QVector3D();
-    }
+	float x = static_cast <float> (position.x());
+	float y = static_cast <float> (position.y());
+	vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
+	vertexHandlers.push_back(handler);
+	setVertexColor(vertexHandlers.size() - 1, color);
+	return handler.idx();
+}
 
-    return guiMesh.data(vertexHandlers[index]).color();
+void MeshHandler::removeVertex(int idx)
+{
+	int index = findVertexHandler(idx);
+	vertexHandle handle = vertexHandlers.at(index);
+	guiMesh.delete_vertex(handle);
 
 }
 
-void MeshHandler::setVertexColor(int index, QColor color)
+void MeshHandler::setVertexPoint(int idx, const QPointF &position)
 {
-    if( index <0 || index > vertexHandlers.size())
-    {
-        throw "Index out of bounds";
-    }
+		float x = static_cast <float> (position.x());
+		float y = static_cast <float> (position.y());
+		int index = findVertexHandler(idx);
+		guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x, y, .0f));
+}
 
+QVector3D MeshHandler::vertexColor(int idx)
+{
+	int index = findVertexHandler(idx);
+    return guiMesh.data(vertexHandlers.at(index)).color();
+}
+
+void MeshHandler::setVertexColor(int idx, QColor color)
+{
+	int index = findVertexHandler(idx);
     QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
-    guiMesh.data(vertexHandlers[index]).setColor(color_);
+    guiMesh.data(vertexHandlers.at(index)).setColor(color_);
 }
 
-double MeshHandler::vertexWeight(int index)
+double MeshHandler::vertexWeight(int idx)
 {
-    if( index <0 || index > vertexHandlers.size())
-    {
-        throw "Fatal error";
-    }
-
-    return guiMesh.data(vertexHandlers[index]).weight();
+	int index = findVertexHandler(idx);
+    return guiMesh.data(vertexHandlers.at(index)).weight();
 }
 
-bool MeshHandler::setVertexWeight(int index, double weight)
+bool MeshHandler::setVertexWeight(int idx, double weight)
 {
-    if( index <0 || index > vertexHandlers.size()){
-        throw "Fatal error";
-    }
-
-    guiMesh.data(vertexHandlers[index]).setWeight(weight);
+	int index = findVertexHandler(idx);
+    guiMesh.data(vertexHandlers.at(index)).setWeight(weight);
     return true;
-}
-
-void MeshHandler::addVertex(const QPointF &position, const QColor color)
-{
-    float x = static_cast <float> (position.x());
-    float y = static_cast <float> (position.y());
-    vertexHandle handler= guiMesh.add_vertex(OpnMesh::Point(x,y,.0f));
-    vertexHandlers.push_back(handler);
-
-    setVertexColor(vertexHandlers.size()-1, color);
-}
-
-void MeshHandler::removeVertex(int index)
-{
-    vertexHandle handle = vertexHandlers.at(index);
-    guiMesh.delete_vertex(handle);
-}
-
-void MeshHandler::setVertexPoint(int index, const QPointF &position)
-{
-    float x = static_cast <float> (position.x());
-    float y = static_cast <float> (position.y());
-    guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x,y, .0f));
 }
 
 bool MeshHandler::makeFace()
@@ -144,6 +131,30 @@ bool MeshHandler::makeFace()
 /********************************************
  * HELPER METHODS
 ********************************************/
+
+int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
+{
+	for (int i = 0; i < vertexHandlers.size(); i++)
+	{
+		if (vertexHandlers.at(i).idx() == idxToFind)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+int GUILogic::MeshHandler::findEdgeHandler(int idxToFind)
+{
+    for (int i = 0; i < edgeHandlers.size(); i++)
+    {
+        if (edgeHandlers.at(i).idx() == idxToFind)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
 
 // Subdivide mesh for rendering
 // using method of Lieng et al.
@@ -254,7 +265,6 @@ void MeshHandler::prepareGuiMeshForSubd()
                 {
                     tempString += to_string(i);
                     tempString += " ";
-                    qDebug()<<"index: " << i;
                     i = vertexHandlers.size();
                 }
             }

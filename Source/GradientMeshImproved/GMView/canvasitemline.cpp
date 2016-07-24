@@ -25,3 +25,13 @@ bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
     }
     return false;
 }
+
+int CanvasItemLine::edgeHandleIdx()
+{
+    return edgeHandleIdx_;
+}
+
+void CanvasItemLine::setEdgeHandleIdx(int idx)
+{
+    edgeHandleIdx_ = idx;
+}

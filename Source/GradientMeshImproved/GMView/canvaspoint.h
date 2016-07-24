@@ -16,6 +16,9 @@ public:
     QColor color();
     double weight();
 
+	int vertexHandleIdx();
+	void setVertexHandleIdx(int idx);
+
     void setRadius(int);
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
@@ -29,6 +32,7 @@ private:
     double weight_;
     int radius_ = 5;
     bool hovered_ = false;
+	int vertexHandleIdx_;
 
 public slots:
     void setColor(QColor color);

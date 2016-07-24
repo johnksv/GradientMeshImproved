@@ -153,7 +153,8 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
         if(!collide)
         {
             addItemPoint(itemPoint);
-            meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
+            int vertexHandleIdx = meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
+			itemPoint->setVertexHandleIdx(vertexHandleIdx);
         }
 
        if(lineStartPoint_ == nullptr)
@@ -228,8 +229,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 
 void GMCanvas::makeFace()
 {
-    qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace();
-
+    qDebug() << "TODO: Reimplement makeFace";
 }
 
 

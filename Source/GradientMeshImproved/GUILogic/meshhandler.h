@@ -41,13 +41,13 @@ public:
      *
      */
     vector<QPointF> vertices();
-    void addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
-    void removeVertex(int index);
-    void setVertexPoint(int index, const QPointF& position);
-    QVector3D vertexColor(int index);
-    void setVertexColor(int index, QColor vertexColor);
-    double vertexWeight(int index);
-    bool setVertexWeight(int index, double vertexWeight);
+    int addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
+    void removeVertex(int idx);
+    void setVertexPoint(int idx, const QPointF& position);
+    QVector3D vertexColor(int idx);
+    void setVertexColor(int idx, QColor vertexColor);
+    double vertexWeight(int idx);
+    bool setVertexWeight(int idx, double vertexWeight);
     bool makeFace();
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
@@ -57,11 +57,19 @@ public:
 private:
     //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
     vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers;
+    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::EdgeHandle> edgeHandlers;
     vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::FaceHandle> faceHandlers;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
+
+	/*	Returns the index (in "vertexHandlers") to the vertexhandler with idx == idxToFind
+	*	If no match is found, -1 is returned (which will lead to an error as it should)
+	*
+	*/
+	int findVertexHandler(int idxToFind);
+    int findEdgeHandler(int idxToFind);
 
     /*METHODS*/
     void subdivide(signed int steps = 3);
