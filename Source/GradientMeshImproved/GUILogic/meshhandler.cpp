@@ -33,12 +33,8 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 
     // draw our two meshes (mesh creation should not happen here of course...)
-    //Causes Second Chance Assertion Failed: File C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\INCLUDE\vector, Line 1236. probably something wrong with .off-file
-    //Error on line (ca) 8150 with: vertex->my_facets[0]
-    //Call stack: setUpSubdMeshFile -> LoadV2 -> build() -> CatmullClarkLimit()
-    // vertex->my_valency equals 0
-    //setUpSubdMeshFile();
-    //subdMesh->draw(context);
+    setUpSubdMeshFile();
+    subdMesh->draw(context);
 
     setUpSubdMeshStream();
     subdMesh->draw(context);
@@ -63,58 +59,59 @@ vector<QPointF> MeshHandler::vertices()
 
 int MeshHandler::addVertex(const QPointF &position, const QColor color)
 {
-	float x = static_cast <float> (position.x());
-	float y = static_cast <float> (position.y());
-	vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
-	vertexHandlers.push_back(handler);
-	setVertexColor(vertexHandlers.size() - 1, color);
-	return handler.idx();
+    float x = static_cast <float> (position.x());
+    float y = static_cast <float> (position.y());
+    vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
+    vertexHandlers.push_back(handler);
+    setVertexColor(vertexHandlers.size() - 1, color);
+    return handler.idx();
 }
 
 void MeshHandler::removeVertex(int idx)
 {
-	int index = findVertexHandler(idx);
-	vertexHandle handle = vertexHandlers.at(index);
-	guiMesh.delete_vertex(handle);
+    int index = findVertexHandler(idx);
+    vertexHandle handle = vertexHandlers.at(index);
+    guiMesh.delete_vertex(handle);
     vertexHandlers.erase(vertexHandlers.begin()+index);
+	guiMesh.garbage_collection();
 }
 
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
 {
-		float x = static_cast <float> (position.x());
-		float y = static_cast <float> (position.y());
-		int index = findVertexHandler(idx);
-		guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x, y, .0f));
+        float x = static_cast <float> (position.x());
+        float y = static_cast <float> (position.y());
+        int index = findVertexHandler(idx);
+        guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x, y, .0f));
 }
 
 QVector3D MeshHandler::vertexColor(int idx)
 {
-	int index = findVertexHandler(idx);
+    int index = findVertexHandler(idx);
     return guiMesh.data(vertexHandlers.at(index)).color();
 }
 
 void MeshHandler::setVertexColor(int idx, QColor color)
 {
-	int index = findVertexHandler(idx);
+    int index = findVertexHandler(idx);
     QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
     guiMesh.data(vertexHandlers.at(index)).setColor(color_);
 }
 
 double MeshHandler::vertexWeight(int idx)
 {
-	int index = findVertexHandler(idx);
+    int index = findVertexHandler(idx);
     return guiMesh.data(vertexHandlers.at(index)).weight();
 }
 
 bool MeshHandler::setVertexWeight(int idx, double weight)
 {
-	int index = findVertexHandler(idx);
+    int index = findVertexHandler(idx);
     guiMesh.data(vertexHandlers.at(index)).setWeight(weight);
     return true;
 }
 
 int MeshHandler::addEdge(int startVertexIdx, int endVertexIdx)
-{
+{   
     int indexStartVer = findVertexHandler(startVertexIdx);
     int indexEndVer = findVertexHandler(endVertexIdx);
 
@@ -122,38 +119,70 @@ int MeshHandler::addEdge(int startVertexIdx, int endVertexIdx)
     vertexHandle endVH = vertexHandlers.at(indexEndVer);
 
     OpnMesh::HalfedgeHandle halfHandle = guiMesh.new_edge(startVH, endVH);
+	guiMesh.set_halfedge_handle(startVH,halfHandle);
 
     OpnMesh::EdgeHandle edgeHandle = guiMesh.edge_handle(halfHandle);
     edgeHandlers.push_back(edgeHandle);
     return edgeHandle.idx();
 }
 
+void MeshHandler::removeEdge(int idx)
+{
+    int index = findEdgeHandler(idx);
+    guiMesh.delete_edge(edgeHandlers.at(index));
+    edgeHandlers.erase(edgeHandlers.begin() + index);
+    guiMesh.garbage_collection();
+}
+
 void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 {
-	int edgeIndex = findEdgeHandler(edgeIdx);
-	int vertexIndex = findVertexHandler(vertexIdx);
+    int edgeIndex = findEdgeHandler(edgeIdx);
+    int vertexIndex = findVertexHandler(vertexIdx);
     //TODO: Test
     guiMesh.split_edge(edgeHandlers.at(edgeIndex), vertexHandlers.at(vertexIndex));
 }
 
-void MeshHandler::removeEdge(int idx)
+void MeshHandler::linkEdges(int startVertexIdx)
 {
-    int index = findEdgeHandler(idx);
-	guiMesh.delete_edge(edgeHandlers.at(index));
-    edgeHandlers.erase(edgeHandlers.begin() + index);
+    //NB: Code not functional
+    qDebug() << "Code not functional. Implement";
+    OpnMesh::FaceHandle fh =  guiMesh.new_face();
+    faceHandlers.push_back(fh);
+
+    int vertexIndex = findVertexHandler(startVertexIdx);
+    vertexHandle startVertex = vertexHandlers.at(vertexIndex);
+	    
+    OpnMesh::HalfedgeHandle initHalfedge = guiMesh.halfedge_handle(startVertex);
+	guiMesh.set_face_handle(initHalfedge, fh);
+
+    vertexHandle nextVert = guiMesh.to_vertex_handle(initHalfedge);
+    OpnMesh::HalfedgeHandle nextHeh = guiMesh.halfedge_handle(nextVert);
+    while (nextHeh != initHalfedge)
+    {
+        guiMesh.set_next_halfedge_handle(initHalfedge, nextHeh);
+		guiMesh.set_face_handle(nextHeh, fh);
+        nextVert = guiMesh.to_vertex_handle(nextHeh);
+        nextHeh = guiMesh.halfedge_handle(nextVert);
+    }
 }
 
-bool MeshHandler::makeFace()
+bool MeshHandler::makeFace(int startVertexIdx)
 {
-    if(vertexHandlers.size()<=2){
-        return false;
-    }
-    try
-    {
-        faceHandlers.push_back(guiMesh.add_face(vertexHandlers));
-    }catch(exception& x){
-        qDebug() << x.what();
-    }
+    //TODO: Implement
+    linkEdges(startVertexIdx);
+
+//    OpnMesh::HalfedgeHandle heh_start = guiMesh.halfedge_handle(startVertex);
+//    OpnMesh::HalfedgeHandle heh = heh_start;
+//    while (heh != heh_start)
+//    {
+
+//        qDebug() << guiMesh.to_vertex_handle(heh).idx();
+//        vertexHandlers.push_back(guiMesh.to_vertex_handle(heh));
+//        heh = guiMesh.next_halfedge_handle(heh);
+//    }
+
+
+ //   OpnMesh::FaceHandle fh = guiMesh.add_face(vertexToFace);
 
     return true;
 }
@@ -164,14 +193,14 @@ bool MeshHandler::makeFace()
 
 int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
 {
-	for (int i = 0; i < vertexHandlers.size(); i++)
-	{
-		if (vertexHandlers.at(i).idx() == idxToFind)
-		{
-			return i;
-		}
-	}
-	return -1;
+    for (int i = 0; i < vertexHandlers.size(); i++)
+    {
+        if (vertexHandlers.at(i).idx() == idxToFind)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
 int GUILogic::MeshHandler::findEdgeHandler(int idxToFind)
@@ -232,7 +261,6 @@ void MeshHandler::prepareGuiMeshForSubd()
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
         //x y z
-
         tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]);
         tempString += " ";
 
@@ -363,7 +391,6 @@ void MeshHandler::setUpSubdMeshFile()
     // create new mesh object
     delete subdMesh; // delete from heap (if any)
     subdMesh = new SbdvMesh();
-    qDebug() << "Loading";
     subdMesh->loadV2(TEMPFILEPATH2);
     subdMesh->build(); // must be called after load
     subdivide();

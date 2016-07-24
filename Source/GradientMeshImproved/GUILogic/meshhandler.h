@@ -50,15 +50,18 @@ public:
     bool setVertexWeight(int idx, double vertexWeight);
 
     int addEdge(int startVertexIdx, int endVertexIdx);
-	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
     void removeEdge(int idx);
-    bool makeFace();
+	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
+    void linkEdges(int startVertexIdx = 0);
+
+    bool makeFace(int startVertexIdx);
 
 
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 
     void prepareGuiMeshForSubd();
+
 
 private:
     //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
@@ -70,11 +73,11 @@ private:
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 
-	/*	Returns the index (in "vertexHandlers") to the vertexhandler with idx == idxToFind
-	*	If no match is found, -1 is returned (which will lead to an error as it should)
-	*
-	*/
-	int findVertexHandler(int idxToFind);
+    /*	Returns the index (in "vertexHandlers") to the vertexhandler with idx == idxToFind
+    *	If no match is found, -1 is returned (which will lead to an error as it should)
+    *
+    */
+    int findVertexHandler(int idxToFind);
     int findEdgeHandler(int idxToFind);
 
     /*METHODS*/

@@ -233,7 +233,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 
 void GMCanvas::makeFace()
 {
-    qDebug() << "TODO: Reimplement makeFace";
+    qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace(0);
 }
 
 
