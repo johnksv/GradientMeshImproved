@@ -76,7 +76,7 @@ void MeshHandler::removeVertex(int idx)
 	int index = findVertexHandler(idx);
 	vertexHandle handle = vertexHandlers.at(index);
 	guiMesh.delete_vertex(handle);
-
+    vertexHandlers.erase(vertexHandlers.begin()+index);
 }
 
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
@@ -111,6 +111,36 @@ bool MeshHandler::setVertexWeight(int idx, double weight)
 	int index = findVertexHandler(idx);
     guiMesh.data(vertexHandlers.at(index)).setWeight(weight);
     return true;
+}
+
+int MeshHandler::addEdge(int startVertexIdx, int endVertexIdx)
+{
+    int indexStartVer = findVertexHandler(startVertexIdx);
+    int indexEndVer = findVertexHandler(endVertexIdx);
+
+    vertexHandle startVH = vertexHandlers.at(indexStartVer);
+    vertexHandle endVH = vertexHandlers.at(indexEndVer);
+
+    OpnMesh::HalfedgeHandle halfHandle = guiMesh.new_edge(startVH, endVH);
+
+    OpnMesh::EdgeHandle edgeHandle = guiMesh.edge_handle(halfHandle);
+    edgeHandlers.push_back(edgeHandle);
+    return edgeHandle.idx();
+}
+
+void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
+{
+	int edgeIndex = findEdgeHandler(edgeIdx);
+	int vertexIndex = findVertexHandler(vertexIdx);
+    //TODO: Test
+    guiMesh.split_edge(edgeHandlers.at(edgeIndex), vertexHandlers.at(vertexIndex));
+}
+
+void MeshHandler::removeEdge(int idx)
+{
+    int index = findEdgeHandler(idx);
+	guiMesh.delete_edge(edgeHandlers.at(index));
+    edgeHandlers.erase(edgeHandlers.begin() + index);
 }
 
 bool MeshHandler::makeFace()

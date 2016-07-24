@@ -40,8 +40,9 @@ void GMCanvas::clearAll()
 
     for(int i = 0; i < layers_.at(currLayerIndex_)->points.size(); i++)
     {
-        removeItem( layers_.at(currLayerIndex_)->points.at(i));
-        meshHandlers_.at(currLayerIndex_)->removeVertex(i);
+        CanvasItemPoint *canvasPoint = layers_.at(currLayerIndex_)->points.at(i);
+        removeItem(canvasPoint);
+        meshHandlers_.at(currLayerIndex_)->removeVertex(canvasPoint->vertexHandleIdx());
         delete  layers_.at(currLayerIndex_)->points.at(i);
     }
      layers_.at(currLayerIndex_)->points.clear();
@@ -201,6 +202,9 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
            {
                layers_.at(currLayerIndex_)->addToGroup(line);
                layers_.at(currLayerIndex_)->lines.push_back(line);
+               int edgeIdx = meshHandlers()->at(currLayerIndex_)->addEdge(lineStartPoint_->vertexHandleIdx(),
+                                                                          lineEndPoint_->vertexHandleIdx());
+               line->setEdgeHandleIdx(edgeIdx);
            }
 
            lineStartPoint_ = lineEndPoint_;

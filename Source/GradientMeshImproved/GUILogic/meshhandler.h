@@ -48,7 +48,13 @@ public:
     void setVertexColor(int idx, QColor vertexColor);
     double vertexWeight(int idx);
     bool setVertexWeight(int idx, double vertexWeight);
+
+    int addEdge(int startVertexIdx, int endVertexIdx);
+	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
+    void removeEdge(int idx);
     bool makeFace();
+
+
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 
