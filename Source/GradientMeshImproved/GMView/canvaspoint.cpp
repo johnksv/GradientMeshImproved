@@ -41,6 +41,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
         painter->setOpacity(1);
     }
     painter->drawEllipse(boundingRect());
+    painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
 }
 
 QPainterPath CanvasItemPoint::shape() const

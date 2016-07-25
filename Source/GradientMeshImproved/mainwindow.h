@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QActionGroup>
 #include "GMView/canvas.h"
+#include <QUndoStack>
 
 namespace Ui {
 class MainWindow;
@@ -74,6 +75,7 @@ private:
     QActionGroup *drawModeGroup_;
     GMCanvas *scene_;
     QStandardItemModel *layerModel_;
+    QUndoStack *undoStack;
     void initLayoutContainer();
     void initColorSelector();
     // 1 for pirmary, 2 for secondary, 3 for tertiary

@@ -285,6 +285,29 @@
       </item>
      </layout>
     </widget>
+    <widget class="QGroupBox" name="undoContainer">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>340</y>
+       <width>161</width>
+       <height>121</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>UndoView</string>
+     </property>
+     <widget class="QUndoView" name="undoView">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>141</width>
+        <height>91</height>
+       </rect>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QDockWidget" name="splitWidget">
@@ -497,6 +520,11 @@
    <class>GMOpenGLWidget</class>
    <extends>QOpenGLWidget</extends>
    <header>GMView/openglwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QUndoView</class>
+   <extends>QListView</extends>
+   <header location="global">qundoview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

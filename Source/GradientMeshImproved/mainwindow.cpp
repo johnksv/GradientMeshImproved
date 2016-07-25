@@ -6,7 +6,6 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->splitWidget->setVisible(false);
     ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
+
+    //TODO: implement undoStack
+    undoStack = new QUndoStack(this);
+    ui->undoView->setStack(undoStack);
 
     initActionGroups();
     initLayoutContainer();
