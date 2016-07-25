@@ -34,8 +34,6 @@ public:
     void addLayer(QString name);
     void deleteLayer(int index);
     void toogleLayerVisibility(int index);
-    //Move down -> move towards last element
-    void layerMoveIndex(int index, bool moveDown);
 
     /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
      * This function is ment to be called from CanvasItemPoint methods.

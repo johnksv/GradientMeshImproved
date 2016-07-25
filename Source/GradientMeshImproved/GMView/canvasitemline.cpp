@@ -1,7 +1,7 @@
 #include "canvasitemline.h"
 #include <QDebug>
 
-CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint(startPoint), endPoint(endPoint)
+CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint_(startPoint), endPoint_(endPoint)
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
     setZValue(1);
@@ -10,15 +10,15 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 
 void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    setLine(QLineF(startPoint->pos(), endPoint->pos()));
+    setLine(QLineF(startPoint_->pos(), endPoint_->pos()));
     QGraphicsLineItem::paint(painter,option,widget);
 }
 
 bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
 {
-    if((*this).startPoint == lineA.startPoint)
+    if((*this).startPoint_ == lineA.startPoint_)
     {
-        if((*this).endPoint == lineA.endPoint)
+        if((*this).endPoint_ == lineA.endPoint_)
         {
             return true;
         }
@@ -34,4 +34,14 @@ int CanvasItemLine::edgeHandleIdx()
 void CanvasItemLine::setEdgeHandleIdx(int idx)
 {
     edgeHandleIdx_ = idx;
+}
+
+CanvasItemPoint *CanvasItemLine::startPoint()
+{
+	return startPoint_;
+}
+
+CanvasItemPoint *CanvasItemLine::endPoint()
+{
+	return endPoint_;
 }

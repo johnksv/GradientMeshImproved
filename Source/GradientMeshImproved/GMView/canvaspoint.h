@@ -15,6 +15,8 @@ public:
     //TODO: read on  item and sceen coordinates;
     QColor color();
     double weight();
+    void setColor(QColor color);
+    void setWeight(double);
 
 	int vertexHandleIdx();
 	void setVertexHandleIdx(int idx);
@@ -33,10 +35,6 @@ private:
     int radius_ = 5;
     bool hovered_ = false;
 	int vertexHandleIdx_;
-
-public slots:
-    void setColor(QColor color);
-    void setWeight(double);
 };
 
 #endif // GMCANVASITEM_H

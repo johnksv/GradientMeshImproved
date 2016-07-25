@@ -68,6 +68,8 @@ private slots:
 
     void on_colorTert_clicked();
 
+    void on_actionClearSelection_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

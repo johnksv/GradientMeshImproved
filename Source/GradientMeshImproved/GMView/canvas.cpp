@@ -4,6 +4,8 @@
 #include <QDebug>
 #include <QGraphicsProxyWidget>
 #include <QList>
+#include <QVector4D>
+#include <QUndoCommand>
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
@@ -58,12 +60,20 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     {
         qDebug() << "scne import";
         meshHandlers_.at(currLayerIndex_)->importGuiMesh(location);
-        vector<QPointF> vertices = meshHandlers_.at(currLayerIndex_)->vertices();
-        for(QPointF point : vertices){
+        vector<QVector4D> vertices = meshHandlers_.at(currLayerIndex_)->vertices();
+        for(QVector4D vertex : vertices){
             CanvasItemPoint *item = new CanvasItemPoint();
+            QPointF point(vertex.x(), vertex.y());
             item->setPos(point);
+            item->setVertexHandleIdx(vertex.w());
             addItemPoint(item);
         }
+
+        vector<QVector4D> edges = meshHandlers_.at(currLayerIndex_)->edges();
+        for(QVector4D edge : edges){
+            //TODO add edge
+        }
+
     }
     else
     {
@@ -76,39 +86,36 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     switch(drawMode_){
+    case drawModeCanvas::move:
+        QGraphicsScene::mousePressEvent(mouseEvent);
+        break;
     case drawModeCanvas::vertAndEdge:
         handleMousePressVert(mouseEvent);
+        mouseEvent->accept();
         break;
     case drawModeCanvas::edge:
         break;
     case drawModeCanvas::faces:
         break;
     }
-    QGraphicsScene::mousePressEvent(mouseEvent);
+
 }
 
 void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
 {
-    int index;
-    for (int i =0; i < layers_.at(currLayerIndex_)->points.size(); i++)
-    {
-        if(layers_.at(currLayerIndex_)->points.at(i) == &item){
-            index = i;
-            i = layers_.at(currLayerIndex_)->points.size();
-        }
-    }
+    int vertHanIdx = item.vertexHandleIdx();
 
     if(mode == 0)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexPoint(index, item.pos());
+        meshHandlers_.at(currLayerIndex_)->setVertexPoint(vertHanIdx, item.pos());
     }
     else if(mode == 1)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexColor(index,item.color());
+        meshHandlers_.at(currLayerIndex_)->setVertexColor(vertHanIdx,item.color());
     }
     else if(mode == 2)
     {
-        meshHandlers_.at(currLayerIndex_)->setVertexWeight(index,item.weight());
+        meshHandlers_.at(currLayerIndex_)->setVertexWeight(vertHanIdx,item.weight());
     }
     else
     {
@@ -188,7 +195,9 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
            int size = layers_.at(currLayerIndex_)->lines.size();
            for(int i = 0; i < size; i++ )
            {
-               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line )
+               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line	|| 
+                        ( layers_.at(currLayerIndex_)->lines.at(i)->endPoint() == line->startPoint() &&
+                          layers_.at(currLayerIndex_)->lines.at(i)->startPoint() == line->endPoint()))
                {
                     exists = true;
                     i = size;
@@ -305,23 +314,5 @@ void GMCanvas::toogleLayerVisibility(int index)
     else
     {
         selectedLayer->show();
-    }
-}
-
-void GMCanvas::layerMoveIndex(int index, bool moveDown)
-{
-    if(moveDown)
-    {
-        if(! (index >= layers_.size()))
-        {
-            std::swap(layers_[index], layers_[index+1]);
-        }
-    }
-    else
-    {
-        if(! (index <= 0))
-        {
-            std::swap(layers_.at(index), layers_.at(index-1));
-        }
     }
 }

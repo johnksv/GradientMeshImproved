@@ -40,7 +40,7 @@ public:
      * \return a vector of points. Each element contains x, y, z coordiantes respectively
      *
      */
-    vector<QPointF> vertices();
+    vector<QVector4D> vertices();
     int addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
     void removeVertex(int idx);
     void setVertexPoint(int idx, const QPointF& position);
@@ -49,6 +49,8 @@ public:
     double vertexWeight(int idx);
     bool setVertexWeight(int idx, double vertexWeight);
 
+    //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
+    vector<QVector4D> edges();
     int addEdge(int startVertexIdx, int endVertexIdx);
     void removeEdge(int idx);
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);

@@ -73,6 +73,7 @@
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
     <addaction name="actionClear_all"/>
+    <addaction name="actionClearSelection"/>
    </widget>
    <widget class="QMenu" name="menuMesh">
     <property name="title">
@@ -162,7 +163,7 @@
        <x>5</x>
        <y>10</y>
        <width>171</width>
-       <height>181</height>
+       <height>211</height>
       </rect>
      </property>
      <property name="title">
@@ -183,8 +184,8 @@
        <rect>
         <x>0</x>
         <y>90</y>
-        <width>171</width>
-        <height>83</height>
+        <width>166</width>
+        <height>85</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="layerButtonContainer">
@@ -216,7 +217,7 @@
      <property name="geometry">
       <rect>
        <x>5</x>
-       <y>200</y>
+       <y>230</y>
        <width>171</width>
        <height>131</height>
       </rect>
@@ -289,7 +290,7 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>340</y>
+       <y>370</y>
        <width>161</width>
        <height>121</height>
       </rect>
@@ -456,7 +457,7 @@
   </action>
   <action name="actionClear_all">
    <property name="text">
-    <string>Clear all</string>
+    <string>Clear/delete all</string>
    </property>
    <property name="shortcut">
     <string>Del</string>
@@ -506,6 +507,17 @@
    </property>
    <property name="text">
     <string>Render only in split window</string>
+   </property>
+  </action>
+  <action name="actionClearSelection">
+   <property name="text">
+    <string>Clear selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear selection</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
  </widget>

@@ -5,6 +5,7 @@
 #include "GMView/canvasitemgroup.h"
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -288,4 +289,9 @@ void MainWindow::handleColorButtonClick(int color)
     button->setAutoFillBackground(true);
     button->setPalette(palette);
     button->update();
+}
+
+void MainWindow::on_actionClearSelection_triggered()
+{
+    scene_->clearSelection();
 }

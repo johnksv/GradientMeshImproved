@@ -1,6 +1,7 @@
 #include "GUILogic/meshhandler.h"
 #include <QDebug>
 #include <QPointF>
+#include <QVector4D>
 #include <QColor>
 #include "subdivMesh/utils.h"
 
@@ -40,14 +41,15 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     subdMesh->draw(context);
 }
 
-vector<QPointF> MeshHandler::vertices()
+vector<QVector4D> MeshHandler::vertices()
 {
-    vector<QPointF> result;
+    vector<QVector4D> result;
+
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_sbegin();
            v_it != guiMesh.vertices_end(); ++v_it)
     {
-        QPointF point(guiMesh.point(v_it)[0], guiMesh.point(v_it)[1]);
-
+        QVector4D point(guiMesh.point(v_it)[0], guiMesh.point(v_it)[1], guiMesh.point(v_it)[2], v_it->idx());
+        qDebug() << v_it->idx();
         //For debugging. TODO: Remove
         qDebug() << "From Meshhandler:49: " << point;
 
@@ -73,7 +75,6 @@ void MeshHandler::removeVertex(int idx)
     vertexHandle handle = vertexHandlers.at(index);
     guiMesh.delete_vertex(handle);
     vertexHandlers.erase(vertexHandlers.begin()+index);
-	guiMesh.garbage_collection();
 }
 
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
@@ -110,6 +111,23 @@ bool MeshHandler::setVertexWeight(int idx, double weight)
     return true;
 }
 
+vector<QVector4D> MeshHandler::edges()
+{
+    vector<QVector4D> result;
+
+    for (OpnMesh::EdgeIter e_it = guiMesh.edges_sbegin();
+           e_it != guiMesh.edges_end(); ++e_it)
+    {
+        vertexHandle startVert = guiMesh.from_vertex_handle(guiMesh.halfedge_handle(e_it, 0));
+        vertexHandle endVert = guiMesh.from_vertex_handle(guiMesh.halfedge_handle(e_it, 1));
+        QVector4D edge(startVert.idx(),endVert.idx(), e_it->idx(), 0);
+
+        result.push_back(edge);
+
+    }
+    return result;
+}
+
 int MeshHandler::addEdge(int startVertexIdx, int endVertexIdx)
 {   
     int indexStartVer = findVertexHandler(startVertexIdx);
@@ -131,6 +149,7 @@ void MeshHandler::removeEdge(int idx)
     int index = findEdgeHandler(idx);
     guiMesh.delete_edge(edgeHandlers.at(index));
     edgeHandlers.erase(edgeHandlers.begin() + index);
+    //TODO check if garbage_collection "collides" with vector, as it did in removeVertex
     guiMesh.garbage_collection();
 }
 
@@ -169,7 +188,7 @@ void MeshHandler::linkEdges(int startVertexIdx)
 bool MeshHandler::makeFace(int startVertexIdx)
 {
     //TODO: Implement
-    linkEdges(startVertexIdx);
+   // linkEdges(startVertexIdx);
 
 //    OpnMesh::HalfedgeHandle heh_start = guiMesh.halfedge_handle(startVertex);
 //    OpnMesh::HalfedgeHandle heh = heh_start;
@@ -362,11 +381,27 @@ bool MeshHandler::saveGuiMeshOff(QString location)
 bool MeshHandler::importGuiMesh(QString location)
 {
     //TODO: Support for multiple formats
+    //TODO: If there alleready are vertices,edges and faces in guiMesh
     if ( ! OpenMesh::IO::read_mesh(guiMesh, location.toStdString()) )
       {
         qDebug() << "Error: Cannot read mesh from " << location;
         return false;
       }
+    qDebug() << "ImportGuiMesh";
+    for(OpnMesh::VertexIter v_ite = guiMesh.vertices_sbegin (); v_ite != guiMesh.vertices_end(); v_ite++)
+    {
+        vertexHandlers.push_back(*v_ite);
+    }
+    for(OpnMesh::EdgeIter e_ite = guiMesh.edges_sbegin (); e_ite != guiMesh.edges_end(); e_ite++)
+    {
+        edgeHandlers.push_back(*e_ite);
+        qDebug() << "Added edge";
+    }
+    for(OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin (); f_ite != guiMesh.faces_end(); f_ite++)
+    {
+        faceHandlers.push_back(*f_ite);
+        qDebug() << "Added face";
+    }
     return true;
 }
 

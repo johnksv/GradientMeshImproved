@@ -15,8 +15,11 @@ public:
     int edgeHandleIdx();
     void setEdgeHandleIdx(int idx);
 
+	CanvasItemPoint *startPoint();
+	CanvasItemPoint *endPoint();
+
 private:
-    CanvasItemPoint *startPoint, *endPoint;
+    CanvasItemPoint *startPoint_, *endPoint_;
     int edgeHandleIdx_;
 };
 

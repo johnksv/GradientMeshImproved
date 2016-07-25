@@ -41,6 +41,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
         painter->setOpacity(1);
     }
     painter->drawEllipse(boundingRect());
+    //For debugging purposes TODO: remove
     painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
 }
 
@@ -93,7 +94,6 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
 
 void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
 }
 
 void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent*)
@@ -118,20 +118,25 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == chooseColorAction)
     {
-        QColorDialog *colordialog = new QColorDialog(color_);
-        colordialog->open();
+        QColor chosenColor = QColorDialog::getColor();
+        if(chosenColor.isValid())
+        {
+            setColor(chosenColor);
+        }
 
-        QObject::connect(colordialog, SIGNAL(colorSelected(QColor)), this, SLOT(setColor(QColor)));
     }
     else if(selectedAction == setWeightAction)
     {
-        QInputDialog *weightDialog = new QInputDialog();
-        weightDialog->setInputMode(QInputDialog::DoubleInput);
-        weightDialog->setDoubleMaximum(1);
-        weightDialog->setLabelText("Enter a value (0.00 - 1.00):");
-        weightDialog->open();
+        QString label("Enter a value (0.00 - 1.00):");
+        bool *ok = new bool;
+        double newWeight = QInputDialog::getDouble(nullptr,"Vertex weight",label,weight_,0,1,2,ok, Qt::Tool);
+        if(*ok == true)
+        {
+            setWeight(newWeight);
+        }
 
-        QObject::connect(weightDialog, SIGNAL(doubleValueSelected(double)), this, SLOT(setWeight(double)));
+        delete ok;
+
     }
     else if(selectedAction == deletePointAction)
     {
