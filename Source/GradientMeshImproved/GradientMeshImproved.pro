@@ -24,7 +24,10 @@ SOURCES += main.cpp\
     GMView/canvasitemline.cpp \
     GMView/canvaspoint.cpp \
     GMView/canvasitemface.cpp \
-    GMView/canvasitemgroup.cpp
+    GMView/canvasitemgroup.cpp \
+    undoCommands/movevertex.cpp \
+    undoCommands/undoweight.cpp \
+    undoCommands/undocolor.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -41,7 +44,10 @@ HEADERS  += mainwindow.h \
     GMView/canvasitemline.h \
     GMView/canvaspoint.h \
     GMView/canvasitemface.h \
-    GMView/canvasitemgroup.h
+    GMView/canvasitemgroup.h \
+    undoCommands/movevertex.h \
+    undoCommands/undoweight.h \
+    undoCommands/undocolor.h
 
 FORMS    += mainwindow.ui
 
