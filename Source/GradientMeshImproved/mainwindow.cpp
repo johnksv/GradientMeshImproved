@@ -293,5 +293,6 @@ void MainWindow::handleColorButtonClick(int color)
 
 void MainWindow::on_actionClearSelection_triggered()
 {
+    scene_->resetLineStartEnd();
     scene_->clearSelection();
 }

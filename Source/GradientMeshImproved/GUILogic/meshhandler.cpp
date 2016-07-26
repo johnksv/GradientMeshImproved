@@ -111,6 +111,12 @@ bool MeshHandler::setVertexWeight(int idx, double weight)
     return true;
 }
 
+uint MeshHandler::vertexValence(int idx)
+{
+    int index = findVertexHandler(idx);
+    return guiMesh.valence(vertexHandlers.at(index));
+}
+
 vector<QVector4D> MeshHandler::edges()
 {
     vector<QVector4D> result;
@@ -161,47 +167,23 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
     guiMesh.split_edge(edgeHandlers.at(edgeIndex), vertexHandlers.at(vertexIndex));
 }
 
-void MeshHandler::linkEdges(int startVertexIdx)
+bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
 {
-    //NB: Code not functional
-    qDebug() << "Code not functional. Implement";
-    OpnMesh::FaceHandle fh =  guiMesh.new_face();
-    faceHandlers.push_back(fh);
-
-    int vertexIndex = findVertexHandler(startVertexIdx);
-    vertexHandle startVertex = vertexHandlers.at(vertexIndex);
-	    
-    OpnMesh::HalfedgeHandle initHalfedge = guiMesh.halfedge_handle(startVertex);
-	guiMesh.set_face_handle(initHalfedge, fh);
-
-    vertexHandle nextVert = guiMesh.to_vertex_handle(initHalfedge);
-    OpnMesh::HalfedgeHandle nextHeh = guiMesh.halfedge_handle(nextVert);
-    while (nextHeh != initHalfedge)
+    vector<vertexHandle> vHandlers;
+    for(int idx : vertexHandlersIdx)
     {
-        guiMesh.set_next_halfedge_handle(initHalfedge, nextHeh);
-		guiMesh.set_face_handle(nextHeh, fh);
-        nextVert = guiMesh.to_vertex_handle(nextHeh);
-        nextHeh = guiMesh.halfedge_handle(nextVert);
+        int index = findVertexHandler(idx);
+        vHandlers.push_back(vertexHandlers.at(index));
     }
-}
+    faceHandlers.push_back(guiMesh.add_face(vHandlers));
+    qDebug() << "Made Face";
 
-bool MeshHandler::makeFace(int startVertexIdx)
-{
-    //TODO: Implement
-   // linkEdges(startVertexIdx);
-
-//    OpnMesh::HalfedgeHandle heh_start = guiMesh.halfedge_handle(startVertex);
-//    OpnMesh::HalfedgeHandle heh = heh_start;
-//    while (heh != heh_start)
-//    {
-
-//        qDebug() << guiMesh.to_vertex_handle(heh).idx();
-//        vertexHandlers.push_back(guiMesh.to_vertex_handle(heh));
-//        heh = guiMesh.next_halfedge_handle(heh);
-//    }
-
-
- //   OpnMesh::FaceHandle fh = guiMesh.add_face(vertexToFace);
+    //Check which vertecies are in current face
+    //Crashes if new face are added in opposite direction.
+    for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers.back()); fv_ite != guiMesh.fv_end(faceHandlers.back()); fv_ite++)
+    {
+        qDebug() << "vertexHandleIdx: " << fv_ite->idx();
+    }
 
     return true;
 }
@@ -269,7 +251,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     size_t vertices = guiMesh.n_vertices();
     size_t faces = guiMesh.n_faces();
     //0 for Lab, 1 for RGB.
-    short colormode = 0;
+    short colormode = 1;
 
     //Metadata
     tempString.append(to_string(vertices) + " " + to_string(faces) + " " + to_string(colormode) + "\n");
@@ -286,7 +268,7 @@ void MeshHandler::prepareGuiMeshForSubd()
         //l a b
         double l, a, b;
         subdivMesh::RGB2LAB(color.x(), color.y(), color.z(), l, a, b);
-        tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
+        tempString += to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z());
         tempString += " ";
 
         //valence
@@ -330,22 +312,20 @@ void MeshHandler::prepareGuiMeshForSubd()
     }
 
     //Faces:
+    tempString += "\n";
     for(int i = 0; i < faceHandlers.size(); i++)
     {
+        int counterValence = 0;
+        string vertexInFace;
         for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers[i]);
             fv_ite != guiMesh.fv_end(faceHandlers[i]); fv_ite++)
         {
-
-            for(int i = 0; i < vertexHandlers.size(); i++)
-            {
-                if(*fv_ite == vertexHandlers[i])
-                {
-                    tempString += to_string(i);
-                    tempString += " ";
-                    i = vertexHandlers.size();
-                }
-            }
+            counterValence++;
+            vertexInFace += to_string(fv_ite->idx()) + " ";
         }
+        tempString += to_string(counterValence) + " ";
+        tempString += vertexInFace;
+
         tempString += "\n";
     }
 

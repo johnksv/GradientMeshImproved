@@ -50,7 +50,13 @@ void GMCanvas::clearAll()
      layers_.at(currLayerIndex_)->points.clear();
      layers_.at(currLayerIndex_)->points_selected.clear();
 
-    update();
+     update();
+}
+
+void GMCanvas::resetLineStartEnd()
+{
+    lineStartPoint_ = nullptr;
+    lineEndPoint_ = nullptr;
 }
 
 
@@ -141,6 +147,7 @@ void GMCanvas::setDrawColorVertex(QColor pointColor)
 
 void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
 {
+    bool madeFace = false;
     bool collide = false;
     int collideWithIndex;
 
@@ -155,35 +162,54 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
             i = layers_.at(currLayerIndex_)->points.size();
         }
     }
-
     if(event->button() == Qt::LeftButton)
     {
         if(!collide)
         {
             addItemPoint(itemPoint);
             int vertexHandleIdx = meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
-			itemPoint->setVertexHandleIdx(vertexHandleIdx);
+            itemPoint->setVertexHandleIdx(vertexHandleIdx);
+
+            //The point is new, and should be added to a new face.
+            vertesToAddFace_.push_back(vertexHandleIdx);
+        }
+        else
+        {
+            int vertexHandleIdx = layers_.at(currLayerIndex_)->points.at(collideWithIndex)->vertexHandleIdx();
+            if (vertesToAddFace_.size() == 0)
+            {
+                //Face start at an already existing vertex
+                vertesToAddFace_.push_back(vertexHandleIdx);
+            }
+            else
+            {
+                if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertesToAddFace_.at(0)) > 0)
+                {
+                    //The first element has edges already connect to it.
+                    //We shall now find the edge(s) to it, and add the vertex/vertices we find to the face.
+
+                    //Current implementation: All points added with same rotation. There are no additional edges between the first (element 0) and last vertex
+                    vertesToAddFace_.push_back(vertexHandleIdx);
+
+                }
+
+                //Else: Make a face of the points added. (E.g. the bounadary).
+                meshHandlers_.at(currLayerIndex_)->makeFace(vertesToAddFace_);
+                madeFace = true;
+                vertesToAddFace_.clear();
+            }
         }
 
-       if(lineStartPoint_ == nullptr)
-       {
-           if(collide)
-           {
+       if(lineStartPoint_ == nullptr){
+           if(collide){
                 lineStartPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
-           }
-           else
-           {
+           }else{
                lineStartPoint_ = itemPoint;
            }
-       }
-       else
-       {
-           if(collide)
-           {
+       }else{
+           if(collide) {
                 lineEndPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
-           }
-           else
-           {
+           }else{
                lineEndPoint_ = itemPoint;
            }
        }
@@ -191,44 +217,44 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
        if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr)
        {
            CanvasItemLine *line = new CanvasItemLine(lineStartPoint_, lineEndPoint_);
+
+           //Check if line exists
            bool exists = false;
            int size = layers_.at(currLayerIndex_)->lines.size();
            for(int i = 0; i < size; i++ )
            {
-               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line	|| 
+               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line	||
                         ( layers_.at(currLayerIndex_)->lines.at(i)->endPoint() == line->startPoint() &&
                           layers_.at(currLayerIndex_)->lines.at(i)->startPoint() == line->endPoint()))
                {
                     exists = true;
                     i = size;
                }
-           }
+           }//End check line exists
+
            if(exists)
            {
+              //Delete line from heap
               delete line;
            }
            else
            {
                layers_.at(currLayerIndex_)->addToGroup(line);
                layers_.at(currLayerIndex_)->lines.push_back(line);
-               int edgeIdx = meshHandlers()->at(currLayerIndex_)->addEdge(lineStartPoint_->vertexHandleIdx(),
-                                                                          lineEndPoint_->vertexHandleIdx());
-               line->setEdgeHandleIdx(edgeIdx);
            }
 
            lineStartPoint_ = lineEndPoint_;
            lineEndPoint_ = nullptr;
        }
 
-        return;
+
+       //Startpoint should be reset if a face was made.
+       if(madeFace) lineStartPoint_ = nullptr;
+
+       //Should not delete ItemPoint from heap.
+       return;
     }
-    else if(event->button() == Qt::RightButton)
-    {
-        if(!collide)
-        {
-            makeFace();
-        }
-    }
+
     delete itemPoint;
 }
 
@@ -242,7 +268,7 @@ void GMCanvas::addItemPoint(CanvasItemPoint *item)
 
 void GMCanvas::makeFace()
 {
-    qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace(0);
+    //qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace(0);
 }
 
 
@@ -250,6 +276,7 @@ void GMCanvas::setRenderingMode(int mode){
     renderingMode_ = mode;
 }
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
+    resetLineStartEnd();
     this->drawMode_ = drawMode;
 }
 

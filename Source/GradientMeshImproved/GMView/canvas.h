@@ -16,6 +16,7 @@ public:
     GMCanvas(QObject * parent = 0);
 
     void clearAll();
+    void resetLineStartEnd();
 
     /*! Handel action from File Dialog related to the mesh, such as import and export.
      * \param location the location of the file to import/export
@@ -58,6 +59,8 @@ private:
     GMOpenGLWidget *opengl_;
     QColor pointColor_;
     CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
+
+    vector<int> vertesToAddFace_;
 
     //Referces to the index in the layers vector. 0 index is first element
     unsigned char currLayerIndex_ = 0;

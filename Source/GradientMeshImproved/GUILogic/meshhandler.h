@@ -48,15 +48,15 @@ public:
     void setVertexColor(int idx, QColor vertexColor);
     double vertexWeight(int idx);
     bool setVertexWeight(int idx, double vertexWeight);
+    uint vertexValence(int idx);
 
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();
     int addEdge(int startVertexIdx, int endVertexIdx);
     void removeEdge(int idx);
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
-    void linkEdges(int startVertexIdx = 0);
 
-    bool makeFace(int startVertexIdx);
+    bool makeFace(vector<int> &vertexHandlersIdx);
 
 
     bool saveGuiMeshOff(QString);
