@@ -183,18 +183,32 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
             }
             else
             {
+                //Check if first element has edges already connect to it. If not, the point is already added.
                 if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertesToAddFace_.at(0)) > 0)
                 {
-                    //The first element has edges already connect to it.
-                    //We shall now find the edge(s) to it, and add the vertex/vertices we find to the face.
-
-                    //Current implementation: All points added with same rotation. There are no additional edges between the first (element 0) and last vertex
                     vertesToAddFace_.push_back(vertexHandleIdx);
-
                 }
 
                 //Else: Make a face of the points added. (E.g. the bounadary).
                 meshHandlers_.at(currLayerIndex_)->makeFace(vertesToAddFace_);
+
+
+
+                //For debugging purposes
+                CanvasItemFace * face = new CanvasItemFace();
+                for(int handle : vertesToAddFace_)
+                {
+                    for(CanvasItemPoint *point : layers_.at(currLayerIndex_)->points)
+                    {
+                        if(point->vertexHandleIdx() == handle)
+                        {
+                            face->addCanvasPoint(point);
+                        }
+                    }
+                }
+                layers_.at(currLayerIndex_)->addToGroup(face); //End debugging purposes
+
+
                 madeFace = true;
                 vertesToAddFace_.clear();
             }

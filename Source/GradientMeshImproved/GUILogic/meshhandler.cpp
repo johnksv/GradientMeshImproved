@@ -4,6 +4,7 @@
 #include <QVector4D>
 #include <QColor>
 #include "subdivMesh/utils.h"
+#include <QLineF>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
@@ -169,16 +170,71 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
 {
-    vector<vertexHandle> vHandlers;
+    //TODO: Check orientation of edge
+
+    vector<vertexHandle> vHandlersFace;
     for(int idx : vertexHandlersIdx)
     {
         int index = findVertexHandler(idx);
-        vHandlers.push_back(vertexHandlers.at(index));
+        vHandlersFace.push_back(vertexHandlers.at(index));
     }
-    faceHandlers.push_back(guiMesh.add_face(vHandlers));
-    qDebug() << "Made Face";
+    vertexHandle lastVertex = vHandlersFace.back();
+    OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
 
-    //Check which vertecies are in current face
+    vertexHandle secondLastVertex = vHandlersFace.at(vHandlersFace.size()-2);
+    QLineF toBeNewEdge(lastPoint[0],lastPoint[1],
+                        guiMesh.point(secondLastVertex)[0],guiMesh.point(secondLastVertex)[1]);
+
+
+    //To be the halfedge that is outgoing from the last vertex the user clicked.
+    OpnMesh::HalfedgeHandle outgoingHalfedge;
+
+    double angle = 361;
+    //Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
+    for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+    {
+        if(guiMesh.is_boundary(vOutH_ite))
+        {
+            //Calculate angle relative to the new edge
+            OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(*vOutH_ite));
+            QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
+
+            double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+
+            //The edge with the smallest angle relative to the new edge should be the next vertex in the face.
+            if(angleTo < angle)
+            {
+                 angle = angleTo;
+                 outgoingHalfedge = vOutH_ite;
+            }
+        }
+    }
+
+    if(outgoingHalfedge.is_valid())
+    {
+        bool  runLoop = true;
+        while(runLoop)
+        {
+            vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
+            outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
+
+            if(nextVertex != vHandlersFace.front())
+            {
+                vHandlersFace.push_back(nextVertex);
+                vertexHandlersIdx.push_back(nextVertex.idx());
+            }
+            else
+            {
+                runLoop = false;
+            }
+        }
+    }
+
+
+
+    faceHandlers.push_back(guiMesh.add_face(vHandlersFace));
+
+    //Check which vertecies are in current face, for debugging
     //Crashes if new face are added in opposite direction.
     for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers.back()); fv_ite != guiMesh.fv_end(faceHandlers.back()); fv_ite++)
     {
