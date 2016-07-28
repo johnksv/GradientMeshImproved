@@ -27,6 +27,9 @@ namespace GUILogic {
  * Version: 0 (class in development)
  */
 
+typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
+typedef OpnMesh::VertexHandle vertexHandle;
+
 class MeshHandler
 {
 public:
@@ -67,8 +70,8 @@ public:
 
 private:
     //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
-    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers;
-    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::FaceHandle> faceHandlers;
+    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers_;
+    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::FaceHandle> faceHandlers_;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     // mesh for editing gui:
@@ -80,6 +83,11 @@ private:
     */
     int findVertexHandler(int idxToFind);
     int findFaceHandler(int idxToFind);
+
+
+     /* Check if new face has same orientation as first face (CW or CCW), if NOT, true is returned (which means an extra loop in makeFace is required).
+     */
+    bool faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace);
 
     /*METHODS*/
     void subdivide(signed int steps = 3);

@@ -11,8 +11,6 @@
 
 using namespace GUILogic;
 
-typedef OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> OpnMesh;
-typedef OpnMesh::VertexHandle vertexHandle;
 typedef subdivMesh::Mesh SbdvMesh;
 
 
@@ -65,17 +63,17 @@ int MeshHandler::addVertex(const QPointF &position, const QColor color)
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
     vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
-    vertexHandlers.push_back(handler);
-    setVertexColor(vertexHandlers.size() - 1, color);
+    vertexHandlers_.push_back(handler);
+    setVertexColor(vertexHandlers_.size() - 1, color);
     return handler.idx();
 }
 
 void MeshHandler::removeVertex(int idx)
 {
     int index = findVertexHandler(idx);
-    vertexHandle handle = vertexHandlers.at(index);
+    vertexHandle handle = vertexHandlers_.at(index);
     guiMesh.delete_vertex(handle);
-    vertexHandlers.erase(vertexHandlers.begin()+index);
+    vertexHandlers_.erase(vertexHandlers_.begin()+index);
 }
 
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
@@ -83,39 +81,39 @@ void MeshHandler::setVertexPoint(int idx, const QPointF &position)
         float x = static_cast <float> (position.x());
         float y = static_cast <float> (position.y());
         int index = findVertexHandler(idx);
-        guiMesh.set_point(vertexHandlers.at(index), OpnMesh::Point(x, y, .0f));
+        guiMesh.set_point(vertexHandlers_.at(index), OpnMesh::Point(x, y, .0f));
 }
 
 QVector3D MeshHandler::vertexColor(int idx)
 {
     int index = findVertexHandler(idx);
-    return guiMesh.data(vertexHandlers.at(index)).color();
+    return guiMesh.data(vertexHandlers_.at(index)).color();
 }
 
 void MeshHandler::setVertexColor(int idx, QColor color)
 {
     int index = findVertexHandler(idx);
     QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
-    guiMesh.data(vertexHandlers.at(index)).setColor(color_);
+    guiMesh.data(vertexHandlers_.at(index)).setColor(color_);
 }
 
 double MeshHandler::vertexWeight(int idx)
 {
     int index = findVertexHandler(idx);
-    return guiMesh.data(vertexHandlers.at(index)).weight();
+    return guiMesh.data(vertexHandlers_.at(index)).weight();
 }
 
 bool MeshHandler::setVertexWeight(int idx, double weight)
 {
     int index = findVertexHandler(idx);
-    guiMesh.data(vertexHandlers.at(index)).setWeight(weight);
+    guiMesh.data(vertexHandlers_.at(index)).setWeight(weight);
     return true;
 }
 
 uint MeshHandler::vertexValence(int idx)
 {
     int index = findVertexHandler(idx);
-    return guiMesh.valence(vertexHandlers.at(index));
+    return guiMesh.valence(vertexHandlers_.at(index));
 }
 
 vector<QVector4D> MeshHandler::edges()
@@ -146,82 +144,91 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
 {
     //TODO: Check orientation of edge
 
-    vector<vertexHandle> vHandlersFace;
+    vector<vertexHandle> vHandlersFace, orginalvHandlersFace;
     for(int idx : vertexHandlersIdx)
     {
         int index = findVertexHandler(idx);
-        vHandlersFace.push_back(vertexHandlers.at(index));
+        vHandlersFace.push_back(vertexHandlers_.at(index));
     }
-    vertexHandle lastVertex = vHandlersFace.back();
-    OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
+    orginalvHandlersFace = vHandlersFace;
 
-    vertexHandle secondLastVertex = vHandlersFace.at(vHandlersFace.size()-2);
-    QLineF toBeNewEdge(lastPoint[0],lastPoint[1],
-                        guiMesh.point(secondLastVertex)[0],guiMesh.point(secondLastVertex)[1]);
+    //Variable to hold the face that is added by the vertices.
+    OpnMesh::FaceHandle newFace;
 
-
-    //To be the halfedge that is outgoing from the last vertex the user clicked.
-    OpnMesh::HalfedgeHandle outgoingHalfedge;
-
-    double angle = 361;
-    //Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
-    for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+    do
     {
-        if(guiMesh.is_boundary(vOutH_ite))
+        vertexHandle lastVertex = vHandlersFace.back();
+        OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
+
+        vertexHandle secondLastVertex = vHandlersFace.at(vHandlersFace.size()-2);
+        QLineF toBeNewEdge(lastPoint[0],lastPoint[1],
+                            guiMesh.point(secondLastVertex)[0],guiMesh.point(secondLastVertex)[1]);
+
+
+        //To be the halfedge that is outgoing from the last vertex the user clicked.
+        OpnMesh::HalfedgeHandle outgoingHalfedge;
+
+        double angle = 361;
+        //Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
+        for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
         {
-            //Calculate angle relative to the new edge
-            OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(*vOutH_ite));
-            QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
-
-            double angleTo = toBeNewEdge.angleTo(vertVertEdge);
-
-            //The edge with the smallest angle relative to the new edge should be the next vertex in the face.
-            if(angleTo < angle)
+            if(guiMesh.is_boundary(vOutH_ite))
             {
-                 angle = angleTo;
-                 outgoingHalfedge = vOutH_ite;
+                //Calculate angle relative to the new edge
+                OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(*vOutH_ite));
+                QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
+
+                double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+
+                //The edge with the smallest angle relative to the new edge should be the next vertex in the face.
+                if(angleTo < angle)
+                {
+                     angle = angleTo;
+                     outgoingHalfedge = vOutH_ite;
+                }
             }
         }
-    }
 
-    if(outgoingHalfedge.is_valid())
-    {
-        bool  runLoop = true;
-        while(runLoop)
+        if(outgoingHalfedge.is_valid())
         {
-            vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
-            outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
+            while(true)
+            {
+                vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
+                outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
 
-            if(nextVertex != vHandlersFace.front())
-            {
-                vHandlersFace.push_back(nextVertex);
-                vertexHandlersIdx.push_back(nextVertex.idx());
-            }
-            else
-            {
-                runLoop = false;
+                if(nextVertex != vHandlersFace.front())
+                {
+                    vHandlersFace.push_back(nextVertex);
+                }
+                else
+                {
+                    break;
+                }
             }
         }
-    }
+        newFace = guiMesh.add_face(vHandlersFace);
 
+        //Call helper function to check if a loop is requierd.
+    }while(faceOrientation(orginalvHandlersFace, newFace, vHandlersFace));
 
-
-    faceHandlers.push_back(guiMesh.add_face(vHandlersFace));
+    faceHandlers_.push_back(newFace);
 
     //Check which vertecies are in current face, for debugging
     //Crashes if new face are added in opposite direction.
-    for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers.back()); fv_ite != guiMesh.fv_end(faceHandlers.back()); fv_ite++)
+
+    vertexHandlersIdx.clear();
+    for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers_.back()); fv_ite != guiMesh.fv_end(faceHandlers_.back()); fv_ite++)
     {
         qDebug() << "vertexHandleIdx: " << fv_ite->idx();
+        vertexHandlersIdx.push_back(fv_ite->idx());
     }
-
     return true;
 }
 
 void MeshHandler::clearAll()
 {
-    vertexHandlers.clear();
-    faceHandlers.clear();
+    vertexHandlers_.clear();
+    faceHandlers_.clear();
     guiMesh.clear();
     guiMesh.garbage_collection();
 }
@@ -232,9 +239,9 @@ void MeshHandler::clearAll()
 
 int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
 {
-    for (int i = 0; i < vertexHandlers.size(); i++)
+    for (int i = 0; i < vertexHandlers_.size(); i++)
     {
-        if (vertexHandlers.at(i).idx() == idxToFind)
+        if (vertexHandlers_.at(i).idx() == idxToFind)
         {
             return i;
         }
@@ -244,14 +251,39 @@ int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
 
 int GUILogic::MeshHandler::findFaceHandler(int idxToFind)
 {
-    for (int i = 0; i < faceHandlers.size(); i++)
+    for (int i = 0; i < faceHandlers_.size(); i++)
     {
-        if (faceHandlers.at(i).idx() == idxToFind)
+        if (faceHandlers_.at(i).idx() == idxToFind)
         {
             return i;
         }
     }
     return -1;
+}
+
+bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace)
+{
+    if(faceHandlers_.size() > 0)
+    {
+        OpnMesh::Normal baseNormal = guiMesh.calc_face_normal(faceHandlers_.front());
+        bool isValidFace = newFace.is_valid();
+        OpnMesh::Normal newFaceNormal;
+        if(isValidFace)
+        {
+            newFaceNormal = guiMesh.calc_face_normal(newFace);
+        }
+        //TODO: Implement check for 3D
+        qDebug() << "Valid?" << isValidFace << baseNormal[2] << ", second: " << newFaceNormal[2];
+        //Orientation is of if face is not valid, or z-component of normal is different (2D).
+        if(!isValidFace || baseNormal[2] != newFaceNormal[2])
+        {
+            vHandlersFace = orginalvHandlersFace;
+            reverse(vHandlersFace.begin(), vHandlersFace.end());
+            guiMesh.delete_face(newFace);
+            return true;
+        }
+    }
+    return false;
 }
 
 // Subdivide mesh for rendering
@@ -318,13 +350,13 @@ void MeshHandler::prepareGuiMeshForSubd()
         for(OpnMesh::VertexVertexIter vv_ite = guiMesh.vv_begin(ite);
             vv_ite != guiMesh.vv_end(ite); vv_ite++)
         {
-            for(int i = 0; i < vertexHandlers.size(); i++)
+            for(int i = 0; i < vertexHandlers_.size(); i++)
             {
-                if(*vv_ite == vertexHandlers[i])
+                if(*vv_ite == vertexHandlers_[i])
                 {
                     tempString += to_string(i);
                     tempString += " ";
-                    i = vertexHandlers.size();
+                    i = vertexHandlers_.size();
                 }
             }
         }
@@ -351,12 +383,12 @@ void MeshHandler::prepareGuiMeshForSubd()
 
     //Faces:
     tempString += "\n";
-    for(int i = 0; i < faceHandlers.size(); i++)
+    for(int i = 0; i < faceHandlers_.size(); i++)
     {
         int counterValence = 0;
         string vertexInFace;
-        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers[i]);
-            fv_ite != guiMesh.fv_end(faceHandlers[i]); fv_ite++)
+        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers_[i]);
+            fv_ite != guiMesh.fv_end(faceHandlers_[i]); fv_ite++)
         {
             counterValence++;
             vertexInFace += to_string(fv_ite->idx()) + " ";
@@ -408,11 +440,11 @@ bool MeshHandler::importGuiMesh(QString location)
     qDebug() << "ImportGuiMesh";
     for(OpnMesh::VertexIter v_ite = guiMesh.vertices_sbegin (); v_ite != guiMesh.vertices_end(); v_ite++)
     {
-        vertexHandlers.push_back(*v_ite);
+        vertexHandlers_.push_back(*v_ite);
     }
     for(OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin (); f_ite != guiMesh.faces_end(); f_ite++)
     {
-        faceHandlers.push_back(*f_ite);
+        faceHandlers_.push_back(*f_ite);
         qDebug() << "Added face";
     }
     return true;
