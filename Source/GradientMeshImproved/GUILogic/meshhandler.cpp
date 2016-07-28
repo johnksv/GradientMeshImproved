@@ -135,37 +135,11 @@ vector<QVector4D> MeshHandler::edges()
     return result;
 }
 
-int MeshHandler::addEdge(int startVertexIdx, int endVertexIdx)
-{   
-    int indexStartVer = findVertexHandler(startVertexIdx);
-    int indexEndVer = findVertexHandler(endVertexIdx);
-
-    vertexHandle startVH = vertexHandlers.at(indexStartVer);
-    vertexHandle endVH = vertexHandlers.at(indexEndVer);
-
-    OpnMesh::HalfedgeHandle halfHandle = guiMesh.new_edge(startVH, endVH);
-	guiMesh.set_halfedge_handle(startVH,halfHandle);
-
-    OpnMesh::EdgeHandle edgeHandle = guiMesh.edge_handle(halfHandle);
-    edgeHandlers.push_back(edgeHandle);
-    return edgeHandle.idx();
-}
-
-void MeshHandler::removeEdge(int idx)
-{
-    int index = findEdgeHandler(idx);
-    guiMesh.delete_edge(edgeHandlers.at(index));
-    edgeHandlers.erase(edgeHandlers.begin() + index);
-    //TODO check if garbage_collection "collides" with vector, as it did in removeVertex
-    guiMesh.garbage_collection();
-}
-
 void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 {
-    int edgeIndex = findEdgeHandler(edgeIdx);
     int vertexIndex = findVertexHandler(vertexIdx);
-    //TODO: Test
-    guiMesh.split_edge(edgeHandlers.at(edgeIndex), vertexHandlers.at(vertexIndex));
+    //TODO: implement
+
 }
 
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
@@ -244,6 +218,14 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
     return true;
 }
 
+void MeshHandler::clearAll()
+{
+    vertexHandlers.clear();
+    faceHandlers.clear();
+    guiMesh.clear();
+    guiMesh.garbage_collection();
+}
+
 /********************************************
  * HELPER METHODS
 ********************************************/
@@ -260,11 +242,11 @@ int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
     return -1;
 }
 
-int GUILogic::MeshHandler::findEdgeHandler(int idxToFind)
+int GUILogic::MeshHandler::findFaceHandler(int idxToFind)
 {
-    for (int i = 0; i < edgeHandlers.size(); i++)
+    for (int i = 0; i < faceHandlers.size(); i++)
     {
-        if (edgeHandlers.at(i).idx() == idxToFind)
+        if (faceHandlers.at(i).idx() == idxToFind)
         {
             return i;
         }
@@ -427,11 +409,6 @@ bool MeshHandler::importGuiMesh(QString location)
     for(OpnMesh::VertexIter v_ite = guiMesh.vertices_sbegin (); v_ite != guiMesh.vertices_end(); v_ite++)
     {
         vertexHandlers.push_back(*v_ite);
-    }
-    for(OpnMesh::EdgeIter e_ite = guiMesh.edges_sbegin (); e_ite != guiMesh.edges_end(); e_ite++)
-    {
-        edgeHandlers.push_back(*e_ite);
-        qDebug() << "Added edge";
     }
     for(OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin (); f_ite != guiMesh.faces_end(); f_ite++)
     {

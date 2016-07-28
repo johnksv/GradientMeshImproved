@@ -44,12 +44,13 @@ void GMCanvas::clearAll()
     {
         CanvasItemPoint *canvasPoint = layers_.at(currLayerIndex_)->points.at(i);
         removeItem(canvasPoint);
-        meshHandlers_.at(currLayerIndex_)->removeVertex(canvasPoint->vertexHandleIdx());
         delete  layers_.at(currLayerIndex_)->points.at(i);
     }
      layers_.at(currLayerIndex_)->points.clear();
      layers_.at(currLayerIndex_)->points_selected.clear();
 
+
+     meshHandlers_.at(currLayerIndex_)->clearAll();
      update();
 }
 
@@ -196,6 +197,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
 
                 //For debugging purposes
                 CanvasItemFace * face = new CanvasItemFace();
+                layers_.at(currLayerIndex_)->faces.push_back(face);
                 for(int handle : vertesToAddFace_)
                 {
                     for(CanvasItemPoint *point : layers_.at(currLayerIndex_)->points)
