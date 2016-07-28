@@ -53,15 +53,7 @@ private slots:
 
     void on_colorRepresentation_clicked();
 
-    void on_toolsWidget_visibilityChanged(bool visible);
-
-    void on_actionWindow_ToolsWidget_changed();
-
-    void on_splitWidget_visibilityChanged(bool visible);
-
     void on_actionRender_in_split_window_changed();
-
-    void on_actionWindow_SplitWidget_changed();
 
 
     void on_colorSec_clicked();

@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setScene(scene_);
 
     ui->splitWidget->setVisible(false);
+    ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
+
+
     ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
 
     //TODO: implement undoStack
@@ -207,40 +211,6 @@ void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
 }
 
 
-void MainWindow::on_toolsWidget_visibilityChanged(bool visible)
-{
-    ui->actionWindow_ToolsWidget->setChecked(visible);
-}
-
-void MainWindow::on_actionWindow_ToolsWidget_changed()
-{
-    if( ui->actionWindow_ToolsWidget->isChecked())
-    {
-         ui->toolsWidget->setVisible(true);
-    }
-    else
-    {
-        ui->toolsWidget->setVisible(false);
-    }
-}
-
-void MainWindow::on_splitWidget_visibilityChanged(bool visible)
-{
-    ui->actionWindow_SplitWidget->setChecked(visible);
-}
-
-void MainWindow::on_actionWindow_SplitWidget_changed()
-{
-    if( ui->actionWindow_SplitWidget->isChecked())
-    {
-         ui->splitWidget->setVisible(true);
-    }
-    else
-    {
-        ui->splitWidget->setVisible(false);
-    }
-}
-
 void MainWindow::on_actionRender_in_split_window_changed()
 {
     bool checked = ui->actionRender_in_split_window->isChecked();
@@ -277,7 +247,7 @@ void MainWindow::handleColorButtonClick(int color)
     QPalette palette = button->palette();
 
     if( !ui->colorLockMode->isChecked()){
-        QColor chosenColor = QColorDialog::getColor();
+        QColor chosenColor = QColorDialog::getColor(palette.color(QPalette::Button));
         if(chosenColor.isValid())
         {
             palette.setColor(QPalette::Button, chosenColor);
