@@ -17,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->splitWidget->setVisible(false);
     ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->undoWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
 
 

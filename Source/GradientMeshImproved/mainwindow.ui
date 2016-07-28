@@ -136,13 +136,13 @@
    <property name="minimumSize">
     <size>
      <width>180</width>
-     <height>142</height>
+     <height>215</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>180</width>
-     <height>600</height>
+     <height>215</height>
     </size>
    </property>
    <property name="floating">
@@ -152,163 +152,54 @@
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Tools</string>
+    <string>Layers</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="toolsWidgetContents">
-    <widget class="QGroupBox" name="layerContainer">
+    <widget class="QListView" name="layer_listView">
      <property name="geometry">
       <rect>
-       <x>5</x>
+       <x>10</x>
        <y>10</y>
-       <width>171</width>
-       <height>211</height>
+       <width>165</width>
+       <height>71</height>
       </rect>
      </property>
-     <property name="title">
-      <string>Layers</string>
-     </property>
-     <widget class="QListView" name="layer_listView">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>20</y>
-        <width>171</width>
-        <height>71</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>90</y>
-        <width>166</width>
-        <height>85</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="layerButtonContainer">
-       <item row="0" column="0">
-        <widget class="QPushButton" name="layerToogleView">
-         <property name="text">
-          <string>Toggle View</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QPushButton" name="layerNew">
-         <property name="text">
-          <string>New Layer</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QPushButton" name="layerDelete">
-         <property name="text">
-          <string>Delete Layer</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
     </widget>
-    <widget class="QGroupBox" name="colorContainer">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>5</x>
-       <y>230</y>
-       <width>171</width>
-       <height>131</height>
+       <x>10</x>
+       <y>90</y>
+       <width>166</width>
+       <height>85</height>
       </rect>
      </property>
-     <property name="title">
-      <string>Color</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0">
-       <widget class="QLabel" name="colorSecLabel">
-        <property name="text">
-         <string>Secondary (2):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="colorRepresentation">
-        <property name="autoFillBackground">
-         <bool>true</bool>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="colorSec">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
+     <layout class="QGridLayout" name="layerButtonContainer">
       <item row="0" column="0">
-       <widget class="QLabel" name="colorPrimLabel">
+       <widget class="QPushButton" name="layerToogleView">
         <property name="text">
-         <string>Primary (1):</string>
+         <string>Toggle View</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
-       <widget class="QLabel" name="colorTertLabel">
+       <widget class="QPushButton" name="layerNew">
         <property name="text">
-         <string>Tertiary (3):</string>
+         <string>New Layer</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QPushButton" name="colorTert">
+       <widget class="QPushButton" name="layerDelete">
         <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0" colspan="2">
-       <widget class="QCheckBox" name="colorLockMode">
-        <property name="layoutDirection">
-         <enum>Qt::RightToLeft</enum>
-        </property>
-        <property name="text">
-         <string>Colors in lock mode (4)</string>
-        </property>
-        <property name="tristate">
-         <bool>false</bool>
+         <string>Delete Layer</string>
         </property>
        </widget>
       </item>
      </layout>
-    </widget>
-    <widget class="QGroupBox" name="undoContainer">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>370</y>
-       <width>161</width>
-       <height>121</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>UndoView</string>
-     </property>
-     <widget class="QUndoView" name="undoView">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>141</width>
-        <height>91</height>
-       </rect>
-      </property>
-     </widget>
     </widget>
    </widget>
   </widget>
@@ -343,6 +234,151 @@
       <widget class="GMOpenGLWidget" name="openGLWidget"/>
      </item>
     </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="colorWidget">
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>140</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>180</width>
+     <height>140</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Color</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <widget class="QPushButton" name="colorSec">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>33</y>
+       <width>72</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colorTertLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>59</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Tertiary (3):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colorSecLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>33</y>
+       <width>72</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Secondary (2):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="colorPrimLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>6</y>
+       <width>57</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Primary (1):</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="colorRepresentation">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>6</y>
+       <width>72</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="colorTert">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>60</y>
+       <width>72</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="colorLockMode">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>87</y>
+       <width>127</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>Colors in lock mode (4)</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="tristate">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="undoWidget">
+   <property name="windowTitle">
+    <string>Undo Stack</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="undoWidgetContents">
+    <widget class="QUndoView" name="undoView">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>161</width>
+       <height>91</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <action name="action_New">
