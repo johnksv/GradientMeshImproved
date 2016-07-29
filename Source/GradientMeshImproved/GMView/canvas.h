@@ -29,6 +29,8 @@ public:
     void setActiveLayer(unsigned char index);
     void setDrawColorVertex(QColor pointColor);
 
+    drawModeCanvas drawingMode();
+
     vector<CanvasItemGroup *> layers();
     vector<GUILogic::MeshHandler *> *meshHandlers();
 

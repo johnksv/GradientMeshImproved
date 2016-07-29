@@ -39,15 +39,23 @@ QRectF CanvasItemFace::boundingRect() const
     return QRectF(left,top,right-left,bottom-top);
 }
 
+QPainterPath CanvasItemFace::shape() const
+{
+    QPainterPath path;
+    QPolygonF poly;
+    for(CanvasItemPoint *item : pointsInFace_)
+    {
+        poly.push_back(item->pos());
+    }
+    path.addPolygon(poly);
+    return path;
+}
+
 void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
     painter->setBrush(QColor(225,225,225,100));
-    QPolygonF temp;
-    for(CanvasItemPoint *item : pointsInFace_)
-    {
-        temp.push_back(item->pos());
-    }
-    painter->drawPolygon(temp);
+
+    painter->drawPath(shape());
 }
 
 void CanvasItemFace::addCanvasPoint(CanvasItemPoint *point)

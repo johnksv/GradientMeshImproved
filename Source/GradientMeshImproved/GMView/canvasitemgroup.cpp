@@ -18,16 +18,15 @@ QRectF CanvasItemGroup::boundingRect() const
 QPainterPath CanvasItemGroup::shape() const
 {
     QPainterPath result;
-    QPolygon poly;
-    for (int i = 0; i < points.size(); i++)
+
+    for (int i = 0; i < faces.size(); i++)
     {
-        poly << points.at(i)->pos().toPoint();
+        result.addPath(faces.at(i)->shape());
     }
-    result.addPolygon(poly);
     return result;
 }
 
-void CanvasItemGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+void CanvasItemGroup::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
 {
 }
 

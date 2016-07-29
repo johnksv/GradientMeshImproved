@@ -5,12 +5,12 @@ moveVertex::moveVertex(QUndoCommand *parent) : QUndoCommand(parent)
     setText("Moved vertex");
 }
 
-void UndoWeight::redo()
+void moveVertex::redo()
 {
 
 }
 
-void UndoWeight::undo()
+void moveVertex::undo()
 {
 
 }

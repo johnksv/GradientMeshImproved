@@ -8,6 +8,7 @@
 #include <QPen>
 #include <QPainterPath>
 #include <QToolTip>
+#include "canvas.h"
 
 CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint_(startPoint), endPoint_(endPoint)
 {
@@ -125,13 +126,16 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void CanvasItemLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    QString toolTip("Line:");
-    toolTip.append("\n");
-    toolTip.append("Discontinuous: ");
-    discontinuous_ ? toolTip.append("yes.") : toolTip.append("no.");
-    toolTip.append("\n");
-    toolTip.append("Color (RGB): ").append(QString::number(color_.red())).append(",");
-    toolTip.append(QString::number(color_.green())).append(",").append(QString::number(color_.blue())).append(".");
-
-    QToolTip::showText(event->screenPos(), toolTip);
+    GMCanvas* parent = static_cast <GMCanvas*> (scene());
+    if(parent->drawingMode() == drawModeCanvas::move)
+    {
+        QString toolTip("Line:");
+        toolTip.append("\n");
+        toolTip.append("Discontinuous: ");
+        discontinuous_ ? toolTip.append("yes.") : toolTip.append("no.");
+        toolTip.append("\n");
+        toolTip.append("Color (RGB): ").append(QString::number(color_.red())).append(",");
+        toolTip.append(QString::number(color_.green())).append(",").append(QString::number(color_.blue())).append(".");
+        QToolTip::showText(event->screenPos(), toolTip);
+    }
 }

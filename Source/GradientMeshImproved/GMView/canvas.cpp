@@ -146,6 +146,11 @@ void GMCanvas::setDrawColorVertex(QColor pointColor)
     pointColor_ = pointColor;
 }
 
+drawModeCanvas GMCanvas::drawingMode()
+{
+    return drawMode_;
+}
+
 void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
 {
     bool madeFace = false;
