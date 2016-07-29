@@ -73,7 +73,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
             QPointF point(vertex.x(), vertex.y());
             item->setPos(point);
             item->setVertexHandleIdx(vertex.w());
-            addItemPoint(item);
+            addControlPoint(item);
         }
 
         vector<QVector4D> edges = meshHandlers_.at(currLayerIndex_)->edges();
@@ -97,12 +97,12 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         QGraphicsScene::mousePressEvent(mouseEvent);
         break;
     case drawModeCanvas::vertAndEdge:
-        handleMousePressVert(mouseEvent);
+        mouseLineTool(mouseEvent);
         mouseEvent->accept();
         break;
-    case drawModeCanvas::edge:
-        break;
-    case drawModeCanvas::faces:
+    case drawModeCanvas::vertexConstraints:
+        mouseVertexConstraint(mouseEvent);
+        mouseEvent->accept();
         break;
     }
 
@@ -151,7 +151,7 @@ drawModeCanvas GMCanvas::drawingMode()
     return drawMode_;
 }
 
-void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
+void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 {
     bool madeFace = false;
     bool collide = false;
@@ -172,7 +172,7 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
     {
         if(!collide)
         {
-            addItemPoint(itemPoint);
+            addControlPoint(itemPoint);
             int vertexHandleIdx = meshHandlers_.at(currLayerIndex_)->addVertex(itemPoint->pos(), pointColor_);
             itemPoint->setVertexHandleIdx(vertexHandleIdx);
 
@@ -279,19 +279,47 @@ void GMCanvas::handleMousePressVert(QGraphicsSceneMouseEvent *event)
     delete itemPoint;
 }
 
-void GMCanvas::addItemPoint(CanvasItemPoint *item)
+void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem *collideItem = itemAt(event->scenePos(), QTransform());
+
+    //Use lineStartPoint_ as holder for control vertex.
+    if(lineStartPoint_ == nullptr)
+    {
+        CanvasItemPoint *collidePoint = dynamic_cast<CanvasItemPoint*> (collideItem);
+
+        if(collidePoint != nullptr)
+        {
+            lineStartPoint_ = collidePoint;
+            lineStartPoint_->setHighlighted(true);
+        }
+        else
+        {
+            qDebug() << "Did not click on point.";
+        }
+    }
+    else
+    {
+        CanvasItemLine *collideLine = dynamic_cast<CanvasItemLine*> (collideItem);
+        if(collideLine != nullptr)
+        {
+
+            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
+            gradientConstraint->setPos(event->scenePos());
+            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
+            lineStartPoint_->setHighlighted(false);
+            lineStartPoint_ = nullptr;
+        }
+    }
+}
+
+void GMCanvas::addControlPoint(CanvasItemPoint *item)
 {
     item->setZValue(2);
     layers_.at(currLayerIndex_)->points.push_back(item);
     layers_.at(currLayerIndex_)->addToGroup(item);
     update(item->boundingRect());
 }
-
-void GMCanvas::makeFace()
-{
-    //qDebug() << meshHandlers_.at(currLayerIndex_)->makeFace(0);
-}
-
 
 void GMCanvas::setRenderingMode(int mode){
     renderingMode_ = mode;
@@ -313,8 +341,6 @@ vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
 
 void GMCanvas::setActiveLayer(unsigned char index)
 {
-    if(currLayerIndex_ < layers_.size()) makeFace();
-
     if(index < 0 || index >= layers_.size())
     {
         currLayerIndex_ = 0;

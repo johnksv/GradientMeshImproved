@@ -127,6 +127,11 @@ void MainWindow::on_actionMove_triggered()
     scene_->setDrawingMode(drawModeCanvas::move);
 }
 
+void MainWindow::on_actionDrawGradient_Constraints_triggered()
+{
+    scene_->setDrawingMode(drawModeCanvas::vertexConstraints);
+}
+
 void MainWindow::on_actionExport_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),

@@ -6,7 +6,7 @@
 #include "canvasitemgroup.h"
 
 enum class drawModeCanvas{
-    move, vertAndEdge, edge, faces
+    move, vertAndEdge, vertexConstraints
 };
 
 class GMCanvas : public QGraphicsScene
@@ -71,17 +71,14 @@ private:
     //0 for verticies only, 3 for "full" for full rendering
     unsigned char renderingMode_ = 3;
 
-    /* 0 for move and select. 1 for vertices and edges
-     * TODO: implement: 2 for only edges. 3 for connecting verticies to faces
-     */
     drawModeCanvas drawMode_ = drawModeCanvas::vertAndEdge;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point
      */
-    void handleMousePressVert(QGraphicsSceneMouseEvent *event);
-    void addItemPoint(CanvasItemPoint *item);
-    void makeFace();
+    void mouseLineTool(QGraphicsSceneMouseEvent *event);
+    void mouseVertexConstraint(QGraphicsSceneMouseEvent *event);
+    void addControlPoint(CanvasItemPoint *item);
 };
 
 #endif // GMCANVAS_H

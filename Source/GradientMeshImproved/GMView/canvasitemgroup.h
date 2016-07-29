@@ -6,6 +6,7 @@
 #include <QString>
 #include "canvasitemline.h"
 #include "canvasitemface.h"
+#include "canvaspointconstraint.h"
 
 
 class CanvasItemGroup : public QGraphicsItem, public QStandardItem

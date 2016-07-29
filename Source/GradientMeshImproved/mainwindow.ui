@@ -81,6 +81,7 @@
     </property>
     <addaction name="actionMove"/>
     <addaction name="actionDraw_Line_tool"/>
+    <addaction name="actionDrawGradient_Constraints"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -128,6 +129,7 @@
    <addaction name="separator"/>
    <addaction name="actionMove"/>
    <addaction name="actionDraw_Line_tool"/>
+   <addaction name="actionDrawGradient_Constraints"/>
    <addaction name="separator"/>
    <addaction name="actionColor_Choose"/>
    <addaction name="actionExecuteRender"/>
@@ -539,6 +541,11 @@
    </property>
    <property name="shortcut">
     <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionDrawGradient_Constraints">
+   <property name="text">
+    <string>Gradient Constraints</string>
    </property>
   </action>
  </widget>

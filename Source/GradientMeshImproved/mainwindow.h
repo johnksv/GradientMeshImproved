@@ -62,6 +62,8 @@ private slots:
 
     void on_actionClearSelection_triggered();
 
+    void on_actionDrawGradient_Constraints_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

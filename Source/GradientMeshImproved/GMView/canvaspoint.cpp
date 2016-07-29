@@ -10,6 +10,7 @@
 #include <QColorDialog>
 #include <QInputDialog>
 #include "canvas.h"
+#include <QPen>
 
 
 CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
@@ -32,9 +33,18 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
         QColor temp = QColor(color_);
         temp.setAlpha(150);
         painter->setBrush(temp);
-    }else{
+    }
+    else
+    {
+        if(highlighted_)
+        {
+            QPen pen(Qt::red);
+            pen.setWidth(2);
+            painter->setPen(pen);
+        }
         painter->setBrush(color_);
     }
+
     if(hovered_){
         painter->setOpacity(0.5);
     }else{
@@ -80,6 +90,16 @@ void CanvasItemPoint::setRadius(int _radius)
     }else{
         radius_ = _radius;
     }
+}
+
+bool CanvasItemPoint::isHighlighted()
+{
+    return highlighted_;
+}
+
+void CanvasItemPoint::setHighlighted(bool highlighted)
+{
+    highlighted_ = highlighted;
 }
 
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
