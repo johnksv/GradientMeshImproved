@@ -41,7 +41,7 @@ QRectF CanvasItemFace::boundingRect() const
 
 void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
 {
-    painter->setBrush(Qt::gray);
+    painter->setBrush(QColor(225,225,225,100));
     QPolygonF temp;
     for(CanvasItemPoint *item : pointsInFace_)
     {
