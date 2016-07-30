@@ -5,6 +5,7 @@
 #include "GMView/canvasitemgroup.h"
 #include <QStandardItemModel>
 #include <QMessageBox>
+#include <QApplication>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -272,4 +273,9 @@ void MainWindow::on_actionClearSelection_triggered()
 {
     scene_->resetLineStartEnd();
     scene_->clearSelection();
+}
+
+void MainWindow::on_actionHelpAbout_Qt_triggered()
+{
+     QApplication::aboutQt();
 }

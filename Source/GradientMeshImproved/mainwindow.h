@@ -64,6 +64,8 @@ private slots:
 
     void on_actionDrawGradient_Constraints_triggered();
 
+    void on_actionHelpAbout_Qt_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

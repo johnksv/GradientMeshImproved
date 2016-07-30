@@ -91,6 +91,7 @@
     <addaction name="actionHow_to"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionHelpAbout_Qt"/>
    </widget>
    <widget class="QMenu" name="menuRendering">
     <property name="title">
@@ -546,6 +547,11 @@
   <action name="actionDrawGradient_Constraints">
    <property name="text">
     <string>Gradient Constraints</string>
+   </property>
+  </action>
+  <action name="actionHelpAbout_Qt">
+   <property name="text">
+    <string>About Qt</string>
    </property>
   </action>
  </widget>
