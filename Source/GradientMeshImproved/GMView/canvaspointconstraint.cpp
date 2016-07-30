@@ -1,12 +1,16 @@
 #include "canvaspointconstraint.h"
+#include <QDebug>
 #include <QPainter>
-
+#include <QVariant>
+#include <QLineF>
+#include <QtMath>
+#include <QApplication>
 
 CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
     : controlPoint_(controlPoint), edge_(edge), QGraphicsItem(parent)
 {
     setZValue(2);
-    setFlags(ItemSendsScenePositionChanges);
+    setFlags(ItemIsMovable | ItemSendsScenePositionChanges);
 }
 
 QRectF CanvasPointConstraint::boundingRect() const
@@ -39,8 +43,18 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
 {
     if(change == ItemPositionChange)
     {
-        //TODO: Snap to line
+        //May want to change the position differently depening on input type?
+        if(QApplication::mouseButtons() == Qt::LeftButton)
+        {
+            QPointF *newPoint = &value.toPointF();
+            QLineF startToNewLine(*newPoint, edge_->line().p1());
 
+            /*Snaps to the point that intersects between the orgianl line,
+            and the normal of the line from the new point and the lines startpoint */
+            //Known bug: If startToNewLine -> startpoint
+            startToNewLine.normalVector().intersect( edge_->line(), newPoint);
+            return *newPoint;
+        }
     }
     return value;
 }
