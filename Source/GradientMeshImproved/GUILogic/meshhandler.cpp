@@ -140,27 +140,32 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 
 }
 
-bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
+bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 {
-    //TODO: Check orientation of edge
 
-    vector<vertexHandle> vHandlersFace, orginalvHandlersFace;
+    vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
     for(int idx : vertexHandlersIdx)
     {
         int index = findVertexHandler(idx);
-        vHandlersFace.push_back(vertexHandlers_.at(index));
+        vHandlersToBeFace.push_back(vertexHandlers_.at(index));
     }
-    orginalvHandlersFace = vHandlersFace;
+	//Used if rotation of added vertices are wrong
+    orginalvHandlersFace = vHandlersToBeFace;
 
     //Variable to hold the face that is added by the vertices.
     OpnMesh::FaceHandle newFace;
 
+	//Variable to hold if loop must be run again to fix orientation
+	bool loopToFixOrientation = false;
+
     do
     {
-        vertexHandle lastVertex = vHandlersFace.back();
+		qDebug() << "/nEnter loop";
+        vertexHandle lastVertex = vHandlersToBeFace.back();
         OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
 
-        vertexHandle secondLastVertex = vHandlersFace.at(vHandlersFace.size()-2);
+        vertexHandle secondLastVertex = vHandlersToBeFace.at(vHandlersToBeFace.size()-2);
+		//Used to find the halfedges that is leading to the closest vertices that should be a part of the face.
         QLineF toBeNewEdge(lastPoint[0],lastPoint[1],
                             guiMesh.point(secondLastVertex)[0],guiMesh.point(secondLastVertex)[1]);
 
@@ -169,36 +174,42 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
         OpnMesh::HalfedgeHandle outgoingHalfedge;
 
         double angle = 361;
-        //Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
-        for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+
+		
+		
+			//Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
+			for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+			{
+				if(guiMesh.is_boundary(vOutH_ite) || faceInsideFace)
+				{
+					//Calculate angle relative to the new edge
+					OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(vOutH_ite));
+					QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
+
+					double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+					//The edge with the smallest angle relative to the new edge should be the next vertex in the face.
+					if(angleTo < angle)
+					{
+						 angle = angleTo;
+						 outgoingHalfedge = vOutH_ite;
+					}
+				}
+			}
+		
+		if(outgoingHalfedge.is_valid())
         {
-            if(guiMesh.is_boundary(vOutH_ite))
-            {
-                //Calculate angle relative to the new edge
-                OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(*vOutH_ite));
-                QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
-
-                double angleTo = toBeNewEdge.angleTo(vertVertEdge);
-
-                //The edge with the smallest angle relative to the new edge should be the next vertex in the face.
-                if(angleTo < angle)
-                {
-                     angle = angleTo;
-                     outgoingHalfedge = vOutH_ite;
-                }
-            }
-        }
-
-        if(outgoingHalfedge.is_valid())
-        {
+			qDebug() << "Following edge from vertex " << guiMesh.from_vertex_handle(outgoingHalfedge).idx() 
+				<< ", to vertex " << guiMesh.to_vertex_handle(outgoingHalfedge).idx();
             while(true)
             {
+				//TODO: Fix looping.
+				qDebug() << "Looping forever?";
                 vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
                 outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
 
-                if(nextVertex != vHandlersFace.front())
+                if(nextVertex != vHandlersToBeFace.front())
                 {
-                    vHandlersFace.push_back(nextVertex);
+                    vHandlersToBeFace.push_back(nextVertex);
                 }
                 else
                 {
@@ -206,20 +217,108 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx)
                 }
             }
         }
-        newFace = guiMesh.add_face(vHandlersFace);
 
-        //Call helper function to check if a loop is requierd.
-    }while(faceOrientation(orginalvHandlersFace, newFace, vHandlersFace));
+		if (faceInsideFace)
+		{
+			if (guiMesh.face_handle(outgoingHalfedge).is_valid())
+			{
+
+				OpnMesh::FaceHandle &oldFace = guiMesh.face_handle(outgoingHalfedge);
+				vector<vertexHandle> verticesOldFace;
+				//Iterate over vertices in oldFace
+				for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(oldFace); fv_ite != guiMesh.fv_end(oldFace); fv_ite++)
+				{
+					qDebug() << "vertexHandleIdx: " << fv_ite->idx();
+					verticesOldFace.push_back(fv_ite);
+				}
+				//delete old face
+				guiMesh.delete_face(oldFace, false);
+				qDebug() << "Deleted old face";
+				
+				newFace = guiMesh.add_face(vHandlersToBeFace);
+
+				//Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
+				if (faceHandlers_.size() > 1)
+				{
+					//Check if newFace has correct orientation, else, make correct face
+					if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
+					{
+						qDebug() << "Wrong rotation.. Recursive call to makeFace";
+						if (!makeFace(vertexHandlersIdx)) {
+							qDebug() << "Did not make face. TODO: Check for error";
+						}
+					}
+					else
+					{
+						qDebug() << "Everything is ok with newFace. Making BoundaryFace";
+					}
+				}
+				
+				int matchingEndIndex;
+				for (int i = 0; i < verticesOldFace.size(); i++)
+				{
+					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.front())
+					{
+						qDebug() << "Old face should start from idx: "<< QString::number(vertexHandlersIdx.front());
+						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + i);
+					}
+					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.back())
+					{
+						qDebug() << "Old face should end from idx: " << QString::number(vertexHandlersIdx.back());
+						verticesOldFace.erase(verticesOldFace.begin() + i, verticesOldFace.end());
+						break;
+					}
+				}
+
+				//Adding the old face, but with the new vertices.
+				reverse(vertexHandlersIdx.begin(), vertexHandlersIdx.end());
+				for (int i = 0; i < vertexHandlersIdx.size() - 1; i++)
+				{
+					int index = findVertexHandler(vertexHandlersIdx.at(i));
+					vertexHandle vertex = vertexHandlers_.at(index);
+					verticesOldFace.push_back(vertex);
+				}
+				
+
+				OpnMesh::FaceHandle boundaryFace = guiMesh.add_face(verticesOldFace);
+				qDebug() << "BoundaryFace made. Checking rotation.";
+				//Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
+				if (faceHandlers_.size() > 1)
+				{
+					//Should be OK, but needs testing.
+					if (faceOrientation(orginalvHandlersFace, boundaryFace, vHandlersToBeFace))
+					{
+						qDebug() << "Wrong orientation... TODO: Handle";
+					}
+				}
+				faceHandlers_.push_back(boundaryFace);
+
+				//Print vertex IDX for debugging.
+				qDebug() << "Vertices in boundaryFace:";
+				for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(boundaryFace); fv_ite != guiMesh.fv_end(boundaryFace); fv_ite++)
+				{
+					qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
+					vertexHandlersIdx.push_back(fv_ite->idx());
+				}
+			}
+		}
+		else
+		{
+	        newFace = guiMesh.add_face(vHandlersToBeFace);
+			loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
+		}
+
+        //Call helper function to check if a loop is required.
+    }while(loopToFixOrientation);
 
     faceHandlers_.push_back(newFace);
 
-    //Check which vertecies are in current face, for debugging
-    //Crashes if new face are added in opposite direction.
-
+    //Check which vertices are in current face, for debugging
     vertexHandlersIdx.clear();
-    for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers_.back()); fv_ite != guiMesh.fv_end(faceHandlers_.back()); fv_ite++)
+	qDebug() << "Vertices in the new face:";
+    for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(newFace); fv_ite != guiMesh.fv_end(newFace); fv_ite++)
     {
-        qDebug() << "vertexHandleIdx: " << fv_ite->idx();
+        qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
         vertexHandlersIdx.push_back(fv_ite->idx());
     }
     return true;
@@ -265,7 +364,7 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
 {
     if(faceHandlers_.size() > 0)
     {
-        OpnMesh::Normal baseNormal = guiMesh.calc_face_normal(faceHandlers_.front());
+		
         bool isValidFace = newFace.is_valid();
         OpnMesh::Normal newFaceNormal;
         if(isValidFace)
@@ -273,9 +372,9 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
             newFaceNormal = guiMesh.calc_face_normal(newFace);
         }
         //TODO: Implement check for 3D
-        qDebug() << "Valid?" << isValidFace << baseNormal[2] << ", second: " << newFaceNormal[2];
+        qDebug() << "Orientation: " << isValidFace << ", Normals: " << newFaceNormal[2];
         //Orientation is of if face is not valid, or z-component of normal is different (2D).
-        if(!isValidFace || baseNormal[2] != newFaceNormal[2])
+        if(!isValidFace || (1 - newFaceNormal[2])  > 0.0000001)
         {
             vHandlersFace = orginalvHandlersFace;
             reverse(vHandlersFace.begin(), vHandlersFace.end());

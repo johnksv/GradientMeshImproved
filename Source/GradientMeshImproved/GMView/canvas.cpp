@@ -177,33 +177,51 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
             itemPoint->setVertexHandleIdx(vertexHandleIdx);
 
             //The point is new, and should be added to a new face.
-            vertesToAddFace_.push_back(vertexHandleIdx);
+            vertesToAddFace_.push_back(itemPoint);
         }
         else
         {
-            int vertexHandleIdx = layers_.at(currLayerIndex_)->points.at(collideWithIndex)->vertexHandleIdx();
+            CanvasItemPoint *collidePoint = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
             if (vertesToAddFace_.size() == 0)
             {
                 //Face start at an already existing vertex
-                vertesToAddFace_.push_back(vertexHandleIdx);
+                vertesToAddFace_.push_back(collidePoint);
             }
             else
             {
-                //Check if first element has edges already connect to it. If not, the point is already added.
-                if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertesToAddFace_.at(0)) > 0)
+                //Check if first element has edges already connect to it. If not, the point is already added in prev face.
+                if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertesToAddFace_.at(0)->vertexHandleIdx()) > 0)
                 {
-                    vertesToAddFace_.push_back(vertexHandleIdx);
+                    vertesToAddFace_.push_back(collidePoint);
                 }
 
-                //Else: Make a face of the points added. (E.g. the bounadary).
-                meshHandlers_.at(currLayerIndex_)->makeFace(vertesToAddFace_);
-
-
+                vector<int> vertesToAddFaceIdx;
+                //If the face to be should be added inside an already existing face
+                bool faceInsideFace = false;
+				for (int i = 0; i < vertesToAddFace_.size(); i++)
+				{
+					CanvasItemPoint *itemPoint = vertesToAddFace_.at(i);
+                    vertesToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
+					//No need to check last or first item,.
+					if (i != 0 && i < vertesToAddFace_.size() - 1)
+					{
+						for(QGraphicsItem *item: itemPoint->collidingItems())
+						{
+							if(dynamic_cast<CanvasItemFace*>(item))
+							{
+								faceInsideFace = true;
+							}
+						}
+					}
+                }
+				if (vertesToAddFace_.size() == 2) faceInsideFace = true;
+                meshHandlers_.at(currLayerIndex_)->makeFace(vertesToAddFaceIdx, faceInsideFace);
 
                 //For debugging purposes
                 CanvasItemFace * face = new CanvasItemFace();
                 layers_.at(currLayerIndex_)->faces.push_back(face);
-                for(int handle : vertesToAddFace_)
+
+                for(int handle : vertesToAddFaceIdx)
                 {
                     for(CanvasItemPoint *point : layers_.at(currLayerIndex_)->points)
                     {
@@ -214,7 +232,6 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                     }
                 }
                 layers_.at(currLayerIndex_)->addToGroup(face); //End debugging purposes
-
 
                 madeFace = true;
                 vertesToAddFace_.clear();
@@ -303,10 +320,10 @@ void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
         CanvasItemLine *collideLine = dynamic_cast<CanvasItemLine*> (collideItem);
         if(collideLine != nullptr)
         {
-
-            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
-            gradientConstraint->setPos(event->scenePos());
-            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
+			//TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
+            //CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
+			//gradientConstraint->setPos(event->scenePos());
+			//layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
             lineStartPoint_->setHighlighted(false);
             lineStartPoint_ = nullptr;
         }

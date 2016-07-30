@@ -62,7 +62,7 @@ private:
     QColor pointColor_;
     CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
 
-    vector<int> vertesToAddFace_;
+    vector<CanvasItemPoint*> vertesToAddFace_;
 
     //Referces to the index in the layers vector. 0 index is first element
     unsigned char currLayerIndex_ = 0;

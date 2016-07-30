@@ -57,7 +57,7 @@ public:
     vector<QVector4D> edges();
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
 
-    bool makeFace(vector<int> &vertexHandlersIdx);
+    bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
 
     void clearAll();
 
