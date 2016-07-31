@@ -179,28 +179,25 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         OpnMesh::HalfedgeHandle outgoingHalfedge;
 
         double angle = 361;
-
-		
-		
-			//Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
-			for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+		//Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
+		for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
+		{
+			if(guiMesh.is_boundary(vOutH_ite) || faceInsideFace)
 			{
-				if(guiMesh.is_boundary(vOutH_ite) || faceInsideFace)
-				{
-					//Calculate angle relative to the new edge
-					OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(vOutH_ite));
-					QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
+				//Calculate angle relative to the new edge
+				OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(vOutH_ite));
+				QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
 
-					double angleTo = toBeNewEdge.angleTo(vertVertEdge);
-					qDebug() << "angleTo" << angleTo;
-					//The edge with the smallest angle relative to the new edge should be the next vertex in the face.
-					if(angleTo < angle)
-					{
-						 angle = angleTo;
-						 outgoingHalfedge = vOutH_ite;
-					}
+				double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+				qDebug() << "angleTo" << angleTo;
+				//The edge with the smallest angle relative to the new edge should be the next vertex in the face.
+				if(angleTo < angle)
+				{
+						angle = angleTo;
+						outgoingHalfedge = vOutH_ite;
 				}
 			}
+		}
 		
 		if(outgoingHalfedge.is_valid())
         {
@@ -224,6 +221,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
             }
         }
 
+		//If faceInsideFace, or if vertesToAddFace_.size() == 2 (canvas.cpp) (outgoingHalfedge is than invalid)
 		if (faceInsideFace)
 		{
 			if (guiMesh.face_handle(outgoingHalfedge).is_valid())
@@ -350,6 +348,11 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 					qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
 					vertexHandlersIdx.push_back(fv_ite->idx());
 				}
+			}
+			else
+			{
+				newFace = guiMesh.add_face(vHandlersToBeFace);
+				loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
 			}
 		}
 		else
