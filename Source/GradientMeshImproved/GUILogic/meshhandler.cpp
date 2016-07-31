@@ -160,7 +160,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 
     do
     {
-		qDebug() << "/nEnter loop";
+		qDebug() << "Enter loop";
         vertexHandle lastVertex = vHandlersToBeFace.back();
         OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
 
@@ -187,6 +187,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 					QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
 
 					double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+					qDebug() << "angleTo" << angleTo;
 					//The edge with the smallest angle relative to the new edge should be the next vertex in the face.
 					if(angleTo < angle)
 					{
@@ -228,12 +229,11 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 				//Iterate over vertices in oldFace
 				for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(oldFace); fv_ite != guiMesh.fv_end(oldFace); fv_ite++)
 				{
-					qDebug() << "vertexHandleIdx: " << fv_ite->idx();
+					qDebug() << "Old face vertexHandleIdx: " << fv_ite->idx();
 					verticesOldFace.push_back(fv_ite);
 				}
 				//delete old face
 				guiMesh.delete_face(oldFace, false);
-				qDebug() << "Deleted old face";
 				
 				newFace = guiMesh.add_face(vHandlersToBeFace);
 
@@ -248,31 +248,76 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 							qDebug() << "Did not make face. TODO: Check for error";
 						}
 					}
-					else
-					{
-						qDebug() << "Everything is ok with newFace. Making BoundaryFace";
-					}
 				}
 				
-				int matchingEndIndex;
+				//Calculate which vertices that should not be included in boundaryFace (because they were added in newFace instead).
+				int startIndex = -1, endIndex =-1;
 				for (int i = 0; i < verticesOldFace.size(); i++)
 				{
 					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.front())
 					{
-						qDebug() << "Old face should start from idx: "<< QString::number(vertexHandlersIdx.front());
-						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + i);
+						startIndex = i;
+						break;
 					}
+				}
+				for (int i = 0; i < verticesOldFace.size(); i++)
+				{
 					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.back())
 					{
-						qDebug() << "Old face should end from idx: " << QString::number(vertexHandlersIdx.back());
-						verticesOldFace.erase(verticesOldFace.begin() + i, verticesOldFace.end());
+						endIndex = i;
 						break;
 					}
 				}
 
+				/*	The only vertices left after erase are vertices not "touched" by the new face
+				*	Eg: you have face ABCD and add AEFD inside ABCD, 
+				*	after erase oldFace/boundaryFace-vector will only contain BC.
+				*	DEFA is added in next for-loop so the new face and the boundaryFace dosn't collide.
+				*	Resulting faces will be:
+				*		New Face (already added by the time this if-statement hits): AEFD
+				*		Boundary face (to be added): BCDFEA
+				*/
+				if (startIndex != -1 && endIndex != -1 && startIndex > endIndex)
+				{
+					if (startIndex-verticesOldFace.size() > 0)
+					{
+
+					}
+					vector<vertexHandle> behindVerts;
+					for (auto v_ite = verticesOldFace.begin()+startIndex+1; v_ite != verticesOldFace.end(); v_ite++)
+					{
+						behindVerts.push_back(*v_ite);
+
+						qDebug() << v_ite->idx();
+					}
+					verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+					verticesOldFace.insert(verticesOldFace.begin(), behindVerts.begin(), behindVerts.end());
+					
+				}
+				else
+				{
+					if (startIndex != -1 && endIndex != -1)
+					{
+						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
+						//Line above: Index is shortened by startindex + 1 elements. Adjust endIndex accordingly.
+						endIndex -= startIndex+1;
+						verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+					}
+					else if (startIndex != -1)
+					{
+						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
+					}
+					else if (endIndex != -1)
+					{
+						verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+					}
+
+				}
+
 				//Adding the old face, but with the new vertices.
+				//Continuation from example above:
 				reverse(vertexHandlersIdx.begin(), vertexHandlersIdx.end());
-				for (int i = 0; i < vertexHandlersIdx.size() - 1; i++)
+				for (int i = 0; i < vertexHandlersIdx.size(); i++)
 				{
 					int index = findVertexHandler(vertexHandlersIdx.at(i));
 					vertexHandle vertex = vertexHandlers_.at(index);
