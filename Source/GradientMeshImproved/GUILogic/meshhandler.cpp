@@ -366,6 +366,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
         vertexHandlersIdx.push_back(fv_ite->idx());
     }
+
     return true;
 }
 
@@ -459,6 +460,8 @@ void MeshHandler::subdivide(signed int steps)
 
 void MeshHandler::prepareGuiMeshForSubd()
 {
+	guiMesh.garbage_collection();
+
     string tempString;
     tempString +="OFF\n";
 
@@ -470,8 +473,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     //Metadata
     tempString.append(to_string(vertices) + " " + to_string(faces) + " " + to_string(colormode) + "\n");
 
-    for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin();
-        ite != guiMesh.vertices_end(); ite++ )
+    for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin(); ite != guiMesh.vertices_end(); ite++ )
     {
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
@@ -527,22 +529,17 @@ void MeshHandler::prepareGuiMeshForSubd()
 
     //Faces:
     tempString += "\n";
-    for(int i = 0; i < faceHandlers_.size(); i++)
+	
+	for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
     {
-        int counterValence = 0;
-        string vertexInFace;
-        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(faceHandlers_[i]);
-            fv_ite != guiMesh.fv_end(faceHandlers_[i]); fv_ite++)
+		tempString += to_string(guiMesh.valence(face_ite)) + " ";
+        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
         {
-            counterValence++;
-            vertexInFace += to_string(fv_ite->idx()) + " ";
+			tempString += to_string(fv_ite->idx()) + " ";
         }
-        tempString += to_string(counterValence) + " ";
-        tempString += vertexInFace;
-
         tempString += "\n";
     }
-
+	
 
     qDebug() << QString::fromUtf8(tempString.c_str());
 
@@ -550,25 +547,23 @@ void MeshHandler::prepareGuiMeshForSubd()
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
 
+	fstream file;
+	file.open("test.off", fstream::out);
+	file << tempString.c_str();
+	file.close();
+	
+	
     //Convert stringstream for support with V2
-    qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2(tempString.c_str());
+    qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2("test.off");
     subdMesh->build(); // build mesh topology from data
     subdivide();
+	std::remove("test.off");
 }
 
 bool MeshHandler::saveGuiMeshOff(QString location)
 {
-    //TODO: Custom save
-    try
-    {
-        if(!OpenMesh::IO::write_mesh(guiMesh, location.toStdString())){
-            qDebug("Cannot write mesh to file..");
-            return false;
-        }
-    }catch (std::exception& x){
-        qDebug(x.what());
-        return false;
-    }
+    //TODO: Use save(const char *fileName, FileType ftype) in Mesh.cpp
+    
     return true;
 }
 

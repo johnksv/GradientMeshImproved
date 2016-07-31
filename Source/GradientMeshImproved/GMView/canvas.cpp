@@ -321,9 +321,9 @@ void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
         if(collideLine != nullptr)
         {
 			//TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
-            //CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
-			//gradientConstraint->setPos(event->scenePos());
-			//layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
+            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
+            gradientConstraint->setPos(event->scenePos());
+            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
             lineStartPoint_->setHighlighted(false);
             lineStartPoint_ = nullptr;
         }
