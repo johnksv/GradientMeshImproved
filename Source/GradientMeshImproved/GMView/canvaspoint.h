@@ -26,6 +26,9 @@ public:
     bool isHighlighted();
     void setHighlighted(bool highlighted);
 
+	bool catmullInterpolation();
+	void setCatmullInterpolation(bool value);
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -40,6 +43,7 @@ private:
     bool hovered_ = false;
     bool highlighted_ = false;
 	int vertexHandleIdx_;
+	bool catmullInterpolation_ = false;
 };
 
 #endif // GMCANVASITEM_H

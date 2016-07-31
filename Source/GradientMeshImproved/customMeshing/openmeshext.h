@@ -27,23 +27,38 @@ struct CustomTraits : public OpenMesh::DefaultTraits
         private:
             float weight_ = 0.5;
             QVector3D color_;
+            bool catmullInterpolation_ = false;
         public:
-            float weight(){
+            float weight()
+			{
                 return weight_;
             }
-            void setWeight(float weight){
+            void setWeight(float weight)
+			{
                 if(weight<0){
                     throw "Weight illegal value (must be positive)";
                 }
                 this->weight_ = weight;
             }
 
-            QVector3D color(){
+            QVector3D color()
+			{
                 return color_;
             }
-            void setColor(QVector3D color){
+            void setColor(QVector3D &color)
+			{
                 this->color_ = color;
             }
+
+            bool catmullInterpolation()
+			{
+                return catmullInterpolation_;
+            }
+            void setCatmullInterpolation(bool value)
+            {
+                catmullInterpolation_ = value;
+            }
+
     };
 
     EdgeTraits
@@ -52,17 +67,20 @@ struct CustomTraits : public OpenMesh::DefaultTraits
             bool discontinuate_;
             QVector3D color_;
         public:
-            double discontinuate(){
+            double discontinuate()
+			{
                 return discontinuate_;
             }
-            void setDiscontinuate(bool discontinuate){
+            void setDiscontinuate(bool discontinuate)
+			{
                 this->discontinuate_ = discontinuate;
             }
 
-            QVector3D color(){
+            QVector3D color()
+			{
                 return color_;
             }
-            void setColor(QVector3D color){
+            void setColor(QVector3D &color){
                 this->color_ = color;
             }
     };

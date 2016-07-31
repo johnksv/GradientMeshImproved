@@ -124,6 +124,10 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
     {
         meshHandlers_.at(currLayerIndex_)->setVertexWeight(vertHanIdx,item.weight());
     }
+    else if(mode == 3)
+    {
+        meshHandlers_.at(currLayerIndex_)->setVertexInterpolation(vertHanIdx,item.catmullInterpolation());
+    }
     else
     {
         qDebug() << "Canvas.cpp UpdateVertexFromPoint: Illegal mode. No changes made.";

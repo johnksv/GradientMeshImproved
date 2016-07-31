@@ -102,6 +102,16 @@ void CanvasItemPoint::setHighlighted(bool highlighted)
     highlighted_ = highlighted;
 }
 
+bool CanvasItemPoint::catmullInterpolation()
+{
+    return catmullInterpolation_;
+}
+
+void CanvasItemPoint::setCatmullInterpolation(bool value)
+{
+    catmullInterpolation_ = value;
+}
+
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if(change == ItemScenePositionHasChanged)
@@ -134,6 +144,12 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QAction *chooseColorAction = menu.addAction("Choose color");
     QAction *setWeightAction = menu.addAction("Set weight");
     menu.addSeparator();
+
+    QAction *setInterpolation = menu.addAction("Catmull-Clark interpolation of point");
+	setInterpolation->setCheckable(true);
+	setInterpolation->setChecked(catmullInterpolation_);
+
+    menu.addSeparator();
     QAction *deletePointAction = menu.addAction("Delete");
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == chooseColorAction)
@@ -158,6 +174,12 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         delete ok;
 
     }
+	else if (selectedAction == setInterpolation)
+	{
+		catmullInterpolation_ = setInterpolation->isChecked();
+		GMCanvas* parent = static_cast <GMCanvas*> (scene());
+        parent->updateVertexFromPoint(*this, 3);
+	}
     else if(selectedAction == deletePointAction)
     {
         //TODO Implement delete point

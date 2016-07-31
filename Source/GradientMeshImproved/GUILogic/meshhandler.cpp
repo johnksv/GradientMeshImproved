@@ -36,8 +36,8 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     setUpSubdMeshFile();
     subdMesh->draw(context);
 
-    setUpSubdMeshStream();
-    subdMesh->draw(context);
+    //setUpSubdMeshStream();
+    //subdMesh->draw(context);
 }
 
 vector<QVector4D> MeshHandler::vertices()
@@ -103,11 +103,16 @@ double MeshHandler::vertexWeight(int idx)
     return guiMesh.data(vertexHandlers_.at(index)).weight();
 }
 
-bool MeshHandler::setVertexWeight(int idx, double weight)
+void MeshHandler::setVertexWeight(int idx, double weight)
 {
     int index = findVertexHandler(idx);
     guiMesh.data(vertexHandlers_.at(index)).setWeight(weight);
-    return true;
+}
+
+void MeshHandler::setVertexInterpolation(int idx, bool catmullClarkInterpolation)
+{
+    int index = findVertexHandler(idx);
+    guiMesh.data(vertexHandlers_.at(index)).setCatmullInterpolation(catmullClarkInterpolation);
 }
 
 uint MeshHandler::vertexValence(int idx)
