@@ -4,6 +4,8 @@
 #include <QDebug>
 #include "canvaspoint.h"
 
+using namespace GMView;
+
 CanvasItemFace::CanvasItemFace(QGraphicsItem *parent) : QGraphicsItem(parent)
 {
 

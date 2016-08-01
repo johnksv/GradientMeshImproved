@@ -6,6 +6,8 @@
 #include <QOpenGLFunctions_1_0>
 #include "GUILogic/meshhandler.h"
 
+namespace GMView{
+
 class GMOpenGLWidget : public QOpenGLWidget, public QOpenGLFunctions_1_0
 {
     Q_OBJECT
@@ -26,5 +28,7 @@ private:
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
 };
+
+} // end of namespace GUIView
 
 #endif // GMOPENGLWIDGET_H

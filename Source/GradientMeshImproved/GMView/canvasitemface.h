@@ -5,6 +5,7 @@
 #include <QPolygon>
 #include "canvaspoint.h"
 
+namespace GMView {
 
 class CanvasItemFace :public QGraphicsItem
 {
@@ -19,5 +20,7 @@ public:
 private:
     vector<CanvasItemPoint*> pointsInFace_;
 };
+
+} // end of namespace GUIView
 
 #endif // CANVASITEMFACE_H

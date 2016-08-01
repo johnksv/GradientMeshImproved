@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    scene_ = new GMCanvas(this);
+    scene_ = new GMView::GMCanvas(this);
     ui->graphicsView->setScene(scene_);
 
     ui->splitWidget->setVisible(false);
@@ -58,8 +58,8 @@ void MainWindow::initLayoutContainer()
     ui->layer_listView->setModel(layerModel_);
     ui->layer_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    vector<CanvasItemGroup *> canvasLayers = scene_->layers();
-    for(CanvasItemGroup *item : canvasLayers)
+    vector<GMView::CanvasItemGroup *> canvasLayers = scene_->layers();
+    for(GMView::CanvasItemGroup *item : canvasLayers)
     {
         layerModel_->appendRow(item);
     }
@@ -120,17 +120,17 @@ void MainWindow::on_actionRender_Full_triggered()
 
 void MainWindow::on_actionDraw_Line_tool_triggered()
 {
-    scene_->setDrawingMode(drawModeCanvas::vertAndEdge);
+    scene_->setDrawingMode(GMView::drawModeCanvas::vertAndEdge);
 }
 
 void MainWindow::on_actionMove_triggered()
 {
-    scene_->setDrawingMode(drawModeCanvas::move);
+    scene_->setDrawingMode(GMView::drawModeCanvas::move);
 }
 
 void MainWindow::on_actionDrawGradient_Constraints_triggered()
 {
-    scene_->setDrawingMode(drawModeCanvas::vertexConstraints);
+    scene_->setDrawingMode(GMView::drawModeCanvas::vertexConstraints);
 }
 
 void MainWindow::on_actionExport_triggered()

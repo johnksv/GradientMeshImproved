@@ -5,6 +5,12 @@
 #include "openglwidget.h"
 #include "canvasitemgroup.h"
 
+
+/*! Namespace for handling user input
+ * and representing data to GUI-part of application.
+ */
+namespace GMView {
+
 enum class drawModeCanvas{
     move, vertAndEdge, vertexConstraints
 };
@@ -14,6 +20,7 @@ class GMCanvas : public QGraphicsScene
     Q_OBJECT
 public:
     GMCanvas(QObject * parent = 0);
+    ~GMCanvas();
 
     void clearAll();
     void resetLineStartEnd();
@@ -80,5 +87,7 @@ private:
     void mouseVertexConstraint(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
 };
+
+} // end of namespace GUIView
 
 #endif // GMCANVAS_H

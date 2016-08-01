@@ -3,6 +3,9 @@
 #include <QtMath>
 #include <QDateTime>
 #include <QtDebug>
+
+using namespace GMView;
+
 CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
     setMouseTracking(true);
@@ -35,6 +38,7 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
     qreal scale = qExp(zoomValue_ / 150);
 
     QMatrix matrix;
+    //Flip y-axis
     matrix.scale(scale, scale);
     setMatrix(matrix);
 }

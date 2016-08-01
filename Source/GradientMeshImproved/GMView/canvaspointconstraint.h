@@ -3,6 +3,7 @@
 
 #include "canvasitemline.h"
 
+namespace GMView{
 
 class CanvasPointConstraint : public QGraphicsItem
 {
@@ -25,5 +26,7 @@ private:
     QVector3D gradientConstraintVec_;
     int radius_ = 3;
 };
+
+} // end of namespace GUIView
 
 #endif // CANVASPOINTCONSTRAINT_H

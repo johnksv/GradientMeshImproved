@@ -2,6 +2,8 @@
 #include <QMouseEvent>
 #include <QDebug>
 
+using namespace GMView;
+
 GMOpenGLWidget::GMOpenGLWidget(QWidget *parent) : QOpenGLWidget{parent}
 {
 }
@@ -16,14 +18,15 @@ void GMOpenGLWidget::initializeGL()
 {
     // initialise an OpenGL context
     initializeOpenGLFunctions();
-    glWidth = 50;
-    glHeight = 50;
+    glWidth = 1280;
+    glHeight = 640;
 
 }
 
 void GMOpenGLWidget::resizeGL(int, int)
 {
-    glOrtho(-10, glWidth, -10, glHeight, -1.0, 1.0);
+    glLoadIdentity(); //Works with mesh.cpp if line uncommented, but will not then draw polygon (line 50)
+    glOrtho(0, glWidth, glHeight, 0, -1.0, 1.0);
 }
 
 void GMOpenGLWidget::setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
@@ -44,6 +47,17 @@ void GMOpenGLWidget::paintGL()
         glClearColor(1.0f,1.0f,1.0f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glBegin(GL_POLYGON);
+        glColor3f(0,1,0);
+        glVertex2f(0,0);
+        glVertex2f(.5f , .5f);
+        glColor3f(0,0,1);
+        glVertex2f(0.5f,0);
+
+        glEnd();
+
+
+
         // draw stuff
         for(GUILogic::MeshHandler *layer : *meshHandlers_)
         {
@@ -58,5 +72,6 @@ void GMOpenGLWidget::paintGL()
 void GMOpenGLWidget::mousePressEvent(QMouseEvent* event){
     int x = event->x();
     int y = event->y();
+    qDebug() << "OpenGL click: " << event->pos();
     //If i need some MouseEvents on the openGLWidget
 }

@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QDebug>
 
+using namespace GMView;
+
 CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
     QGraphicsItem(parent), QStandardItem(layername)
 {

@@ -3,6 +3,8 @@
 
 #include <QGraphicsView>
 
+namespace GMView{
+
 class CustomGraphicsView : public QGraphicsView
 {
 public:
@@ -14,5 +16,7 @@ protected:
 private:
     qreal zoomValue_ = 0;
 };
+
+} // end of namespace GUIView
 
 #endif // CUSTOMGRAPHICSVIEW_H

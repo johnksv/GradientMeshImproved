@@ -5,6 +5,8 @@
 #include "canvaspoint.h"
 #include <QMenu>
 
+namespace GMView{
+
 class CanvasItemLine : public QGraphicsLineItem
 {
 
@@ -35,5 +37,7 @@ private:
     bool discontinuous_ = false;
     QMenu contextMenu_;
 };
+
+} // end of namespace GUIView
 
 #endif // CANVASITEMLINE_H

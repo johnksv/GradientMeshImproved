@@ -6,6 +6,8 @@
 #include <QtMath>
 #include <QApplication>
 
+using namespace GMView;
+
 CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
     : controlPoint_(controlPoint), edge_(edge), QGraphicsItem(parent)
 {

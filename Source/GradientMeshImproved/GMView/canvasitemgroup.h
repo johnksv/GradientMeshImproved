@@ -8,6 +8,8 @@
 #include "canvasitemface.h"
 #include "canvaspointconstraint.h"
 
+namespace GMView{
+
 
 class CanvasItemGroup : public QGraphicsItem, public QStandardItem
 {
@@ -27,5 +29,7 @@ private:
     vector<CanvasItemFace*> faces;
 
 };
+
+} // end of namespace GUIView
 
 #endif // CANVASITEMGROUP_H

@@ -17,7 +17,6 @@ typedef subdivMesh::Mesh SbdvMesh;
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
 {
-
 }
 
 MeshHandler::~MeshHandler()
@@ -34,7 +33,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 
     // draw our two meshes (mesh creation should not happen here of course...)
     setUpSubdMeshFile();
-    subdMesh->draw(context);
+    //subdMesh->draw(context);
 
     //setUpSubdMeshStream();
     //subdMesh->draw(context);
@@ -154,23 +153,23 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         int index = findVertexHandler(idx);
         vHandlersToBeFace.push_back(vertexHandlers_.at(index));
     }
-	//Used if rotation of added vertices are wrong
+    //Used if rotation of added vertices are wrong
     orginalvHandlersFace = vHandlersToBeFace;
 
     //Variable to hold the face that is added by the vertices.
     OpnMesh::FaceHandle newFace;
 
-	//Variable to hold if loop must be run again to fix orientation
-	bool loopToFixOrientation = false;
+    //Variable to hold if loop must be run again to fix orientation
+    bool loopToFixOrientation = false;
 
     do
     {
-		qDebug() << "Enter loop";
+        qDebug() << "Enter loop";
         vertexHandle lastVertex = vHandlersToBeFace.back();
         OpnMesh::Point lastPoint = guiMesh.point(lastVertex);
 
         vertexHandle secondLastVertex = vHandlersToBeFace.at(vHandlersToBeFace.size()-2);
-		//Used to find the halfedges that is leading to the closest vertices that should be a part of the face.
+        //Used to find the halfedges that is leading to the closest vertices that should be a part of the face.
         QLineF toBeNewEdge(lastPoint[0],lastPoint[1],
                             guiMesh.point(secondLastVertex)[0],guiMesh.point(secondLastVertex)[1]);
 
@@ -179,34 +178,34 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         OpnMesh::HalfedgeHandle outgoingHalfedge;
 
         double angle = 361;
-		//Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
-		for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
-		{
-			if(guiMesh.is_boundary(vOutH_ite) || faceInsideFace)
-			{
-				//Calculate angle relative to the new edge
-				OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(vOutH_ite));
-				QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
-
-				double angleTo = toBeNewEdge.angleTo(vertVertEdge);
-				qDebug() << "angleTo" << angleTo;
-				//The edge with the smallest angle relative to the new edge should be the next vertex in the face.
-				if(angleTo < angle)
-				{
-						angle = angleTo;
-						outgoingHalfedge = vOutH_ite;
-				}
-			}
-		}
-		
-		if(outgoingHalfedge.is_valid())
+        //Outgoing halfedge always point towards the start vertex. Assumes that the faces always are added in same orientation (CW or CCW).
+        for(OpnMesh::VertexOHalfedgeIter vOutH_ite = guiMesh.voh_begin(lastVertex); vOutH_ite != guiMesh.voh_end(lastVertex); vOutH_ite++)
         {
-			qDebug() << "Following edge from vertex " << guiMesh.from_vertex_handle(outgoingHalfedge).idx() 
-				<< ", to vertex " << guiMesh.to_vertex_handle(outgoingHalfedge).idx();
+            if(guiMesh.is_boundary(vOutH_ite) || faceInsideFace)
+            {
+                //Calculate angle relative to the new edge
+                OpnMesh::Point point = guiMesh.point(guiMesh.to_vertex_handle(vOutH_ite));
+                QLineF vertVertEdge(lastPoint[0],lastPoint[1],point[0],point[1]);
+
+                double angleTo = toBeNewEdge.angleTo(vertVertEdge);
+                qDebug() << "angleTo" << angleTo;
+                //The edge with the smallest angle relative to the new edge should be the next vertex in the face.
+                if(angleTo < angle)
+                {
+                        angle = angleTo;
+                        outgoingHalfedge = vOutH_ite;
+                }
+            }
+        }
+
+        if(outgoingHalfedge.is_valid())
+        {
+            qDebug() << "Following edge from vertex " << guiMesh.from_vertex_handle(outgoingHalfedge).idx()
+                << ", to vertex " << guiMesh.to_vertex_handle(outgoingHalfedge).idx();
             while(true)
             {
-				//TODO: Fix looping.
-				qDebug() << "Looping forever?";
+                //TODO: Fix looping.
+                qDebug() << "Looping forever?";
                 vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
                 outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
 
@@ -221,145 +220,145 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
             }
         }
 
-		//If faceInsideFace, or if vertesToAddFace_.size() == 2 (canvas.cpp) (outgoingHalfedge is than invalid)
-		if (faceInsideFace)
-		{
-			if (guiMesh.face_handle(outgoingHalfedge).is_valid())
-			{
+        //If faceInsideFace, or if vertesToAddFace_.size() == 2 (canvas.cpp) (outgoingHalfedge is then invalid)
+        if (faceInsideFace)
+        {
+            if (guiMesh.face_handle(outgoingHalfedge).is_valid())
+            {
 
-				OpnMesh::FaceHandle &oldFace = guiMesh.face_handle(outgoingHalfedge);
-				vector<vertexHandle> verticesOldFace;
-				//Iterate over vertices in oldFace
-				for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(oldFace); fv_ite != guiMesh.fv_end(oldFace); fv_ite++)
-				{
-					qDebug() << "Old face vertexHandleIdx: " << fv_ite->idx();
-					verticesOldFace.push_back(fv_ite);
-				}
-				//delete old face
-				guiMesh.delete_face(oldFace, false);
-				
-				newFace = guiMesh.add_face(vHandlersToBeFace);
+                OpnMesh::FaceHandle &oldFace = guiMesh.face_handle(outgoingHalfedge);
+                vector<vertexHandle> verticesOldFace;
+                //Iterate over vertices in oldFace
+                for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(oldFace); fv_ite != guiMesh.fv_end(oldFace); fv_ite++)
+                {
+                    qDebug() << "Old face vertexHandleIdx: " << fv_ite->idx();
+                    verticesOldFace.push_back(fv_ite);
+                }
+                //delete old face
+                guiMesh.delete_face(oldFace, false);
 
-				//Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
-				if (faceHandlers_.size() > 1)
-				{
-					//Check if newFace has correct orientation, else, make correct face
-					if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
-					{
-						qDebug() << "Wrong rotation.. Recursive call to makeFace";
-						if (!makeFace(vertexHandlersIdx)) {
-							qDebug() << "Did not make face. TODO: Check for error";
-						}
-					}
-				}
-				
-				//Calculate which vertices that should not be included in boundaryFace (because they were added in newFace instead).
-				int startIndex = -1, endIndex =-1;
-				for (int i = 0; i < verticesOldFace.size(); i++)
-				{
-					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.front())
-					{
-						startIndex = i;
-						break;
-					}
-				}
-				for (int i = 0; i < verticesOldFace.size(); i++)
-				{
-					if (verticesOldFace.at(i).idx() == vertexHandlersIdx.back())
-					{
-						endIndex = i;
-						break;
-					}
-				}
+                newFace = guiMesh.add_face(vHandlersToBeFace);
 
-				/*	The only vertices left after erase are vertices not "touched" by the new face
-				*	Eg: you have face ABCD and add AEFD inside ABCD, 
-				*	after erase oldFace/boundaryFace-vector will only contain BC.
-				*	DEFA is added in next for-loop so the new face and the boundaryFace dosn't collide.
-				*	Resulting faces will be:
-				*		New Face (already added by the time this if-statement hits): AEFD
-				*		Boundary face (to be added): BCDFEA
-				*/
-				if (startIndex != -1 && endIndex != -1 && startIndex > endIndex)
-				{
-					if (startIndex-verticesOldFace.size() > 0)
-					{
+                //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
+                if (faceHandlers_.size() > 1)
+                {
+                    //Check if newFace has correct orientation, else, make correct face
+                    if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
+                    {
+                        qDebug() << "Wrong rotation.. Recursive call to makeFace";
+                        if (!makeFace(vertexHandlersIdx)) {
+                            qDebug() << "Did not make face. TODO: Check for error";
+                        }
+                    }
+                }
 
-					}
-					vector<vertexHandle> behindVerts;
-					for (auto v_ite = verticesOldFace.begin()+startIndex+1; v_ite != verticesOldFace.end(); v_ite++)
-					{
-						behindVerts.push_back(*v_ite);
+                //Calculate which vertices that should not be included in boundaryFace (because they were added in newFace instead).
+                int startIndex = -1, endIndex =-1;
+                for (int i = 0; i < verticesOldFace.size(); i++)
+                {
+                    if (verticesOldFace.at(i).idx() == vertexHandlersIdx.front())
+                    {
+                        startIndex = i;
+                        break;
+                    }
+                }
+                for (int i = 0; i < verticesOldFace.size(); i++)
+                {
+                    if (verticesOldFace.at(i).idx() == vertexHandlersIdx.back())
+                    {
+                        endIndex = i;
+                        break;
+                    }
+                }
 
-						qDebug() << v_ite->idx();
-					}
-					verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
-					verticesOldFace.insert(verticesOldFace.begin(), behindVerts.begin(), behindVerts.end());
-					
-				}
-				else
-				{
-					if (startIndex != -1 && endIndex != -1)
-					{
-						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
-						//Line above: Index is shortened by startindex + 1 elements. Adjust endIndex accordingly.
-						endIndex -= startIndex+1;
-						verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
-					}
-					else if (startIndex != -1)
-					{
-						verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
-					}
-					else if (endIndex != -1)
-					{
-						verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
-					}
+                /*	The only vertices left after erase are vertices not "touched" by the new face
+                *	Eg: you have face ABCD and add AEFD inside ABCD,
+                *	after erase oldFace/boundaryFace-vector will only contain BC.
+                *	DEFA is added in next for-loop so the new face and the boundaryFace dosn't collide.
+                *	Resulting faces will be:
+                *		New Face (already added by the time this if-statement hits): AEFD
+                *		Boundary face (to be added): BCDFEA
+                */
+                if (startIndex != -1 && endIndex != -1 && startIndex > endIndex)
+                {
+                    if (startIndex-verticesOldFace.size() > 0)
+                    {
 
-				}
+                    }
+                    vector<vertexHandle> behindVerts;
+                    for (auto v_ite = verticesOldFace.begin()+startIndex+1; v_ite != verticesOldFace.end(); v_ite++)
+                    {
+                        behindVerts.push_back(*v_ite);
 
-				//Adding the old face, but with the new vertices.
-				//Continuation from example above:
-				reverse(vertexHandlersIdx.begin(), vertexHandlersIdx.end());
-				for (int i = 0; i < vertexHandlersIdx.size(); i++)
-				{
-					int index = findVertexHandler(vertexHandlersIdx.at(i));
-					vertexHandle vertex = vertexHandlers_.at(index);
-					verticesOldFace.push_back(vertex);
-				}
-				
+                        qDebug() << v_ite->idx();
+                    }
+                    verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+                    verticesOldFace.insert(verticesOldFace.begin(), behindVerts.begin(), behindVerts.end());
 
-				OpnMesh::FaceHandle boundaryFace = guiMesh.add_face(verticesOldFace);
-				qDebug() << "BoundaryFace made. Checking rotation.";
-				//Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
-				if (faceHandlers_.size() > 1)
-				{
-					//Should be OK, but needs testing.
-					if (faceOrientation(orginalvHandlersFace, boundaryFace, vHandlersToBeFace))
-					{
-						qDebug() << "Wrong orientation... TODO: Handle";
-					}
-				}
-				faceHandlers_.push_back(boundaryFace);
+                }
+                else
+                {
+                    if (startIndex != -1 && endIndex != -1)
+                    {
+                        verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
+                        //Line above: Index is shortened by startindex + 1 elements. Adjust endIndex accordingly.
+                        endIndex -= startIndex+1;
+                        verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+                    }
+                    else if (startIndex != -1)
+                    {
+                        verticesOldFace.erase(verticesOldFace.begin(), verticesOldFace.begin() + startIndex + 1);
+                    }
+                    else if (endIndex != -1)
+                    {
+                        verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
+                    }
 
-				//Print vertex IDX for debugging.
-				qDebug() << "Vertices in boundaryFace:";
-				for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(boundaryFace); fv_ite != guiMesh.fv_end(boundaryFace); fv_ite++)
-				{
-					qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
-					vertexHandlersIdx.push_back(fv_ite->idx());
-				}
-			}
-			else
-			{
-				newFace = guiMesh.add_face(vHandlersToBeFace);
-				loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
-			}
-		}
-		else
-		{
-	        newFace = guiMesh.add_face(vHandlersToBeFace);
-			loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
-		}
+                }
+
+                //Adding the old face, but with the new vertices.
+                //Continuation from example above:
+                reverse(vertexHandlersIdx.begin(), vertexHandlersIdx.end());
+                for (int i = 0; i < vertexHandlersIdx.size(); i++)
+                {
+                    int index = findVertexHandler(vertexHandlersIdx.at(i));
+                    vertexHandle vertex = vertexHandlers_.at(index);
+                    verticesOldFace.push_back(vertex);
+                }
+
+
+                OpnMesh::FaceHandle boundaryFace = guiMesh.add_face(verticesOldFace);
+                qDebug() << "BoundaryFace made. Checking rotation.";
+                //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
+                if (faceHandlers_.size() > 1)
+                {
+                    //Should be OK, but needs testing.
+                    if (faceOrientation(orginalvHandlersFace, boundaryFace, vHandlersToBeFace))
+                    {
+                        qDebug() << "Wrong orientation... TODO: Handle";
+                    }
+                }
+                faceHandlers_.push_back(boundaryFace);
+
+                //Print vertex IDX for debugging.
+                qDebug() << "Vertices in boundaryFace:";
+                for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(boundaryFace); fv_ite != guiMesh.fv_end(boundaryFace); fv_ite++)
+                {
+                    qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
+                    vertexHandlersIdx.push_back(fv_ite->idx());
+                }
+            }
+            else
+            {
+                newFace = guiMesh.add_face(vHandlersToBeFace);
+                loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
+            }
+        }
+        else
+        {
+            newFace = guiMesh.add_face(vHandlersToBeFace);
+            loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
+        }
 
         //Call helper function to check if a loop is required.
     }while(loopToFixOrientation);
@@ -428,7 +427,7 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
         //TODO: Implement check for 3D
         qDebug() << "Orientation: " << isValidFace << ", Normals: " << newFaceNormal[2];
         //Orientation is of if face is not valid, or z-component of normal is different (2D).
-        if(!isValidFace || (1 - newFaceNormal[2])  > 0.0000001)
+        if(!isValidFace || (1 - newFaceNormal[2])  > 0.00001)
         {
             vHandlersFace = orginalvHandlersFace;
             reverse(vHandlersFace.begin(), vHandlersFace.end());
@@ -565,7 +564,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2("test.off");
     subdMesh->build(); // build mesh topology from data
     subdivide();
-	std::remove("test.off");
+    //std::remove("test.off");
 }
 
 bool MeshHandler::saveGuiMeshOff(QString location)
@@ -618,7 +617,7 @@ void MeshHandler::setUpSubdMeshFile()
     // create new mesh object
     delete subdMesh; // delete from heap (if any)
     subdMesh = new SbdvMesh();
-    subdMesh->loadV2(TEMPFILEPATH2);
+    subdMesh->loadV3(TEMPFILEPATH);
     subdMesh->build(); // must be called after load
     subdivide();
 }

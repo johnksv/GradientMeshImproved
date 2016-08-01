@@ -10,6 +10,8 @@
 #include <QToolTip>
 #include "canvas.h"
 
+using namespace GMView;
+
 CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint_(startPoint), endPoint_(endPoint)
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));

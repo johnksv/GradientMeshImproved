@@ -31,7 +31,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="CustomGraphicsView" name="graphicsView">
+     <widget class="GMView::CustomGraphicsView" name="graphicsView">
       <property name="minimumSize">
        <size>
         <width>250</width>
@@ -234,7 +234,7 @@
    <widget class="QWidget" name="splitWidgetContents">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="GMOpenGLWidget" name="openGLWidget"/>
+      <widget class="GMView::GMOpenGLWidget" name="openGLWidget"/>
      </item>
     </layout>
    </widget>
@@ -558,12 +558,12 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>CustomGraphicsView</class>
+   <class>GMView::CustomGraphicsView</class>
    <extends>QGraphicsView</extends>
    <header>GMView/customgraphicsview.h</header>
   </customwidget>
   <customwidget>
-   <class>GMOpenGLWidget</class>
+   <class>GMView::GMOpenGLWidget</class>
    <extends>QOpenGLWidget</extends>
    <header>GMView/openglwidget.h</header>
   </customwidget>

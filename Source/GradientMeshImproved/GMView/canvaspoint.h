@@ -4,6 +4,8 @@
 #include <QRectF>
 #include "GUILogic/meshhandler.h"
 
+namespace GMView{
+
 class CanvasItemPoint : public QObject, public QGraphicsItem
 {
     Q_OBJECT
@@ -45,5 +47,7 @@ private:
 	int vertexHandleIdx_;
 	bool catmullInterpolation_ = false;
 };
+
+} // end of namespace GUIView
 
 #endif // GMCANVASITEM_H

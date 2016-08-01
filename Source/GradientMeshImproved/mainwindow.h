@@ -71,7 +71,7 @@ private:
     void initActionGroups();
     QActionGroup *renderModeGroup_;
     QActionGroup *drawModeGroup_;
-    GMCanvas *scene_;
+    GMView::GMCanvas *scene_;
     QStandardItemModel *layerModel_;
     QUndoStack *undoStack;
     void initLayoutContainer();

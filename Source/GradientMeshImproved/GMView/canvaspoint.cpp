@@ -12,6 +12,7 @@
 #include "canvas.h"
 #include <QPen>
 
+using namespace GMView;
 
 CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
     QGraphicsItem(parent), color_(color)
@@ -53,6 +54,8 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
     painter->drawEllipse(boundingRect());
     //For debugging purposes TODO: remove
     painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
+    QString stringPos = QString::number(pos().x()).append(", ").append(QString::number(pos().y()));
+    painter->drawText(QPointF(10,20),stringPos);
 }
 
 QPainterPath CanvasItemPoint::shape() const

@@ -7,6 +7,8 @@
 #include <QVector4D>
 #include <QUndoCommand>
 
+using namespace GMView;
+
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
@@ -22,6 +24,14 @@ GMCanvas::GMCanvas(QObject * parent):
 
     //TODO: Change sceneRect(?)
     setSceneRect(itemsBoundingRect());
+}
+
+GMCanvas::~GMCanvas()
+{
+    for(GUILogic::MeshHandler *mesh : meshHandlers_)
+    {
+        delete mesh;
+    }
 }
 
 void GMCanvas::clearAll()
@@ -325,9 +335,9 @@ void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
         if(collideLine != nullptr)
         {
 			//TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
-            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
+            /*CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
             gradientConstraint->setPos(event->scenePos());
-            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);
+            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);*/
             lineStartPoint_->setHighlighted(false);
             lineStartPoint_ = nullptr;
         }
