@@ -27,7 +27,6 @@ struct CustomTraits : public OpenMesh::DefaultTraits
         private:
             float weight_ = 0.5;
             QVector3D color_;
-            bool catmullInterpolation_ = false;
         public:
             float weight()
 			{
@@ -49,16 +48,6 @@ struct CustomTraits : public OpenMesh::DefaultTraits
 			{
                 this->color_ = color;
             }
-
-            bool catmullInterpolation()
-			{
-                return catmullInterpolation_;
-            }
-            void setCatmullInterpolation(bool value)
-            {
-                catmullInterpolation_ = value;
-            }
-
     };
 
     EdgeTraits

@@ -12,7 +12,8 @@ CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, Canv
     : controlPoint_(controlPoint), edge_(edge), QGraphicsItem(parent)
 {
     setZValue(2);
-    setFlags(ItemIsMovable | ItemSendsScenePositionChanges);
+    setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges);
+    setParentItem(controlPoint_);
 }
 
 QRectF CanvasPointConstraint::boundingRect() const
@@ -24,6 +25,7 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
 {
     QColor color = QColor(125,125,125,125);
     painter->setBrush(color);
+    painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
     painter->drawEllipse(boundingRect());
     //For debugging purposes TODO: remove
     painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
@@ -36,27 +38,21 @@ QPainterPath CanvasPointConstraint::shape() const
     return path;
 }
 
-QVector3D CanvasPointConstraint::gradientConstraintVec()
+CanvasItemPoint *CanvasPointConstraint::controlPoint()
 {
-    return gradientConstraintVec_;
+    return controlPoint_;
+}
+
+CanvasItemLine *CanvasPointConstraint::edge()
+{
+    return edge_;
 }
 
 QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if(change == ItemPositionChange)
+    if(change == ItemPositionChange || change == ItemScenePositionHasChanged)
     {
-        //May want to change the position differently depening on input type?
-        if(QApplication::mouseButtons() == Qt::LeftButton)
-        {
-            QPointF *newPoint = &value.toPointF();
-            QLineF startToNewLine(*newPoint, edge_->line().p1());
-
-            /*Snaps to the point that intersects between the orgianl line,
-            and the normal of the line from the new point and the lines startpoint */
-            //Known bug: If startToNewLine -> startpoint
-            startToNewLine.normalVector().intersect( edge_->line(), newPoint);
-            return *newPoint;
-        }
+        edge_->updateSubdivisonCurve();
     }
     return value;
 }

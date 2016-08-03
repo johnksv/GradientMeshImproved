@@ -28,8 +28,11 @@ public:
     bool isHighlighted();
     void setHighlighted(bool highlighted);
 
-	bool catmullInterpolation();
-	void setCatmullInterpolation(bool value);
+    //TODO better way to avoid header collision
+    //Returns the control point. Had to cast it at CanvasItemPoint due to header collision..
+    //Can be casted to CanvasPointConstraint*
+    QGraphicsItem *controlPoint(QGraphicsItem *_edge);
+
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
@@ -45,7 +48,6 @@ private:
     bool hovered_ = false;
     bool highlighted_ = false;
 	int vertexHandleIdx_;
-	bool catmullInterpolation_ = false;
 };
 
 } // end of namespace GUIView

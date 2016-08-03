@@ -25,8 +25,6 @@ void GMOpenGLWidget::initializeGL()
 
 void GMOpenGLWidget::resizeGL(int, int)
 {
-    glLoadIdentity(); //Works with mesh.cpp if line uncommented, but will not then draw polygon (line 50)
-    glOrtho(0, glWidth, glHeight, 0, -1.0, 1.0);
 }
 
 void GMOpenGLWidget::setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
@@ -47,8 +45,11 @@ void GMOpenGLWidget::paintGL()
         glClearColor(1.0f,1.0f,1.0f,1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        glLoadIdentity(); //Works with mesh.cpp if line uncommented, but will not then draw polygon (line 50)
+        glOrtho(0, 1, 1, 0, -1.0, 1.0);
+
         glBegin(GL_POLYGON);
-        glColor3f(0,1,0);
+        glColor3f(0, 1, 0);
         glVertex2f(0,0);
         glVertex2f(.5f , .5f);
         glColor3f(0,0,1);
@@ -57,6 +58,8 @@ void GMOpenGLWidget::paintGL()
         glEnd();
 
 
+        glLoadIdentity();
+        glOrtho(0, 1200, 600, 0, -1.0, 1.0);
 
         // draw stuff
         for(GUILogic::MeshHandler *layer : *meshHandlers_)

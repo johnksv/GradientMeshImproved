@@ -32,7 +32,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 
     // draw our two meshes (mesh creation should not happen here of course...)
-    setUpSubdMeshFile();
+//    setUpSubdMeshFile();
     //subdMesh->draw(context);
 
     //setUpSubdMeshStream();
@@ -106,12 +106,6 @@ void MeshHandler::setVertexWeight(int idx, double weight)
 {
     int index = findVertexHandler(idx);
     guiMesh.data(vertexHandlers_.at(index)).setWeight(weight);
-}
-
-void MeshHandler::setVertexInterpolation(int idx, bool catmullClarkInterpolation)
-{
-    int index = findVertexHandler(idx);
-    guiMesh.data(vertexHandlers_.at(index)).setCatmullInterpolation(catmullClarkInterpolation);
 }
 
 uint MeshHandler::vertexValence(int idx)
@@ -374,6 +368,17 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         vertexHandlersIdx.push_back(fv_ite->idx());
     }
 
+    for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
+    {
+        QString tempString;
+        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
+        {
+            tempString += QString::number(fv_ite->idx());
+        }
+        qDebug() << tempString;
+    }
+
+
     return true;
 }
 
@@ -414,27 +419,24 @@ int GUILogic::MeshHandler::findFaceHandler(int idxToFind)
 }
 
 bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace)
-{
-    if(faceHandlers_.size() > 0)
+{		
+    bool isValidFace = newFace.is_valid();
+    OpnMesh::Normal newFaceNormal;
+    if(isValidFace)
     {
-		
-        bool isValidFace = newFace.is_valid();
-        OpnMesh::Normal newFaceNormal;
-        if(isValidFace)
-        {
-            newFaceNormal = guiMesh.calc_face_normal(newFace);
-        }
-        //TODO: Implement check for 3D
-        qDebug() << "Orientation: " << isValidFace << ", Normals: " << newFaceNormal[2];
-        //Orientation is of if face is not valid, or z-component of normal is different (2D).
-        if(!isValidFace || (1 - newFaceNormal[2])  > 0.00001)
-        {
-            vHandlersFace = orginalvHandlersFace;
-            reverse(vHandlersFace.begin(), vHandlersFace.end());
-            guiMesh.delete_face(newFace);
-            return true;
-        }
+        newFaceNormal = guiMesh.calc_face_normal(newFace);
     }
+    //TODO: Implement check for 3D
+    qDebug() << "Orientation: " << isValidFace << ", Normals: " << newFaceNormal[2];
+    //Orientation is of if face is not valid, or z-component of normal is different (2D).
+    if(!isValidFace || (1 - newFaceNormal[2])  > 0.00001)
+    {
+        vHandlersFace = orginalvHandlersFace;
+        reverse(vHandlersFace.begin(), vHandlersFace.end());
+        guiMesh.delete_face(newFace);
+        return true;
+    }
+
     return false;
 }
 
@@ -514,12 +516,20 @@ void MeshHandler::prepareGuiMeshForSubd()
             }
         }
 
-        //weight..valence
+
+        //weight..valence For V2
+//        for(unsigned int i = 0; i < valence; i++)
+//        {
+//            tempString += to_string(guiMesh.data(ite).weight());
+//            tempString += " ";
+//        }
+
+        //TODO: Gradient Constraints
         for(unsigned int i = 0; i < valence; i++)
         {
-            tempString += to_string(guiMesh.data(ite).weight());
-            tempString += " ";
+            tempString += "0 0 ";
         }
+
 
         //0..valency(not in use)
         for(unsigned int i = 0; i < valence; i++)
@@ -542,7 +552,7 @@ void MeshHandler::prepareGuiMeshForSubd()
 		tempString += to_string(guiMesh.valence(face_ite)) + " ";
         for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
         {
-			tempString += to_string(fv_ite->idx()) + " ";
+            tempString += to_string(fv_ite->idx()) + " ";
         }
         tempString += "\n";
     }
@@ -553,7 +563,6 @@ void MeshHandler::prepareGuiMeshForSubd()
     // delete current mesh object and insert a new one
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
-
 	fstream file;
 	file.open("test.off", fstream::out);
 	file << tempString.c_str();
@@ -561,7 +570,8 @@ void MeshHandler::prepareGuiMeshForSubd()
 	
 	
     //Convert stringstream for support with V2
-    qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2("test.off");
+    //qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2("test.off");
+    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(tempString.c_str());
     subdMesh->build(); // build mesh topology from data
     subdivide();
     //std::remove("test.off");
@@ -617,7 +627,7 @@ void MeshHandler::setUpSubdMeshFile()
     // create new mesh object
     delete subdMesh; // delete from heap (if any)
     subdMesh = new SbdvMesh();
-    subdMesh->loadV3(TEMPFILEPATH);
+    subdMesh->loadV2(TEMPFILEPATH2);
     subdMesh->build(); // must be called after load
     subdivide();
 }

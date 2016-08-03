@@ -17,14 +17,13 @@ public:
 
     bool operator ==(const CanvasItemLine &lineA);
 
-    int edgeHandleIdx();
-    void setEdgeHandleIdx(int idx);
-
     QColor color();
     void setColor(QColor &color = QColor(0,0,0));
 
 	CanvasItemPoint *startPoint();
 	CanvasItemPoint *endPoint();
+
+    void updateSubdivisonCurve();
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
@@ -32,10 +31,14 @@ protected:
 
 private:
     CanvasItemPoint *startPoint_, *endPoint_;
-    int edgeHandleIdx_;
+
     QColor color_;
     bool discontinuous_ = false;
     QMenu contextMenu_;
+    vector<QPointF> subdividedCurve_;
+
+
+    vector<QPointF> subdCurve(vector<QPointF> spline, int steps = 3, bool closed = false);
 };
 
 } // end of namespace GUIView

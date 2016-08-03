@@ -51,7 +51,6 @@ public:
     void setVertexColor(int idx, QColor vertexColor);
     double vertexWeight(int idx);
     void setVertexWeight(int idx, double vertexWeight);
-    void setVertexInterpolation(int idx, bool catmullClarkInterpolation);
     uint vertexValence(int idx);
 
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0

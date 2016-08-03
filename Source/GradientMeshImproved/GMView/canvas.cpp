@@ -134,10 +134,6 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
     {
         meshHandlers_.at(currLayerIndex_)->setVertexWeight(vertHanIdx,item.weight());
     }
-    else if(mode == 3)
-    {
-        meshHandlers_.at(currLayerIndex_)->setVertexInterpolation(vertHanIdx,item.catmullInterpolation());
-    }
     else
     {
         qDebug() << "Canvas.cpp UpdateVertexFromPoint: Illegal mode. No changes made.";
@@ -293,6 +289,13 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            {
                layers_.at(currLayerIndex_)->addToGroup(line);
                layers_.at(currLayerIndex_)->lines.push_back(line);
+
+               //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
+               CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
+               startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+               CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
+               endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
            }
 
            lineStartPoint_ = lineEndPoint_;
@@ -335,9 +338,8 @@ void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
         if(collideLine != nullptr)
         {
 			//TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
-            /*CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
-            gradientConstraint->setPos(event->scenePos());
-            layers_.at(currLayerIndex_)->addToGroup(gradientConstraint);*/
+            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
+            gradientConstraint->setPos(gradientConstraint->mapFromScene(event->scenePos()));
             lineStartPoint_->setHighlighted(false);
             lineStartPoint_ = nullptr;
         }

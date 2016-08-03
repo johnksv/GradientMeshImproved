@@ -14,7 +14,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
 
-    QVector3D gradientConstraintVec();
+    CanvasItemPoint *controlPoint();
+    CanvasItemLine *edge();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
@@ -23,7 +24,6 @@ private:
     CanvasItemPoint *controlPoint_;
     CanvasItemLine *edge_;
 
-    QVector3D gradientConstraintVec_;
     int radius_ = 3;
 };
 
