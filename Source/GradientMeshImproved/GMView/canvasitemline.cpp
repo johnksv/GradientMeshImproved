@@ -40,7 +40,9 @@ QPainterPath CanvasItemLine::shape() const
     QPainterPath path;
 
     path.moveTo(startPoint_->pos());
-    path.lineTo(endPoint_->pos());
+    for (int i = 1; i < subdividedCurve_.size(); i++){
+        path.lineTo(subdividedCurve_.at(i));
+    }
 
     //Create stroke for mouseclick and tooltip detection
     QPainterPathStroker stroke;

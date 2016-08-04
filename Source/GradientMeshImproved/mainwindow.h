@@ -19,7 +19,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionRender_Vertices_only_triggered();
+    void on_actionRender_no_constraints_handlers_triggered();
 
     void on_actionRender_Full_triggered();
 
@@ -31,7 +31,7 @@ private slots:
 
     void on_actionDraw_Line_tool_triggered();
 
-    void on_actionMove_triggered();
+    void on_actionDraw_move_and_select_triggered();
 
     void on_actionImport_triggered();
 
@@ -62,8 +62,6 @@ private slots:
 
     void on_actionClearSelection_triggered();
 
-    void on_actionDrawGradient_Constraints_triggered();
-
     void on_actionHelpAbout_Qt_triggered();
 
 private:
@@ -78,6 +76,7 @@ private:
     void initColorSelector();
     // 1 for pirmary, 2 for secondary, 3 for tertiary
     void handleColorButtonClick(int color);
+    void initWindowAction();
 };
 
 #endif // MAINWINDOW_H

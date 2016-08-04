@@ -106,12 +106,8 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     case drawModeCanvas::move:
         QGraphicsScene::mousePressEvent(mouseEvent);
         break;
-    case drawModeCanvas::vertAndEdge:
+    case drawModeCanvas::lineTool:
         mouseLineTool(mouseEvent);
-        mouseEvent->accept();
-        break;
-    case drawModeCanvas::vertexConstraints:
-        mouseVertexConstraint(mouseEvent);
         mouseEvent->accept();
         break;
     }
@@ -156,9 +152,24 @@ void GMCanvas::setDrawColorVertex(QColor pointColor)
     pointColor_ = pointColor;
 }
 
-drawModeCanvas GMCanvas::drawingMode()
+void GMCanvas::setRenderConstraintHandlers(bool value)
+{
+    renderConstraintHandlers_ = value;
+}
+
+drawModeCanvas GMCanvas::drawingMode() const
 {
     return drawMode_;
+}
+
+renderModeCanvas GMCanvas::renderMode() const
+{
+    return renderingMode_;
+}
+
+bool GMCanvas::renderConstraintHandlers() const
+{
+    return renderConstraintHandlers_;
 }
 
 void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
@@ -297,53 +308,17 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
            }
-
            lineStartPoint_ = lineEndPoint_;
            lineEndPoint_ = nullptr;
        }
-
-
        //Startpoint should be reset if a face was made.
        if(madeFace) lineStartPoint_ = nullptr;
 
        //Should not delete ItemPoint from heap.
        return;
     }
-
+    //No use for item. Delete it from heap.
     delete itemPoint;
-}
-
-void GMCanvas::mouseVertexConstraint(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem *collideItem = itemAt(event->scenePos(), QTransform());
-
-    //Use lineStartPoint_ as holder for control vertex.
-    if(lineStartPoint_ == nullptr)
-    {
-        CanvasItemPoint *collidePoint = dynamic_cast<CanvasItemPoint*> (collideItem);
-
-        if(collidePoint != nullptr)
-        {
-            lineStartPoint_ = collidePoint;
-            lineStartPoint_->setHighlighted(true);
-        }
-        else
-        {
-            qDebug() << "Did not click on point.";
-        }
-    }
-    else
-    {
-        CanvasItemLine *collideLine = dynamic_cast<CanvasItemLine*> (collideItem);
-        if(collideLine != nullptr)
-        {
-			//TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
-            CanvasPointConstraint *gradientConstraint = new CanvasPointConstraint(lineStartPoint_, collideLine);
-            gradientConstraint->setPos(gradientConstraint->mapFromScene(event->scenePos()));
-            lineStartPoint_->setHighlighted(false);
-            lineStartPoint_ = nullptr;
-        }
-    }
 }
 
 void GMCanvas::addControlPoint(CanvasItemPoint *item)
@@ -354,7 +329,7 @@ void GMCanvas::addControlPoint(CanvasItemPoint *item)
     update(item->boundingRect());
 }
 
-void GMCanvas::setRenderingMode(int mode){
+void GMCanvas::setRenderingMode(renderModeCanvas mode){
     renderingMode_ = mode;
 }
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode){

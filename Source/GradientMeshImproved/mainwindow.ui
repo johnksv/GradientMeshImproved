@@ -79,9 +79,8 @@
     <property name="title">
      <string>Mesh</string>
     </property>
-    <addaction name="actionMove"/>
+    <addaction name="actionDraw_move_and_select"/>
     <addaction name="actionDraw_Line_tool"/>
-    <addaction name="actionDrawGradient_Constraints"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -97,7 +96,7 @@
     <property name="title">
      <string>Rendering</string>
     </property>
-    <addaction name="actionRender_Vertices_only"/>
+    <addaction name="actionRender_no_constraints_handlers"/>
     <addaction name="actionRender_Vertices_and_Edges"/>
     <addaction name="actionRender_Partial"/>
     <addaction name="actionRender_Full"/>
@@ -128,9 +127,8 @@
     <bool>false</bool>
    </attribute>
    <addaction name="separator"/>
-   <addaction name="actionMove"/>
+   <addaction name="actionDraw_move_and_select"/>
    <addaction name="actionDraw_Line_tool"/>
-   <addaction name="actionDrawGradient_Constraints"/>
    <addaction name="separator"/>
    <addaction name="actionColor_Choose"/>
    <addaction name="actionExecuteRender"/>
@@ -428,6 +426,12 @@
    </property>
   </action>
   <action name="actionDraw_Line_tool">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Line tool</string>
    </property>
@@ -455,12 +459,12 @@
     <string>Zoom out</string>
    </property>
   </action>
-  <action name="actionRender_Vertices_only">
+  <action name="actionRender_no_constraints_handlers">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vertices only</string>
+    <string>No constrains handlers</string>
    </property>
   </action>
   <action name="actionRender_Full">
@@ -490,7 +494,10 @@
     <string>Vertices and Edges</string>
    </property>
   </action>
-  <action name="actionMove">
+  <action name="actionDraw_move_and_select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Move and select</string>
    </property>
@@ -542,11 +549,6 @@
    </property>
    <property name="shortcut">
     <string>Esc</string>
-   </property>
-  </action>
-  <action name="actionDrawGradient_Constraints">
-   <property name="text">
-    <string>Gradient Constraints</string>
    </property>
   </action>
   <action name="actionHelpAbout_Qt">

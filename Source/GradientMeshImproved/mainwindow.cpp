@@ -8,6 +8,8 @@
 #include <QApplication>
 #include <QDebug>
 
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -16,13 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     scene_ = new GMView::GMCanvas(this);
     ui->graphicsView->setScene(scene_);
 
+    initWindowAction();
     ui->splitWidget->setVisible(false);
-    ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
-    ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
-    ui->menuWindow->addAction(ui->undoWidget->toggleViewAction());
-    ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
-
-
+    ui->actionRender_no_constraints_handlers->setChecked(true);
     ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
 
     //TODO: implement undoStack
@@ -39,16 +37,27 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::initWindowAction()
+{
+    ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->undoWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
+}
+
 void MainWindow::initActionGroups()
 {
+
     renderModeGroup_ = new QActionGroup(this);
-    renderModeGroup_->addAction(ui->actionRender_Vertices_only);
     renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
     renderModeGroup_->addAction(ui->actionRender_Partial);
     renderModeGroup_->addAction(ui->actionRender_Full);
-    connect(renderModeGroup_, SIGNAL(triggered(QAction*)), this, SLOT(handleRenderModeGroup(QAction*)));
+    connect(renderModeGroup_, &QActionGroup::triggered, [=](QAction *selected) {selected->setChecked(true);});
 
     drawModeGroup_ = new QActionGroup(this);
+    drawModeGroup_->addAction(ui->actionDraw_Line_tool);
+    drawModeGroup_->addAction(ui->actionDraw_move_and_select);
+    connect(drawModeGroup_, &QActionGroup::triggered, [=](QAction *selected) { selected->setChecked(true);});
 
 }
 
@@ -94,10 +103,10 @@ void MainWindow::handleRenderModeGroup(QAction * action)
     action->setChecked(true);
 }
 
-void MainWindow::on_actionRender_Vertices_only_triggered()
+void MainWindow::on_actionRender_no_constraints_handlers_triggered()
 {
-//    ui->openGLWidget-> setRenderingMode(0);
-//    ui->openGLWidget-> paintGL();
+    scene_->setRenderConstraintHandlers(ui->actionRender_no_constraints_handlers->isChecked());
+    scene_->update();
 }
 
 void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
@@ -114,23 +123,18 @@ void MainWindow::on_actionRender_Partial_triggered()
 
 void MainWindow::on_actionRender_Full_triggered()
 {
-//    ui->openGLWidget-> setRenderingMode(3);
-//    ui->openGLWidget-> paintGL();
+    scene_-> setRenderingMode(GMView::renderModeCanvas::fullRender);
+    scene_->update();
 }
 
 void MainWindow::on_actionDraw_Line_tool_triggered()
 {
-    scene_->setDrawingMode(GMView::drawModeCanvas::vertAndEdge);
+    scene_->setDrawingMode(GMView::drawModeCanvas::lineTool);
 }
 
-void MainWindow::on_actionMove_triggered()
+void MainWindow::on_actionDraw_move_and_select_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::move);
-}
-
-void MainWindow::on_actionDrawGradient_Constraints_triggered()
-{
-    scene_->setDrawingMode(GMView::drawModeCanvas::vertexConstraints);
 }
 
 void MainWindow::on_actionExport_triggered()

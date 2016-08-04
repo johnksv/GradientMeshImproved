@@ -12,7 +12,10 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, vertAndEdge, vertexConstraints
+    move, lineTool
+};
+enum class renderModeCanvas{
+    fullRender
 };
 
 class GMCanvas : public QGraphicsScene
@@ -31,12 +34,16 @@ public:
      */
     void handleFileDialog(QString location, bool import);
 
-    void setRenderingMode(int);
     void setDrawingMode(drawModeCanvas);
+    void setRenderingMode(renderModeCanvas);
     void setActiveLayer(unsigned char index);
     void setDrawColorVertex(QColor pointColor);
+    void setRenderConstraintHandlers(bool value);
 
-    drawModeCanvas drawingMode();
+    drawModeCanvas drawingMode() const;
+    renderModeCanvas renderMode() const;
+    bool renderConstraintHandlers() const;
+
 
     vector<CanvasItemGroup *> layers();
     vector<GUILogic::MeshHandler *> *meshHandlers();
@@ -74,17 +81,14 @@ private:
     //Referces to the index in the layers vector. 0 index is first element
     unsigned char currLayerIndex_ = 0;
 
-
-    //0 for verticies only, 3 for "full" for full rendering
-    unsigned char renderingMode_ = 3;
-
-    drawModeCanvas drawMode_ = drawModeCanvas::vertAndEdge;
+    drawModeCanvas drawMode_ = drawModeCanvas::lineTool;
+    renderModeCanvas renderingMode_ =  renderModeCanvas::fullRender;
+    bool renderConstraintHandlers_;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point
      */
     void mouseLineTool(QGraphicsSceneMouseEvent *event);
-    void mouseVertexConstraint(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
 };
 

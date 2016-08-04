@@ -5,6 +5,7 @@
 #include <QLineF>
 #include <QtMath>
 #include <QApplication>
+#include "canvas.h"
 
 using namespace GMView;
 
@@ -23,12 +24,16 @@ QRectF CanvasPointConstraint::boundingRect() const
 
 void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QColor color = QColor(125,125,125,125);
-    painter->setBrush(color);
-    painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
-    painter->drawEllipse(boundingRect());
-    //For debugging purposes TODO: remove
-    painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
+    GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+    if(canvas->renderConstraintHandlers())
+    {
+        QColor color = QColor(125,125,125,125);
+        painter->setBrush(color);
+        painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
+        painter->drawEllipse(boundingRect());
+        //For debugging purposes TODO: remove
+        painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
+    }
 }
 
 QPainterPath CanvasPointConstraint::shape() const
