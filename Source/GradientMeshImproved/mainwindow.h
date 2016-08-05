@@ -19,7 +19,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionRender_no_constraints_handlers_triggered();
+    void on_actionRender_constraints_handlers_triggered();
 
     void on_actionRender_Full_triggered();
 

@@ -47,6 +47,7 @@ public:
 
     vector<CanvasItemGroup *> layers();
     vector<GUILogic::MeshHandler *> *meshHandlers();
+    GUILogic::MeshHandler *currentMeshHandler();
 
     void addLayer(QString name);
     void deleteLayer(int index);
@@ -76,7 +77,7 @@ private:
     QColor pointColor_;
     CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
 
-    vector<CanvasItemPoint*> vertesToAddFace_;
+    vector<CanvasItemPoint*> vertsToAddFace_;
 
     //Referces to the index in the layers vector. 0 index is first element
     unsigned char currLayerIndex_ = 0;

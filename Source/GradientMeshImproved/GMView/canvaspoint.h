@@ -15,20 +15,23 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
 
-    QColor color();
-    double weight();
+    QColor color() const;
     void setColor(QColor color);
+    double weight() const;
     void setWeight(double);
 
-	int vertexHandleIdx();
-	void setVertexHandleIdx(int idx);
+    int vertexHandleIdx() const;
+    void setVertexHandleIdx(int idx);
 
     void setRadius(int);
 
-    bool isHighlighted();
+    bool isHighlighted() const;
     void setHighlighted(bool highlighted);
 
-    //TODO better way to avoid header collision
+    bool discontinuous() const;
+    void setDiscontinuous(bool value);
+
+    //TODO better way to avoid header include collision
     //Returns the control point. Had to cast it at CanvasItemPoint due to header collision..
     //Can be casted to CanvasPointConstraint*
     QGraphicsItem *controlPoint(QGraphicsItem *_edge);
@@ -48,6 +51,7 @@ private:
     bool hovered_ = false;
     bool highlighted_ = false;
 	int vertexHandleIdx_;
+    bool discontinuous_ = false;
 };
 
 } // end of namespace GUIView

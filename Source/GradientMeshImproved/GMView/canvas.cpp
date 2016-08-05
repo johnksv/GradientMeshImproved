@@ -59,7 +59,6 @@ void GMCanvas::clearAll()
      layers_.at(currLayerIndex_)->points.clear();
      layers_.at(currLayerIndex_)->points_selected.clear();
 
-
      meshHandlers_.at(currLayerIndex_)->clearAll();
      update();
 }
@@ -198,33 +197,33 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
             itemPoint->setVertexHandleIdx(vertexHandleIdx);
 
             //The point is new, and should be added to a new face.
-            vertesToAddFace_.push_back(itemPoint);
+            vertsToAddFace_.push_back(itemPoint);
         }
         else
         {
             CanvasItemPoint *collidePoint = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
-            if (vertesToAddFace_.size() == 0)
+            if (vertsToAddFace_.size() == 0)
             {
                 //Face start at an already existing vertex
-                vertesToAddFace_.push_back(collidePoint);
+                vertsToAddFace_.push_back(collidePoint);
             }
             else
             {
                 //Check if first element has edges already connect to it. If not, the point is already added in prev face.
-                if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertesToAddFace_.at(0)->vertexHandleIdx()) > 0)
+                if(meshHandlers_.at(currLayerIndex_)->vertexValence(vertsToAddFace_.at(0)->vertexHandleIdx()) > 0)
                 {
-                    vertesToAddFace_.push_back(collidePoint);
+                    vertsToAddFace_.push_back(collidePoint);
                 }
 
                 vector<int> vertesToAddFaceIdx;
                 //If the face to be should be added inside an already existing face
                 bool faceInsideFace = false;
-				for (int i = 0; i < vertesToAddFace_.size(); i++)
+                for (int i = 0; i < vertsToAddFace_.size(); i++)
 				{
-					CanvasItemPoint *itemPoint = vertesToAddFace_.at(i);
+                    CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
                     vertesToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
 					//No need to check last or first item,.
-					if (i != 0 && i < vertesToAddFace_.size() - 1)
+                    if (i != 0 && i < vertsToAddFace_.size() - 1)
 					{
 						for(QGraphicsItem *item: itemPoint->collidingItems())
 						{
@@ -235,7 +234,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 						}
 					}
                 }
-				if (vertesToAddFace_.size() == 2) faceInsideFace = true;
+                if (vertsToAddFace_.size() == 2) faceInsideFace = true;
                 meshHandlers_.at(currLayerIndex_)->makeFace(vertesToAddFaceIdx, faceInsideFace);
 
                 //For debugging purposes
@@ -255,7 +254,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                 layers_.at(currLayerIndex_)->addToGroup(face); //End debugging purposes
 
                 madeFace = true;
-                vertesToAddFace_.clear();
+                vertsToAddFace_.clear();
             }
         }
 
@@ -345,6 +344,11 @@ vector<CanvasItemGroup *> GMCanvas::layers()
 vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
 {
     return &meshHandlers_;
+}
+
+GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
+{
+    return meshHandlers_.at(currLayerIndex_);
 }
 
 void GMCanvas::setActiveLayer(unsigned char index)

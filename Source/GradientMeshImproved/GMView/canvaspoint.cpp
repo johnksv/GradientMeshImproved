@@ -11,6 +11,7 @@
 #include <QInputDialog>
 #include "canvas.h"
 #include <QPen>
+#include "canvaspointdiscontinued.h"
 
 using namespace GMView;
 
@@ -51,7 +52,8 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, 
     }else{
         painter->setOpacity(1);
     }
-    painter->drawEllipse(boundingRect());
+
+    if(!discontinuous_) painter->drawEllipse(boundingRect());
 
     //For debugging purposes TODO: remove
     painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
@@ -67,17 +69,33 @@ QPainterPath CanvasItemPoint::shape() const
 }
 
 
-QColor CanvasItemPoint::color()
+QColor CanvasItemPoint::color() const
 {
     return color_;
 }
 
-double CanvasItemPoint::weight()
+void CanvasItemPoint::setColor(QColor color)
+{
+    this->color_ = color;
+    GMCanvas* parent = static_cast <GMCanvas*> (scene());
+    parent->updateVertexFromPoint(*this, 1);
+    update(boundingRect());
+}
+
+double CanvasItemPoint::weight() const
 {
     return weight_;
 }
 
-int CanvasItemPoint::vertexHandleIdx()
+void CanvasItemPoint::setWeight(double weight)
+{
+    this->weight_ = weight;
+    GMCanvas* parent = static_cast <GMCanvas*> (scene());
+    parent->updateVertexFromPoint(*this, 2);
+}
+
+
+int CanvasItemPoint::vertexHandleIdx() const
 {
 	return vertexHandleIdx_;
 }
@@ -96,7 +114,7 @@ void CanvasItemPoint::setRadius(int _radius)
     }
 }
 
-bool CanvasItemPoint::isHighlighted()
+bool CanvasItemPoint::isHighlighted() const
 {
     return highlighted_;
 }
@@ -106,12 +124,33 @@ void CanvasItemPoint::setHighlighted(bool highlighted)
     highlighted_ = highlighted;
 }
 
+bool CanvasItemPoint::discontinuous() const
+{
+    return discontinuous_;
+}
+
+void CanvasItemPoint::setDiscontinuous(bool value)
+{
+    discontinuous_ = value;
+    if(discontinuous_)
+    {
+        CanvasPointDiscontinued *pointA = new CanvasPointDiscontinued(true, this);
+        CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
+        //TODO set position of A and B on the normal of the incoming edge for visual look.
+    }
+    else
+    {
+        //TODO: Delete the discontinued points (Internaly maybe with collapsing edges)
+    }
+
+    update();
+}
+
 QGraphicsItem *CanvasItemPoint::controlPoint(QGraphicsItem *_edge)
 {
     CanvasItemLine *edge = dynamic_cast<CanvasItemLine*> (_edge);
     if(edge != nullptr)
     {
-        //QList<QGraphicsItem *> items = childItems();
         for(QGraphicsItem *item : childItems())
         {
             CanvasPointConstraint *constraint = dynamic_cast<CanvasPointConstraint*> (item);
@@ -190,19 +229,4 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         //TODO Implement delete point
     }
-}
-
-void CanvasItemPoint::setColor(QColor color)
-{
-    this->color_ = color;
-    GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(*this, 1);
-    update(boundingRect());
-}
-
-void CanvasItemPoint::setWeight(double weight)
-{
-    this->weight_ = weight;
-    GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(*this, 2);
 }

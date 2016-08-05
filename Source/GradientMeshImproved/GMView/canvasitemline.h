@@ -17,9 +17,6 @@ public:
 
     bool operator ==(const CanvasItemLine &lineA);
 
-    QColor color();
-    void setColor(QColor &color = QColor(0,0,0));
-
 	CanvasItemPoint *startPoint();
 	CanvasItemPoint *endPoint();
 
@@ -32,7 +29,6 @@ protected:
 private:
     CanvasItemPoint *startPoint_, *endPoint_;
 
-    QColor color_;
     bool discontinuous_ = false;
     QMenu contextMenu_;
     vector<QPointF> subdividedCurve_;

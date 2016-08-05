@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     undoCommands/movevertex.cpp \
     undoCommands/undoweight.cpp \
     undoCommands/undocolor.cpp \
-    GMView/canvaspointconstraint.cpp
+    GMView/canvaspointconstraint.cpp \
+    GMView/canvaspointdiscontinued.cpp
 
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
@@ -49,7 +50,8 @@ HEADERS  += mainwindow.h \
     undoCommands/movevertex.h \
     undoCommands/undoweight.h \
     undoCommands/undocolor.h \
-    GMView/canvaspointconstraint.h
+    GMView/canvaspointconstraint.h \
+    GMView/canvaspointdiscontinued.h
 
 FORMS    += mainwindow.ui
 

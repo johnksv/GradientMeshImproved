@@ -16,7 +16,6 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
     setZValue(1);
-    setColor();
     setAcceptHoverEvents(true);
     //setFlags(ItemIsSelectable);
 }
@@ -40,13 +39,15 @@ QPainterPath CanvasItemLine::shape() const
     QPainterPath path;
 
     path.moveTo(startPoint_->pos());
+
+    path.lineTo(endPoint_->pos());
     for (int i = 1; i < subdividedCurve_.size(); i++){
-        path.lineTo(subdividedCurve_.at(i));
+    //   path.lineTo(subdividedCurve_.at(i));
     }
 
     //Create stroke for mouseclick and tooltip detection
     QPainterPathStroker stroke;
-    stroke.setWidth(10);
+    stroke.setWidth(5);
 
     return stroke.createStroke(path);
 }
@@ -62,19 +63,6 @@ bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
         }
     }
     return false;
-}
-
-QColor CanvasItemLine::color()
-{
-    return color_;
-}
-
-void CanvasItemLine::setColor(QColor &color)
-{
-    color_ = color;
-    //TODO: Width from QSettings
-    QPen pen(color_);
-    setPen(pen);
 }
 
 CanvasItemPoint *CanvasItemLine::startPoint()
@@ -108,37 +96,18 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *setDiscontinuous = menu.addAction("Discontinuous/Hard edge");
-    QAction *chooseColorAction = menu.addAction("Choose color");
 
     setDiscontinuous->setCheckable(true);
     setDiscontinuous->setChecked(discontinuous_);
-    chooseColorAction->setEnabled(discontinuous_);
 
     QAction *selectedAction = menu.exec(event->screenPos());
-    if(selectedAction == chooseColorAction)
+
+    if (selectedAction == setDiscontinuous)
     {
-        QColor chosenColor = QColorDialog::getColor();
-        if(chosenColor.isValid())
-        {
-            setColor(chosenColor);
-        }
-    }
-    else if (selectedAction == setDiscontinuous)
-    {
-        discontinuous_ = setDiscontinuous->isChecked();
-        if(!discontinuous_){
-            //Edge no longer discontinuous, set color to black
-            setColor();
-        }
-        else
-        {
-            //TODO: Should the colorpicker pop up when you choose the edge to be discontinuous?
-            QColor chosenColor = QColorDialog::getColor();
-            if(chosenColor.isValid())
-            {
-                setColor(chosenColor);
-            }
-        }
+        bool value = setDiscontinuous->isChecked();
+        discontinuous_ = value;
+        startPoint_->setDiscontinuous(value);
+        endPoint_->setDiscontinuous(value);
     }
 }
 
@@ -151,9 +120,7 @@ void CanvasItemLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
         toolTip.append("\n");
         toolTip.append("Discontinuous: ");
         discontinuous_ ? toolTip.append("yes.") : toolTip.append("no.");
-        toolTip.append("\n");
-        toolTip.append("Color (RGB): ").append(QString::number(color_.red())).append(",");
-        toolTip.append(QString::number(color_.green())).append(",").append(QString::number(color_.blue())).append(".");
+
         QToolTip::showText(event->screenPos(), toolTip);
     }
 }

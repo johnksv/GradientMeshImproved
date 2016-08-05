@@ -96,7 +96,7 @@
     <property name="title">
      <string>Rendering</string>
     </property>
-    <addaction name="actionRender_no_constraints_handlers"/>
+    <addaction name="actionRender_constraints_handlers"/>
     <addaction name="actionRender_Vertices_and_Edges"/>
     <addaction name="actionRender_Partial"/>
     <addaction name="actionRender_Full"/>
@@ -459,12 +459,15 @@
     <string>Zoom out</string>
    </property>
   </action>
-  <action name="actionRender_no_constraints_handlers">
+  <action name="actionRender_constraints_handlers">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>No constrains handlers</string>
+    <string>Constrains handlers</string>
+   </property>
+   <property name="toolTip">
+    <string>Constrains handlers</string>
    </property>
   </action>
   <action name="actionRender_Full">

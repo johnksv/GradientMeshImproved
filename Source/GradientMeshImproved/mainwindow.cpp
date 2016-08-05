@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initWindowAction();
     ui->splitWidget->setVisible(false);
-    ui->actionRender_no_constraints_handlers->setChecked(true);
+    ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
 
     //TODO: implement undoStack
@@ -103,9 +103,9 @@ void MainWindow::handleRenderModeGroup(QAction * action)
     action->setChecked(true);
 }
 
-void MainWindow::on_actionRender_no_constraints_handlers_triggered()
+void MainWindow::on_actionRender_constraints_handlers_triggered()
 {
-    scene_->setRenderConstraintHandlers(ui->actionRender_no_constraints_handlers->isChecked());
+    scene_->setRenderConstraintHandlers(ui->actionRender_constraints_handlers->isChecked());
     scene_->update();
 }
 
