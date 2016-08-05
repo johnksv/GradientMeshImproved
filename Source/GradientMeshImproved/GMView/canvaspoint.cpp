@@ -77,8 +77,9 @@ QColor CanvasItemPoint::color() const
 void CanvasItemPoint::setColor(QColor color)
 {
     this->color_ = color;
-    GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(*this, 1);
+    GMCanvas* canvas = static_cast <GMCanvas*> (scene());
+    canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
+
     update(boundingRect());
 }
 
@@ -159,8 +160,8 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
 {
     if(change == ItemScenePositionHasChanged)
     {
-        GMCanvas* parent = static_cast <GMCanvas*> (scene());
-        parent->updateVertexFromPoint(*this, 0);
+        GMCanvas* canvas = static_cast <GMCanvas*> (scene());
+        canvas->currentMeshHandler()->setVertexPoint(vertexHandleIdx_, pos());
     }
     return QGraphicsItem::itemChange(change, value);
 }

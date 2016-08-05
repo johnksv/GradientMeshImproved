@@ -113,24 +113,6 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 
 }
 
-void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
-{
-    int vertHanIdx = item.vertexHandleIdx();
-
-    if(mode == 0)
-    {
-        meshHandlers_.at(currLayerIndex_)->setVertexPoint(vertHanIdx, item.pos());
-    }
-    else if(mode == 1)
-    {
-        meshHandlers_.at(currLayerIndex_)->setVertexColor(vertHanIdx,item.color());
-    }
-    else
-    {
-        qDebug() << "Canvas.cpp UpdateVertexFromPoint: Illegal mode. No changes made.";
-    }
-}
-
 void GMCanvas::drawOpenGlOnCanvas(bool drawOnCanvas)
 {
         opengl_->setVisible(drawOnCanvas);

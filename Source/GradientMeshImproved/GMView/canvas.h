@@ -53,12 +53,6 @@ public:
     void deleteLayer(int index);
     void toogleLayerVisibility(int index);
 
-    /*! Updates the corresponding vertex in meshhandler with new information from the CanvasItemPoint.
-     * This function is ment to be called from CanvasItemPoint methods.
-     * \param mode the value to update. 0 for position, 1 for color, 2 for weight, 3 for CatmullClarkInterpolation.
-     */
-    void updateVertexFromPoint(CanvasItemPoint &item, short mode);
-
     void drawOpenGlOnCanvas(bool drawOnCanvas);
 
     //Temp. Should be moved when split-view
