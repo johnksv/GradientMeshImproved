@@ -51,6 +51,8 @@ public:
     void setVertexColor(int idx, QColor vertexColor);
     uint vertexValence(int idx);
 
+    bool isBoundaryEdge(int startIdx, int endIdx);
+
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);

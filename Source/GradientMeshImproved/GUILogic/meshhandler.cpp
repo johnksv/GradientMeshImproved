@@ -102,6 +102,22 @@ uint MeshHandler::vertexValence(int idx)
     return guiMesh.valence(vertexHandlers_.at(index));
 }
 
+bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
+{
+    vertexHandle startHandle = vertexHandlers_.at(findVertexHandler(startIdx));
+    vertexHandle endHandle = vertexHandlers_.at(findVertexHandler(endIdx));
+
+    for(OpnMesh::ConstVertexEdgeIter ve_ite = guiMesh.cve_iter(startHandle); ve_ite != guiMesh.cve_end(startHandle); ve_ite++)
+    {
+        if(guiMesh.to_vertex_handle(guiMesh.halfedge_handle(ve_ite,0)) == endHandle
+                || guiMesh.to_vertex_handle(guiMesh.halfedge_handle(ve_ite,1)) == endHandle)
+        {
+            return guiMesh.is_boundary(ve_ite);
+        }
+    }
+    return true;
+}
+
 vector<QVector4D> MeshHandler::edges()
 {
     vector<QVector4D> result;

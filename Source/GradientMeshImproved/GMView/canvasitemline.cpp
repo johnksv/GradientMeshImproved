@@ -94,21 +94,31 @@ void CanvasItemLine::updateSubdivisonCurve()
 
 void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    QMenu menu;
-    QAction *setDiscontinuous = menu.addAction("Discontinuous/Hard edge");
+    GMCanvas *canvas = static_cast<GMCanvas*> (scene());
+    int startIdx = startPoint()->vertexHandleIdx();
+    int endIdx = endPoint()->vertexHandleIdx();
 
-    setDiscontinuous->setCheckable(true);
-    setDiscontinuous->setChecked(discontinuous_);
 
-    QAction *selectedAction = menu.exec(event->screenPos());
 
-    if (selectedAction == setDiscontinuous)
-    {
-        bool value = setDiscontinuous->isChecked();
-        discontinuous_ = value;
-        startPoint_->setDiscontinuous(value);
-        endPoint_->setDiscontinuous(value);
-    }
+        QMenu menu;
+        QAction *setDiscontinuous = menu.addAction("Discontinuous/Hard edge");
+
+        setDiscontinuous->setCheckable(true);
+        setDiscontinuous->setChecked(discontinuous_);
+        if(canvas->currentMeshHandler()->isBoundaryEdge(startIdx, endIdx))
+        {
+            setDiscontinuous->setEnabled(false);
+        }
+
+        QAction *selectedAction = menu.exec(event->screenPos());
+
+        if (selectedAction == setDiscontinuous)
+        {
+            bool value = setDiscontinuous->isChecked();
+            discontinuous_ = value;
+            startPoint_->setDiscontinuous(value);
+            endPoint_->setDiscontinuous(value);
+        }
 }
 
 void CanvasItemLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
