@@ -82,19 +82,6 @@ void CanvasItemPoint::setColor(QColor color)
     update(boundingRect());
 }
 
-double CanvasItemPoint::weight() const
-{
-    return weight_;
-}
-
-void CanvasItemPoint::setWeight(double weight)
-{
-    this->weight_ = weight;
-    GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    parent->updateVertexFromPoint(*this, 2);
-}
-
-
 int CanvasItemPoint::vertexHandleIdx() const
 {
 	return vertexHandleIdx_;
@@ -198,7 +185,6 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     QMenu menu;
     QAction *chooseColorAction = menu.addAction("Choose color");
-    QAction *setWeightAction = menu.addAction("Set weight");
     menu.addSeparator();
 
     QAction *deletePointAction = menu.addAction("Delete");
@@ -210,19 +196,6 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         {
             setColor(chosenColor);
         }
-
-    }
-    else if(selectedAction == setWeightAction)
-    {
-        QString label("Enter a value (0.00 - 1.00):");
-        bool *ok = new bool;
-        double newWeight = QInputDialog::getDouble(nullptr,"Vertex weight",label,weight_,0,1,2,ok, Qt::Tool);
-        if(*ok == true)
-        {
-            setWeight(newWeight);
-        }
-
-        delete ok;
 
     }
     else if(selectedAction == deletePointAction)

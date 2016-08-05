@@ -17,8 +17,6 @@ public:
 
     QColor color() const;
     void setColor(QColor color);
-    double weight() const;
-    void setWeight(double);
 
     int vertexHandleIdx() const;
     void setVertexHandleIdx(int idx);

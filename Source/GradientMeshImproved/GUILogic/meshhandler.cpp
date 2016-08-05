@@ -96,18 +96,6 @@ void MeshHandler::setVertexColor(int idx, QColor color)
     guiMesh.data(vertexHandlers_.at(index)).setColor(color_);
 }
 
-double MeshHandler::vertexWeight(int idx)
-{
-    int index = findVertexHandler(idx);
-    return guiMesh.data(vertexHandlers_.at(index)).weight();
-}
-
-void MeshHandler::setVertexWeight(int idx, double weight)
-{
-    int index = findVertexHandler(idx);
-    guiMesh.data(vertexHandlers_.at(index)).setWeight(weight);
-}
-
 uint MeshHandler::vertexValence(int idx)
 {
     int index = findVertexHandler(idx);
@@ -515,14 +503,6 @@ void MeshHandler::prepareGuiMeshForSubd()
                 }
             }
         }
-
-
-        //weight..valence For V2
-//        for(unsigned int i = 0; i < valence; i++)
-//        {
-//            tempString += to_string(guiMesh.data(ite).weight());
-//            tempString += " ";
-//        }
 
         //TODO: Gradient Constraints
         for(unsigned int i = 0; i < valence; i++)

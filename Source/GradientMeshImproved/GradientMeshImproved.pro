@@ -26,7 +26,6 @@ SOURCES += main.cpp\
     GMView/canvasitemface.cpp \
     GMView/canvasitemgroup.cpp \
     undoCommands/movevertex.cpp \
-    undoCommands/undoweight.cpp \
     undoCommands/undocolor.cpp \
     GMView/canvaspointconstraint.cpp \
     GMView/canvaspointdiscontinued.cpp
@@ -48,7 +47,6 @@ HEADERS  += mainwindow.h \
     GMView/canvasitemface.h \
     GMView/canvasitemgroup.h \
     undoCommands/movevertex.h \
-    undoCommands/undoweight.h \
     undoCommands/undocolor.h \
     GMView/canvaspointconstraint.h \
     GMView/canvaspointdiscontinued.h

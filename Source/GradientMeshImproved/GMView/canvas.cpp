@@ -125,10 +125,6 @@ void GMCanvas::updateVertexFromPoint(CanvasItemPoint &item, short mode)
     {
         meshHandlers_.at(currLayerIndex_)->setVertexColor(vertHanIdx,item.color());
     }
-    else if(mode == 2)
-    {
-        meshHandlers_.at(currLayerIndex_)->setVertexWeight(vertHanIdx,item.weight());
-    }
     else
     {
         qDebug() << "Canvas.cpp UpdateVertexFromPoint: Illegal mode. No changes made.";
