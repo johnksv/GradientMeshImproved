@@ -221,9 +221,11 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         //If faceInsideFace, or if vertesToAddFace_.size() == 2 (canvas.cpp) (outgoingHalfedge is then invalid)
         if (faceInsideFace)
         {
+            //if the handlers are neighbours (Which means no face can be made by following edges).
+			if (vHandlersToBeFace.size() <= 2) return false;
+
             if (guiMesh.face_handle(outgoingHalfedge).is_valid())
             {
-
                 OpnMesh::FaceHandle &oldFace = guiMesh.face_handle(outgoingHalfedge);
                 vector<vertexHandle> verticesOldFace;
                 //Iterate over vertices in oldFace
@@ -348,6 +350,9 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
             }
             else
             {
+                //If no verts are added in the above lines (Typically this is becuase the input verts is neighbours)
+                qDebug() << "Size of verts" << QString::number(vHandlersToBeFace.size());
+
                 newFace = guiMesh.add_face(vHandlersToBeFace);
                 loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
             }
@@ -384,6 +389,11 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 
 
     return true;
+}
+
+size_t MeshHandler::numberOfFaces()
+{
+    return guiMesh.n_faces();
 }
 
 void MeshHandler::clearAll()

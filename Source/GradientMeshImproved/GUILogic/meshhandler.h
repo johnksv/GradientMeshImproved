@@ -58,6 +58,7 @@ public:
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
 
     bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
+    size_t numberOfFaces();
 
     void clearAll();
 
