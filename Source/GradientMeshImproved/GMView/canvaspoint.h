@@ -50,6 +50,8 @@ private:
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;
+    //Must be of type QGraphicsItem to avoid header collision.
+    vector<QGraphicsItem*> canvasPointDiscontinuedChildren_;
 };
 
 } // end of namespace GUIView

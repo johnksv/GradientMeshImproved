@@ -27,7 +27,7 @@ void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     //For drawing the subdivided line
     for (int i = 1; i < subdividedCurve_.size(); i++){
-        painter->drawLine(subdividedCurve_.at(i-1),subdividedCurve_.at(i));
+     //   painter->drawLine(subdividedCurve_.at(i-1),subdividedCurve_.at(i));
     }
 
     //For drawing orginal line

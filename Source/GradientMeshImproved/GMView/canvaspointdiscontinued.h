@@ -17,8 +17,14 @@ public:
     QColor color() const;
     void setColor(QColor &color);
 
+    int vertexHandleIdx() const;
+    void setVertexHandleIdx(int idx);
+
+    bool sameIdxAsParent() const;
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
 private:
     int radius_ = 3;

@@ -1,5 +1,8 @@
 #include "canvaspointdiscontinued.h"
 #include "GUILogic/meshhandler.h"
+#include <QGraphicsSceneContextMenuEvent>
+#include <QAction>
+#include <QColorDialog>
 
 using namespace GMView;
 
@@ -51,6 +54,24 @@ QVariant CanvasPointDiscontinued::itemChange(QGraphicsItem::GraphicsItemChange c
     return value;
 }
 
+void CanvasPointDiscontinued::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    QMenu menu;
+    QAction *chooseColorAction = menu.addAction("Choose color");
+    menu.addSeparator();
+
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(selectedAction == chooseColorAction)
+    {
+        QColor chosenColor = QColorDialog::getColor();
+        if(chosenColor.isValid())
+        {
+            setColor(chosenColor);
+        }
+
+    }
+}
+
 QColor CanvasPointDiscontinued::color() const
 {
     return color_;
@@ -62,4 +83,19 @@ void CanvasPointDiscontinued::setColor(QColor &color)
     GMCanvas* canvas = static_cast <GMCanvas*> (scene());
     canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
     update(boundingRect());
+}
+
+int CanvasPointDiscontinued::vertexHandleIdx() const
+{
+    return vertexHandleIdx_;
+}
+
+void CanvasPointDiscontinued::setVertexHandleIdx(int idx)
+{
+    vertexHandleIdx_ = idx;
+}
+
+bool CanvasPointDiscontinued::sameIdxAsParent() const
+{
+    return sameIdxAsParent_;
 }

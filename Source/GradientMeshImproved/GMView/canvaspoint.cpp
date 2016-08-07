@@ -125,9 +125,14 @@ void CanvasItemPoint::setDiscontinuous(bool value)
         CanvasPointDiscontinued *pointA = new CanvasPointDiscontinued(true, this);
         CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
         //TODO set position of A and B on the normal of the incoming edge for visual look.
+        pointA->setPos(0,-10);
+        pointB->setPos(0,10);
+        canvasPointDiscontinuedChildren_.push_back(pointA);
+        canvasPointDiscontinuedChildren_.push_back(pointB);
     }
     else
     {
+        canvasPointDiscontinuedChildren_.erase(canvasPointDiscontinuedChildren_.begin(), canvasPointDiscontinuedChildren_.end());
         //TODO: Delete the discontinued points (Internaly maybe with collapsing edges)
     }
 
@@ -161,7 +166,20 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
     if(change == ItemScenePositionHasChanged)
     {
         GMCanvas* canvas = static_cast <GMCanvas*> (scene());
-        canvas->currentMeshHandler()->setVertexPoint(vertexHandleIdx_, pos());
+        if(discontinuous_)
+        {
+            for(QGraphicsItem * item : canvasPointDiscontinuedChildren_)
+            {
+                CanvasPointDiscontinued *disPoint = static_cast<CanvasPointDiscontinued*> (item);
+                int vertIdx = disPoint->vertexHandleIdx();
+                //Use same position as parent
+                canvas->currentMeshHandler()->setVertexPoint(vertIdx, pos());
+            }
+        }
+        else
+        {
+            canvas->currentMeshHandler()->setVertexPoint(vertexHandleIdx_, pos());
+        }
     }
     return QGraphicsItem::itemChange(change, value);
 }

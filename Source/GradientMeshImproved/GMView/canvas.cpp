@@ -76,6 +76,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     {
         qDebug() << "scne import";
         meshHandlers_.at(currLayerIndex_)->importGuiMesh(location);
+        //x,y,z = position, w = vertexHandleIdx
         vector<QVector4D> vertices = meshHandlers_.at(currLayerIndex_)->vertices();
         for(QVector4D vertex : vertices){
             CanvasItemPoint *item = new CanvasItemPoint();
