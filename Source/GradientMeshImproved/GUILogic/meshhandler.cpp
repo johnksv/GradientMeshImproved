@@ -200,10 +200,9 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         {
             qDebug() << "Following edge from vertex " << guiMesh.from_vertex_handle(outgoingHalfedge).idx()
                 << ", to vertex " << guiMesh.to_vertex_handle(outgoingHalfedge).idx();
+            int i = 0;
             while(true)
             {
-                //TODO: Fix looping.
-                qDebug() << "Looping forever?";
                 vertexHandle nextVertex = guiMesh.to_vertex_handle(outgoingHalfedge);
                 outgoingHalfedge = guiMesh.next_halfedge_handle(outgoingHalfedge);
 
@@ -214,6 +213,12 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 else
                 {
                     break;
+                }
+                i++;
+                if(i > 10000)
+                {
+                    //TODO: Fix. Not good practice.
+                    throw -1;
                 }
             }
         }
@@ -398,7 +403,23 @@ size_t MeshHandler::numberOfFaces()
 
 bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
 {
-    //TODO Implement
+    vertexHandle vert1 = vertexHandlers_.at(findVertexHandler(vertIdx1));
+    vertexHandle vert2 = vertexHandlers_.at(findVertexHandler(vertIdx2));
+    OpnMesh::FaceHandle faceHandle1;
+
+    //Chech if same facehandler.
+    for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(vert1); voh_ite != guiMesh.voh_end(vert1); voh_ite++)
+    {
+        faceHandle1 = guiMesh.face_handle(voh_ite);
+        for(OpnMesh::VertexOHalfedgeIter voh2_ite = guiMesh.voh_begin(vert2); voh2_ite != guiMesh.voh_end(vert2); voh2_ite++)
+        {
+            if(faceHandle1 == guiMesh.face_handle(voh2_ite) && faceHandle1.is_valid())
+            {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
 

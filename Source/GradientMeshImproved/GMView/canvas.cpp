@@ -105,9 +105,27 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     switch(drawMode_){
     case drawModeCanvas::move:
+
+        //Allow for rubber band selection
+        if(mouseEvent->modifiers() & Qt::ShiftModifier) break;
+
+        if(! (mouseEvent->modifiers() & Qt::ControlModifier))
+        {
+            clearSelection();
+        }
+
         QGraphicsScene::mousePressEvent(mouseEvent);
         break;
     case drawModeCanvas::lineTool:
+        clearSelection();
+
+        if(mouseEvent->modifiers() & Qt::ControlModifier)
+        {
+            QGraphicsScene::mousePressEvent(mouseEvent);
+            break;
+        }
+
+
         mouseLineTool(mouseEvent);
         mouseEvent->accept();
         break;
@@ -231,22 +249,39 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                     }
                 }
 
-                //Check if mesh start and end within same face, to avoid looping condition.
-                if(faceInsideFace)
-                {
-
-                }
-
-
                 //Special case if size == 2
                 if (vertsToAddFace_.size() == 2) faceInsideFace = true;
 
+                //Check if mesh start and end within same face, to avoid one looping condition. Optimaly it should also check all the other points to..
+                if(faceInsideFace)
+                {
+                    int idxFront = vertsToAddFace_.front()->vertexHandleIdx();
+                    int idxBack = vertsToAddFace_.back()->vertexHandleIdx();
+                    bool sameFace = currentMeshHandler()->vertsOnSameFace(idxFront, idxBack);
+                    if(!sameFace)
+                    {
+                        showMessage("Start and end vertex must be on same face", true);
+                        return;
+                    }
+                }
 
                 bool resetToAddFace = false;
                 //If only one point is in list, it should not be added.
                 if(vertsToAddFace_.size() >= 2)
                 {
-                    bool sucsess = currentMeshHandler()->makeFace(vertesToAddFaceIdx, faceInsideFace);
+                    bool sucsess;
+                    try{
+                        sucsess = currentMeshHandler()->makeFace(vertesToAddFaceIdx, faceInsideFace);
+                    }
+                    catch(int e)
+                    {
+                        if (e==-1)
+                        {
+                            showMessage("Second last point must be inside same face as first. Adjust, and select end vertex again", true);
+                            return;
+                        }
+                    }
+
                     qDebug() << "Made face?" << sucsess;
 
                     if(sucsess)
