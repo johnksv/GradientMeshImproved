@@ -32,7 +32,7 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 
     // draw our two meshes (mesh creation should not happen here of course...)
-//    setUpSubdMeshFile();
+    //setUpSubdMeshFile();
     //subdMesh->draw(context);
 
     //setUpSubdMeshStream();
@@ -398,7 +398,7 @@ void MeshHandler::clearAll()
  * HELPER METHODS
 ********************************************/
 
-int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
+int MeshHandler::findVertexHandler(int idxToFind)
 {
     for (int i = 0; i < vertexHandlers_.size(); i++)
     {
@@ -410,7 +410,7 @@ int GUILogic::MeshHandler::findVertexHandler(int idxToFind)
     return -1;
 }
 
-int GUILogic::MeshHandler::findFaceHandler(int idxToFind)
+int MeshHandler::findFaceHandler(int idxToFind)
 {
     for (int i = 0; i < faceHandlers_.size(); i++)
     {
@@ -481,11 +481,12 @@ void MeshHandler::prepareGuiMeshForSubd()
     size_t vertices = guiMesh.n_vertices();
     size_t faces = guiMesh.n_faces();
     //0 for Lab, 1 for RGB.
-    short colormode = 1;
+    short colormode = 0;
 
     //Metadata
     tempString.append(to_string(vertices) + " " + to_string(faces) + " " + to_string(colormode) + "\n");
 
+    //Vertex data
     for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin(); ite != guiMesh.vertices_end(); ite++ )
     {
         OpnMesh::Point point = guiMesh.point(ite);
@@ -497,7 +498,7 @@ void MeshHandler::prepareGuiMeshForSubd()
         //l a b
         double l, a, b;
         subdivMesh::RGB2LAB(color.x(), color.y(), color.z(), l, a, b);
-        tempString += to_string(color.x()) + " " + to_string(color.y()) + " " + to_string(color.z());
+        tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
         tempString += " ";
 
         //valence
@@ -509,18 +510,12 @@ void MeshHandler::prepareGuiMeshForSubd()
         for(OpnMesh::VertexVertexIter vv_ite = guiMesh.vv_begin(ite);
             vv_ite != guiMesh.vv_end(ite); vv_ite++)
         {
-            for(int i = 0; i < vertexHandlers_.size(); i++)
-            {
-                if(*vv_ite == vertexHandlers_[i])
-                {
-                    tempString += to_string(i);
-                    tempString += " ";
-                    i = vertexHandlers_.size();
-                }
-            }
+            tempString += to_string(vv_ite->idx());
+            tempString += " ";
+
         }
 
-        //TODO: Gradient Constraints
+        //TODO: {constraint_vec_x, constraint_vec_y} := the colour gradient constraint towards the given neighbour (according to list of ids)
         for(unsigned int i = 0; i < valence; i++)
         {
             tempString += "0 0 ";
@@ -534,7 +529,7 @@ void MeshHandler::prepareGuiMeshForSubd()
             tempString += " ";
         }
 
-        //0
+        //0(not in use): the number 0
         tempString += "0";
         //New point
         tempString += "\n";
@@ -543,9 +538,12 @@ void MeshHandler::prepareGuiMeshForSubd()
     //Faces:
     tempString += "\n";
 	
+    //Iterate thorugh faces.
 	for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
     {
+        //Valence of face
 		tempString += to_string(guiMesh.valence(face_ite)) + " ";
+
         for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
         {
             tempString += to_string(fv_ite->idx()) + " ";
@@ -559,17 +557,17 @@ void MeshHandler::prepareGuiMeshForSubd()
     // delete current mesh object and insert a new one
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
+
+    //Make a file, for testing
 	fstream file;
 	file.open("test.off", fstream::out);
 	file << tempString.c_str();
 	file.close();
 	
-	
-    //Convert stringstream for support with V2
-    //qDebug() <<"Sucsess with loadV2?" << subdMesh->loadV2("test.off");
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(tempString.c_str());
     subdMesh->build(); // build mesh topology from data
     subdivide();
+
     //std::remove("test.off");
 }
 
@@ -623,7 +621,8 @@ void MeshHandler::setUpSubdMeshFile()
     // create new mesh object
     delete subdMesh; // delete from heap (if any)
     subdMesh = new SbdvMesh();
-    subdMesh->loadV2(TEMPFILEPATH2);
+    //Can replace with "test.off" for testing
+    subdMesh->loadV3(TEMPFILEPATH);
     subdMesh->build(); // must be called after load
     subdivide();
 }
