@@ -85,6 +85,7 @@ private:
      */
     void mouseLineTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
+    void showMessage(QString message, bool eraseLastVertToAddFace = false);
 };
 
 } // end of namespace GUIView

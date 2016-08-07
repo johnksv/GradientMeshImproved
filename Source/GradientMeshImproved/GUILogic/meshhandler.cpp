@@ -396,6 +396,12 @@ size_t MeshHandler::numberOfFaces()
     return guiMesh.n_faces();
 }
 
+bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
+{
+    //TODO Implement
+    return false;
+}
+
 void MeshHandler::clearAll()
 {
     vertexHandlers_.clear();

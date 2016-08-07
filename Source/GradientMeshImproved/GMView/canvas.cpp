@@ -151,6 +151,14 @@ bool GMCanvas::renderConstraintHandlers() const
     return renderConstraintHandlers_;
 }
 
+void GMCanvas::showMessage(QString message, bool eraseLastVertToAddFace)
+{
+    if(eraseLastVertToAddFace) vertsToAddFace_.erase(vertsToAddFace_.end()-1);
+    QMessageBox msgBox;
+    msgBox.setText(message);
+    msgBox.exec();
+}
+
 void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 {
     bool madeFace = false;
@@ -189,9 +197,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                     }
                     else
                     {
-                        QMessageBox msgBox;
-                        msgBox.setText("First face must be closed. Choose the first vertex to close and make face.");
-                        msgBox.exec();
+                        showMessage("First face must be closed. Choose the first vertex to close and make face.");
                         return;
                     }
 
@@ -200,10 +206,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                             && currentMeshHandler()->numberOfFaces() > 0 )
                     {
                         //Delete the last point, that should not be a part of face.
-                        vertsToAddFace_.erase(vertsToAddFace_.end()-1);
-                        QMessageBox msgBox;
-                        msgBox.setText("Last vertex must be connected to a face");
-                        msgBox.exec();
+                        showMessage("Last vertex must be connected to a face", true);
                         return;
                     }
                 }
@@ -227,6 +230,14 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                         }
                     }
                 }
+
+                //Check if mesh start and end within same face, to avoid looping condition.
+                if(faceInsideFace)
+                {
+
+                }
+
+
                 //Special case if size == 2
                 if (vertsToAddFace_.size() == 2) faceInsideFace = true;
 
@@ -281,9 +292,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
         {
             if(currentMeshHandler()->numberOfFaces() > 0 && vertsToAddFace_.size()==0)
             {
-                QMessageBox msgBox;
-                msgBox.setText("First vertex must be connected to face");
-                msgBox.exec();
+                showMessage("First vertex must be connected to face");
                 return;
             }
 
