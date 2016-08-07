@@ -49,30 +49,6 @@ struct CustomTraits : public OpenMesh::DefaultTraits
                 this->color_ = color;
             }
     };
-
-    EdgeTraits
-    {
-        private:
-            bool discontinuate_;
-            QVector3D color_;
-        public:
-            double discontinuate()
-			{
-                return discontinuate_;
-            }
-            void setDiscontinuate(bool discontinuate)
-			{
-                this->discontinuate_ = discontinuate;
-            }
-
-            QVector3D color()
-			{
-                return color_;
-            }
-            void setColor(QVector3D &color){
-                this->color_ = color;
-            }
-    };
 };
 
 }
