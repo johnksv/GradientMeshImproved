@@ -171,7 +171,7 @@ bool GMCanvas::renderConstraintHandlers() const
 
 void GMCanvas::showMessage(QString message, bool eraseLastVertToAddFace)
 {
-    if(eraseLastVertToAddFace) vertsToAddFace_.erase(vertsToAddFace_.end()-1);
+    if(eraseLastVertToAddFace) vertsToAddFace_.pop_back();
     QMessageBox msgBox;
     msgBox.setText(message);
     msgBox.exec();
