@@ -37,28 +37,18 @@ GMCanvas::~GMCanvas()
 
 void GMCanvas::clearAll()
 {
-    for(CanvasItemFace* face: layers_.at(currLayerIndex_)->faces)
-    {
-        removeItem(face);
-        delete face;
-    }
-    layers_.at(currLayerIndex_)->faces.clear();
+     CanvasItemGroup* layer = layers_.at(currLayerIndex_);
+     layer->faces.clear();
+     layer->lines.clear();
+     layer->points.clear();
+     layer->points_selected.clear();
 
-    for(CanvasItemLine* line :  layers_.at(currLayerIndex_)->lines)
-    {
-        removeItem(line);
-        delete line;
-    }
-     layers_.at(currLayerIndex_)->lines.clear();
 
-    for(int i = 0; i < layers_.at(currLayerIndex_)->points.size(); i++)
-    {
-        CanvasItemPoint *canvasPoint = layers_.at(currLayerIndex_)->points.at(i);
-        removeItem(canvasPoint);
-        delete  layers_.at(currLayerIndex_)->points.at(i);
-    }
-     layers_.at(currLayerIndex_)->points.clear();
-     layers_.at(currLayerIndex_)->points_selected.clear();
+     for(QGraphicsItem* item: layer->childItems())
+     {
+         delete item;
+     }
+
 
      currentMeshHandler()->clearAll();
      update();
