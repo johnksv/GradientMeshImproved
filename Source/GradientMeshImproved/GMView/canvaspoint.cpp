@@ -20,6 +20,7 @@ CanvasItemPoint::CanvasItemPoint(QColor color, QGraphicsItem *parent):
 {
     setAcceptHoverEvents(true);
     setFlags(ItemIsMovable | ItemIsSelectable | ItemSendsScenePositionChanges);
+    setZValue(2);
 
 }
 

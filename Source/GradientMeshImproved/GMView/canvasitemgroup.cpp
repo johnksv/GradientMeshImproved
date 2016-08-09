@@ -34,10 +34,12 @@ void CanvasItemGroup::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidge
 
 void CanvasItemGroup::addToGroup(QGraphicsItem *item)
 {
+    //TODO: Auto place item in correct vector.
     item->setParentItem(this);
 }
 
 void CanvasItemGroup::removeFromGroup(QGraphicsItem *item)
 {
+    //Todo: auto remove item from correct vector;
     item->setParentItem(0);
 }

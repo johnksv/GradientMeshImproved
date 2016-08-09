@@ -46,6 +46,7 @@ public:
 
 
     vector<CanvasItemGroup *> layers();
+    CanvasItemGroup *currentLayer();
     vector<GUILogic::MeshHandler *> *meshHandlers();
     GUILogic::MeshHandler *currentMeshHandler();
 

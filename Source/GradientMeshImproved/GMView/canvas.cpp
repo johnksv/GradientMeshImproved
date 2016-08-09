@@ -37,11 +37,10 @@ GMCanvas::~GMCanvas()
 
 void GMCanvas::clearAll()
 {
-     CanvasItemGroup* layer = layers_.at(currLayerIndex_);
+     CanvasItemGroup* layer = currentLayer();
      layer->faces.clear();
      layer->lines.clear();
      layer->points.clear();
-     layer->points_selected.clear();
 
 
      for(QGraphicsItem* item: layer->childItems())
@@ -74,12 +73,61 @@ void GMCanvas::handleFileDialog(QString location, bool import)
             QPointF point(vertex.x(), vertex.y());
             item->setPos(point);
             item->setVertexHandleIdx(vertex.w());
-            addControlPoint(item);
+
+            currentLayer()->points.push_back(item);
+            currentLayer()->addToGroup(item);
         }
 
+        int startIdx,endIdx;
         vector<QVector4D> edges = currentMeshHandler()->edges();
         for(QVector4D edge : edges){
-            //TODO add edge
+            //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
+            startIdx = edge.x();
+            endIdx = edge.y();
+            CanvasItemPoint* startPoint = nullptr;
+            CanvasItemPoint* endPoint = nullptr;
+
+//            qDebug() << edge;
+
+//            for(CanvasItemPoint* point : currentLayer()->points)
+//            {
+//                int pointIdx = point->vertexHandleIdx();
+//                qDebug() << "startIDX: " << startIdx << ", pointIDX:" << pointIdx;
+//                //Looks like compiler will not accept 0 == 0 is true...
+//                if(pointIdx == startIdx)
+//                {
+//                    startPoint == point;
+//                }
+
+//                if(pointIdx == endIdx)
+//                {
+//                    endPoint == point;
+//                }
+
+//                if(startPoint != nullptr && endPoint != nullptr) break;
+//            }
+            
+//            if(startPoint == nullptr || endPoint == nullptr)
+//            {
+//                qDebug() << "Oh no..." << endIdx;
+//            }
+//            else
+//            {
+
+//                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
+//                currentLayer()->addToGroup(line);
+//                currentLayer()->lines.push_back(line);
+
+//                //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
+//                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
+//                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+//                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
+//                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+
+//            }
+
+
         }
 
     }
@@ -176,12 +224,12 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
     CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
     itemPoint->setPos(event->scenePos());
 
-    for(int i = 0; i < layers_.at(currLayerIndex_)->points.size();i++)
+    for(int i = 0; i < currentLayer()->points.size();i++)
     {
-        if(itemPoint->collidesWithItem(layers_.at(currLayerIndex_)->points.at(i))){
+        if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
             collide = true;
             collideWithIndex = i;
-            i = layers_.at(currLayerIndex_)->points.size();
+            i = currentLayer()->points.size();
         }
     }
     if(event->button() == Qt::LeftButton)
@@ -189,7 +237,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
         //If collide check if face should be made, else add point
         if(collide)
         {
-            CanvasItemPoint *collidePoint = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
+            CanvasItemPoint *collidePoint = currentLayer()->points.at(collideWithIndex);
             if (vertsToAddFace_.size() == 0)
             {
                 //Face start at an already existing vertex
@@ -278,11 +326,11 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                     {
                         //For debugging purposes
                         CanvasItemFace * face = new CanvasItemFace();
-                        layers_.at(currLayerIndex_)->faces.push_back(face);
+                        currentLayer()->faces.push_back(face);
 
                         for(int handle : vertesToAddFaceIdx)
                         {
-                            for(CanvasItemPoint *point : layers_.at(currLayerIndex_)->points)
+                            for(CanvasItemPoint *point : currentLayer()->points)
                             {
                                 if(point->vertexHandleIdx() == handle)
                                 {
@@ -290,7 +338,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                                 }
                             }
                         }
-                        layers_.at(currLayerIndex_)->addToGroup(face); //End debugging purposes
+                        currentLayer()->addToGroup(face); //End debugging purposes
                         madeFace = true;
                         vertsToAddFace_.clear();
                     }
@@ -332,13 +380,13 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
        if(lineStartPoint_ == nullptr){
            if(collide){
-                lineStartPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
+                lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
            }else{
                lineStartPoint_ = itemPoint;
            }
        }else{
            if(collide) {
-                lineEndPoint_ = layers_.at(currLayerIndex_)->points.at(collideWithIndex);
+                lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
            }else{
                lineEndPoint_ = itemPoint;
            }
@@ -351,12 +399,12 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
            //Check if line exists
            bool exists = false;
-           int size = layers_.at(currLayerIndex_)->lines.size();
+           int size = currentLayer()->lines.size();
            for(int i = 0; i < size; i++ )
            {
-               if(*(layers_.at(currLayerIndex_)->lines.at(i)) == *line	||
-                        ( layers_.at(currLayerIndex_)->lines.at(i)->endPoint() == line->startPoint() &&
-                          layers_.at(currLayerIndex_)->lines.at(i)->startPoint() == line->endPoint()))
+               if(*(currentLayer()->lines.at(i)) == *line	||
+                        ( currentLayer()->lines.at(i)->endPoint() == line->startPoint() &&
+                          currentLayer()->lines.at(i)->startPoint() == line->endPoint()))
                {
                     exists = true;
                     i = size;
@@ -370,8 +418,8 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            }
            else
            {
-               layers_.at(currLayerIndex_)->addToGroup(line);
-               layers_.at(currLayerIndex_)->lines.push_back(line);
+               currentLayer()->addToGroup(line);
+               currentLayer()->lines.push_back(line);
 
                //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
@@ -398,9 +446,8 @@ void GMCanvas::addControlPoint(CanvasItemPoint *item)
     int vertexHandleIdx = currentMeshHandler()->addVertex(item->pos(), pointColor_);
     item->setVertexHandleIdx(vertexHandleIdx);
 
-    item->setZValue(2);
-    layers_.at(currLayerIndex_)->points.push_back(item);
-    layers_.at(currLayerIndex_)->addToGroup(item);
+    currentLayer()->points.push_back(item);
+    currentLayer()->addToGroup(item);
     update(item->boundingRect());
 }
 
@@ -415,6 +462,11 @@ void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
 vector<CanvasItemGroup *> GMCanvas::layers()
 {
     return layers_;
+}
+
+CanvasItemGroup *GMCanvas::currentLayer()
+{
+    return layers_.at(currLayerIndex_);
 }
 
 vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
@@ -437,7 +489,6 @@ void GMCanvas::setActiveLayer(unsigned char index)
     {
         currLayerIndex_ = index;
     }
-    layers_.at(currLayerIndex_)->points_selected.clear();
 }
 
 void GMCanvas::addLayer(QString name)

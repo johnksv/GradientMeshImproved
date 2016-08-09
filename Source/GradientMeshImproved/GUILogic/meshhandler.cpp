@@ -47,10 +47,6 @@ vector<QVector4D> MeshHandler::vertices()
            v_it != guiMesh.vertices_end(); ++v_it)
     {
         QVector4D point(guiMesh.point(v_it)[0], guiMesh.point(v_it)[1], guiMesh.point(v_it)[2], v_it->idx());
-        qDebug() << v_it->idx();
-        //For debugging. TODO: Remove
-        qDebug() << "From Meshhandler:49: " << point;
-
         result.push_back(point);
 
     }

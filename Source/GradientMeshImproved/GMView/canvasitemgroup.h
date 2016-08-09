@@ -24,7 +24,6 @@ public:
 
 private:
     vector<CanvasItemPoint*> points;
-    vector<CanvasItemPoint*> points_selected;
     vector<CanvasItemLine*> lines;
     vector<CanvasItemFace*> faces;
 
