@@ -1,7 +1,7 @@
 #ifndef CANVASPOINTDISCONTINUED_H
 #define CANVASPOINTDISCONTINUED_H
 
-#include "canvas.h"
+#include <QGraphicsItem>
 
 namespace GMView{
 

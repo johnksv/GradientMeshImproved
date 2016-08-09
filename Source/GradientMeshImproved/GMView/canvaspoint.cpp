@@ -117,22 +117,64 @@ bool CanvasItemPoint::discontinuous() const
     return discontinuous_;
 }
 
-void CanvasItemPoint::setDiscontinuous(bool value)
+void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
 {
     discontinuous_ = value;
+    CanvasItemLine *edge = dynamic_cast<CanvasItemLine*>(edgeItem);
     if(discontinuous_)
     {
-        CanvasPointDiscontinued *pointA = new CanvasPointDiscontinued(true, this);
-        CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
-        //TODO set position of A and B on the normal of the incoming edge for visual look.
-        pointA->setPos(0,-10);
-        pointB->setPos(0,10);
-        canvasPointDiscontinuedChildren_.push_back(pointA);
-        canvasPointDiscontinuedChildren_.push_back(pointB);
+        if(edge != nullptr)
+        {
+            CanvasPointDiscontinued *pointA = new CanvasPointDiscontinued(true, this);
+            CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
+            //TODO: set position of A and B on the normal of the incoming edge for visual look.
+            //TODO: Double constraints only for "spliting"-edge (edge on the middle)
+
+            pointA->setPos(0,-10);
+            pointB->setPos(0,10);
+            double factor;
+
+            for(QGraphicsItem *item: childItems())
+            {
+                CanvasPointConstraint *constraint = dynamic_cast<CanvasPointConstraint*> (item);
+                if(constraint != nullptr)
+                {
+                    constraint->setInactive(true);
+                    CanvasItemLine *consEdge = constraint->edge();
+                    factor = (this == consEdge->startPoint()) ? 0.2 : -0.2;
+
+                    CanvasPointConstraint *pointAConstraint = new CanvasPointConstraint(pointA, consEdge);
+                    pointAConstraint->setPos(QPointF(consEdge->line().dx()*factor, consEdge->line().dy()*factor));
+
+                    CanvasPointConstraint *pointBConstraint = new CanvasPointConstraint(pointB, consEdge);
+                    pointBConstraint->setPos(QPointF(consEdge->line().dx()*factor, consEdge->line().dy()*factor));
+                }
+
+            }
+
+            canvasPointDiscontinuedChildren_.push_back(pointA);
+            canvasPointDiscontinuedChildren_.push_back(pointB);
+        }
     }
     else
     {
-        canvasPointDiscontinuedChildren_.erase(canvasPointDiscontinuedChildren_.begin(), canvasPointDiscontinuedChildren_.end());
+        for(QGraphicsItem* item : canvasPointDiscontinuedChildren_)
+        {
+            delete item;
+        }
+        canvasPointDiscontinuedChildren_.clear();
+
+        for(QGraphicsItem *item: childItems())
+        {
+            CanvasPointConstraint *constraint = dynamic_cast<CanvasPointConstraint*> (item);
+            if(constraint != nullptr)
+            {
+                constraint->setInactive(false);
+            }
+
+        }
+
+
         //TODO: Delete the discontinued points (Internaly maybe with collapsing edges)
     }
 

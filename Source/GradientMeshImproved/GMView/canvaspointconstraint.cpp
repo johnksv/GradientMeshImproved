@@ -9,12 +9,32 @@
 
 using namespace GMView;
 
-CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
-    : controlPoint_(controlPoint), edge_(edge), QGraphicsItem(parent)
+CanvasPointConstraint::CanvasPointConstraint(QGraphicsItem *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
+    : edge_(edge), QGraphicsItem(parent)
 {
+    setParentItem(controlPoint);
+
+    CanvasItemPoint* point = dynamic_cast<CanvasItemPoint*> (controlPoint);
+    if(point == nullptr)
+    {
+        CanvasPointDiscontinued* pointDis = dynamic_cast<CanvasPointDiscontinued*> (controlPoint);
+        if(pointDis != nullptr)
+        {
+            controlPointDis_ = pointDis;
+        }
+        else
+        {
+            throw "Illegal parent type";
+        }
+
+    }
+    else
+    {
+        controlPoint_ = point;
+    }
+
     setZValue(2);
     setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges);
-    setParentItem(controlPoint_);
 }
 
 QRectF CanvasPointConstraint::boundingRect() const
@@ -24,15 +44,26 @@ QRectF CanvasPointConstraint::boundingRect() const
 
 void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    GMCanvas *canvas = static_cast<GMCanvas*>(scene());
-    if(canvas->renderConstraintHandlers())
+    if(!inactive_)
     {
-        QColor color = QColor(125,125,125,125);
-        painter->setBrush(color);
-        painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
-        painter->drawEllipse(boundingRect());
-        //For debugging purposes TODO: remove
-        painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
+        GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+        if(canvas->renderConstraintHandlers())
+        {
+            QColor color = QColor(125,125,125,125);
+            painter->setBrush(color);
+            painter->drawEllipse(boundingRect());
+            //For debugging purposes TODO: remove
+            if(controlPoint_ != nullptr)
+            {
+                painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
+                painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
+            }else if(controlPointDis_ != nullptr)
+            {
+                QPointF startPosition = mapFromItem(controlPointDis_, controlPointDis_->pos()) - controlPointDis_->pos();
+                painter->drawLine(startPosition, QPoint(0,0));
+                painter->drawText(QPointF(10,10),QString(QString::number(controlPointDis_->vertexHandleIdx())));
+            }
+        }
     }
 }
 
@@ -43,7 +74,7 @@ QPainterPath CanvasPointConstraint::shape() const
     return path;
 }
 
-CanvasItemPoint *CanvasPointConstraint::controlPoint()
+QGraphicsItem *CanvasPointConstraint::controlPoint()
 {
     return controlPoint_;
 }
@@ -51,6 +82,11 @@ CanvasItemPoint *CanvasPointConstraint::controlPoint()
 CanvasItemLine *CanvasPointConstraint::edge()
 {
     return edge_;
+}
+
+void CanvasPointConstraint::setInactive(bool value)
+{
+    inactive_ = value;
 }
 
 QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVariant &value)

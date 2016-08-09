@@ -27,7 +27,7 @@ public:
     void setHighlighted(bool highlighted);
 
     bool discontinuous() const;
-    void setDiscontinuous(bool value);
+    void setDiscontinuous(bool value, QGraphicsItem *edgeItem);
 
     //TODO better way to avoid header include collision
     //Returns the control point. Had to cast it at CanvasItemPoint due to header collision..

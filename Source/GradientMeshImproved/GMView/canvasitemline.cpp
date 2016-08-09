@@ -116,8 +116,8 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         {
             bool value = setDiscontinuous->isChecked();
             discontinuous_ = value;
-            startPoint_->setDiscontinuous(value);
-            endPoint_->setDiscontinuous(value);
+            startPoint_->setDiscontinuous(value, this);
+            endPoint_->setDiscontinuous(value, this);
         }
 }
 
