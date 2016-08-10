@@ -32,8 +32,9 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 
     // draw our two meshes (mesh creation should not happen here of course...)
-    //setUpSubdMeshFile();
-    //subdMesh->draw(context);
+    // HENRIK: RENDER TEST-MESH
+    setUpSubdMeshFile();
+    subdMesh->draw(context);
 
     //setUpSubdMeshStream();
     //subdMesh->draw(context);
@@ -525,12 +526,14 @@ void MeshHandler::prepareGuiMeshForSubd()
         OpnMesh::Point point = guiMesh.point(ite);
         QVector3D color = guiMesh.data(ite).color();
         //x y z
-        tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(point[2]);
+        // HENRIK: ENDRING TIL 1.0 (Z-VERDI)
+        tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(1.0);
         tempString += " ";
 
         //l a b
         double l, a, b;
-        subdivMesh::RGB2LAB(color.x(), color.y(), color.z(), l, a, b);
+        // HENRIK: NORMALISER TIL (0-1)
+        subdivMesh::RGB2LAB(color.x()/255, color.y()/255, color.z()/255, l, a, b);
         tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
         tempString += " ";
 
@@ -551,7 +554,8 @@ void MeshHandler::prepareGuiMeshForSubd()
         //TODO: {constraint_vec_x, constraint_vec_y} := the colour gradient constraint towards the given neighbour (according to list of ids)
         for(unsigned int i = 0; i < valence; i++)
         {
-            tempString += "0 0 ";
+            // HENRIK: ENDRING
+            tempString += "0.1 0.1 ";
         }
 
 
