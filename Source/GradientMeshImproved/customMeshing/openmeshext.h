@@ -25,22 +25,19 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     VertexTraits
     {
         private:
-            float weight_ = 0.5;
+            QVector3D constraint_;
             QVector3D color_;
         public:
-            float weight()
+            QVector3D constraint() const
 			{
-                return weight_;
+                return constraint_;
             }
-            void setWeight(float weight)
+            void setConstraint(QVector3D &constraint)
 			{
-                if(weight<0){
-                    throw "Weight illegal value (must be positive)";
-                }
-                this->weight_ = weight;
+                constraint_ = constraint;
             }
 
-            QVector3D color()
+            QVector3D color() const
 			{
                 return color_;
             }

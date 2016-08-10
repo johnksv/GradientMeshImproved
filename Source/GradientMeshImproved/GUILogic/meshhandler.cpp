@@ -30,14 +30,6 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     {
         subdMesh->draw(context);
     }
-
-    // draw our two meshes (mesh creation should not happen here of course...)
-    // HENRIK: RENDER TEST-MESH
-    setUpSubdMeshFile();
-    subdMesh->draw(context);
-
-    //setUpSubdMeshStream();
-    //subdMesh->draw(context);
 }
 
 vector<QVector4D> MeshHandler::vertices()
@@ -601,10 +593,9 @@ void MeshHandler::prepareGuiMeshForSubd()
 	file << tempString.c_str();
 	file.close();
 	
-    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(tempString.c_str());
+    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
     subdivide();
-
     //std::remove("test.off");
 }
 
@@ -624,7 +615,7 @@ bool MeshHandler::importGuiMesh(QString location)
         qDebug() << "Error: Cannot read mesh from " << location;
         return false;
       }
-    qDebug() << "ImportGuiMesh";
+
     for(OpnMesh::VertexIter v_ite = guiMesh.vertices_sbegin (); v_ite != guiMesh.vertices_end(); v_ite++)
     {
         vertexHandlers_.push_back(*v_ite);
@@ -632,34 +623,6 @@ bool MeshHandler::importGuiMesh(QString location)
     for(OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin (); f_ite != guiMesh.faces_end(); f_ite++)
     {
         faceHandlers_.push_back(*f_ite);
-        qDebug() << "Added face";
     }
     return true;
-}
-
-void MeshHandler::setUpSubdMeshStream()
-{
-    // setup a string stream
-    stringstream strStream;
-    strStream << TESTMESH; // pass string to stream (other types can also be passed -> see stringstream doc
-
-    // delete current mesh object and insert a new one
-    delete subdMesh; // delete from heap
-    subdMesh = new SbdvMesh();
-
-    // insert new mesh using custom OFF format
-    subdMesh->loadV3(strStream);
-    subdMesh->build(); // build mesh topology from data
-    subdivide();
-}
-
-void MeshHandler::setUpSubdMeshFile()
-{
-    // create new mesh object
-    delete subdMesh; // delete from heap (if any)
-    subdMesh = new SbdvMesh();
-    //Can replace with "test.off" for testing
-    subdMesh->loadV3(TEMPFILEPATH);
-    subdMesh->build(); // must be called after load
-    subdivide();
 }

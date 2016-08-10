@@ -50,13 +50,19 @@ void GMCanvas::clearAll()
 
 
      currentMeshHandler()->clearAll();
+
+     vertsToAddFace_.clear();
+     resetLineStartEnd();
      update();
 }
 
 void GMCanvas::resetLineStartEnd()
 {
-    lineStartPoint_ = nullptr;
-    lineEndPoint_ = nullptr;
+    if(vertsToAddFace_.empty())
+    {
+        lineStartPoint_ = nullptr;
+        lineEndPoint_ = nullptr;
+    }
 }
 
 
@@ -74,7 +80,6 @@ void GMCanvas::handleFileDialog(QString location, bool import)
             item->setPos(point);
             item->setVertexHandleIdx(vertex.w());
 
-            currentLayer()->points.push_back(item);
             currentLayer()->addToGroup(item);
         }
 
@@ -87,47 +92,41 @@ void GMCanvas::handleFileDialog(QString location, bool import)
             CanvasItemPoint* startPoint = nullptr;
             CanvasItemPoint* endPoint = nullptr;
 
-//            qDebug() << edge;
+            for(CanvasItemPoint* point : currentLayer()->points)
+            {
+                int pointIdx = point->vertexHandleIdx();
 
-//            for(CanvasItemPoint* point : currentLayer()->points)
-//            {
-//                int pointIdx = point->vertexHandleIdx();
-//                qDebug() << "startIDX: " << startIdx << ", pointIDX:" << pointIdx;
-//                //Looks like compiler will not accept 0 == 0 is true...
-//                if(pointIdx == startIdx)
-//                {
-//                    startPoint == point;
-//                }
+                if(pointIdx == startIdx)
+                {
+                    startPoint = point;
+                }
 
-//                if(pointIdx == endIdx)
-//                {
-//                    endPoint == point;
-//                }
+                if(pointIdx == endIdx)
+                {
+                    endPoint = point;
+                }
 
-//                if(startPoint != nullptr && endPoint != nullptr) break;
-//            }
+                if(startPoint != nullptr && endPoint != nullptr) break;
+            }
             
-//            if(startPoint == nullptr || endPoint == nullptr)
-//            {
-//                qDebug() << "Oh no..." << endIdx;
-//            }
-//            else
-//            {
+            if(startPoint == nullptr || endPoint == nullptr)
+            {
+                qDebug() << "Oh no..." << endIdx;
+            }
+            else
+            {
+                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
+                currentLayer()->addToGroup(line);
 
-//                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
-//                currentLayer()->addToGroup(line);
-//                currentLayer()->lines.push_back(line);
+                //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
+                //TODO: Get constraints from import file.
+                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
+                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
 
-//                //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
-//                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
-//                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
+                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
 
-//                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
-//                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
-
-//            }
-
-
+            }
         }
 
     }
@@ -180,6 +179,7 @@ void GMCanvas::prepareRendering()
 {
     currentMeshHandler()->prepareGuiMeshForSubd();
     opengl_->paintGL();
+    update();
 }
 
 void GMCanvas::setDrawColorVertex(QColor pointColor)
@@ -373,7 +373,6 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
             //The point is new, and should be added to a new face.
             vertsToAddFace_.push_back(itemPoint);
-            qDebug() << "added to face";
         }
 
 
@@ -419,7 +418,6 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            else
            {
                currentLayer()->addToGroup(line);
-               currentLayer()->lines.push_back(line);
 
                //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
@@ -446,7 +444,6 @@ void GMCanvas::addControlPoint(CanvasItemPoint *item)
     int vertexHandleIdx = currentMeshHandler()->addVertex(item->pos(), pointColor_);
     item->setVertexHandleIdx(vertexHandleIdx);
 
-    currentLayer()->points.push_back(item);
     currentLayer()->addToGroup(item);
     update(item->boundingRect());
 }
