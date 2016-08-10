@@ -80,7 +80,6 @@ void CanvasItemPoint::setColor(QColor color)
     this->color_ = color;
     GMCanvas* canvas = static_cast <GMCanvas*> (scene());
     canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
-
     update(boundingRect());
 }
 
@@ -208,6 +207,7 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
 {
     if(change == ItemScenePositionHasChanged)
     {
+        //Update position directly in meshhandler
         GMCanvas* canvas = static_cast <GMCanvas*> (scene());
         if(discontinuous_)
         {
@@ -223,6 +223,8 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
         {
             canvas->currentMeshHandler()->setVertexPoint(vertexHandleIdx_, pos());
         }
+
+
     }
     return QGraphicsItem::itemChange(change, value);
 }

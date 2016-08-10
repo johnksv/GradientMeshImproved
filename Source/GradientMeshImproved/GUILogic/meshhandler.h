@@ -50,6 +50,7 @@ public:
     QVector3D vertexColor(int idx);
     void setVertexColor(int idx, QColor vertexColor);
     uint vertexValence(int idx);
+    bool isBoundaryVertex(int idx);
 
     bool isBoundaryEdge(int startIdx, int endIdx);
 

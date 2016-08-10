@@ -39,10 +39,12 @@ public:
     void setActiveLayer(unsigned char index);
     void setDrawColorVertex(QColor pointColor);
     void setRenderConstraintHandlers(bool value);
+    void setRenderVertsEdges(bool renderVertsEdges);
 
     drawModeCanvas drawingMode() const;
     renderModeCanvas renderMode() const;
     bool renderConstraintHandlers() const;
+    bool renderVertsEdges() const;
 
 
     vector<CanvasItemGroup *> layers();
@@ -61,8 +63,9 @@ public:
 
 
 
+
 protected:
-  //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
+    //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
@@ -80,6 +83,7 @@ private:
     drawModeCanvas drawMode_ = drawModeCanvas::lineTool;
     renderModeCanvas renderingMode_ =  renderModeCanvas::fullRender;
     bool renderConstraintHandlers_;
+    bool renderVertsEdges_;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point

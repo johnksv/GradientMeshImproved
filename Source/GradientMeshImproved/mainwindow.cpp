@@ -49,7 +49,6 @@ void MainWindow::initActionGroups()
 {
 
     renderModeGroup_ = new QActionGroup(this);
-    renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
     renderModeGroup_->addAction(ui->actionRender_Partial);
     renderModeGroup_->addAction(ui->actionRender_Full);
     connect(renderModeGroup_, &QActionGroup::triggered, [=](QAction *selected) {selected->setChecked(true);});
@@ -111,8 +110,8 @@ void MainWindow::on_actionRender_constraints_handlers_triggered()
 
 void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
 {
-//    ui->openGLWidget-> setRenderingMode(1);
-//    ui->openGLWidget-> paintGL();
+    scene_->setRenderVertsEdges(ui->actionRender_Vertices_and_Edges->isChecked());
+    scene_->update();
 }
 
 void MainWindow::on_actionRender_Partial_triggered()

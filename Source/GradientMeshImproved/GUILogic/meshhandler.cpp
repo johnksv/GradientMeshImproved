@@ -91,6 +91,12 @@ uint MeshHandler::vertexValence(int idx)
     return guiMesh.valence(vertexHandlers_.at(index));
 }
 
+bool MeshHandler::isBoundaryVertex(int idx)
+{
+    vertexHandle vh = vertexHandlers_.at(findVertexHandler(idx));
+    return guiMesh.is_boundary(vh);
+}
+
 bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
 {
     vertexHandle startHandle = vertexHandlers_.at(findVertexHandler(startIdx));
@@ -381,7 +387,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         qDebug() << tempString;
     }
 
-
     return true;
 }
 
@@ -463,7 +468,7 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
     {
         vHandlersFace = orginalvHandlersFace;
         reverse(vHandlersFace.begin(), vHandlersFace.end());
-        guiMesh.delete_face(newFace);
+        guiMesh.delete_face(newFace, false);
         return true;
     }
 
@@ -499,13 +504,14 @@ void MeshHandler::subdivide(signed int steps)
 
 void MeshHandler::prepareGuiMeshForSubd()
 {
-	guiMesh.garbage_collection();
-
+    guiMesh.garbage_collection();
     string tempString;
     tempString +="OFF\n";
 
     size_t vertices = guiMesh.n_vertices();
     size_t faces = guiMesh.n_faces();
+    if(faces  <= 0) return;
+
     //0 for Lab, 1 for RGB.
     short colormode = 0;
 
@@ -596,7 +602,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
     subdivide();
-    //std::remove("test.off");
+    std::remove("test.off");
 }
 
 bool MeshHandler::saveGuiMeshOff(QString location)
