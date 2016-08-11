@@ -49,7 +49,8 @@ HEADERS  += mainwindow.h \
     undoCommands/movevertex.h \
     undoCommands/undocolor.h \
     GMView/canvaspointconstraint.h \
-    GMView/canvaspointdiscontinued.h
+    GMView/canvaspointdiscontinued.h \
+    GMView/utils.h
 
 FORMS    += mainwindow.ui
 

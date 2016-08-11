@@ -32,11 +32,8 @@ private:
     bool discontinuous_ = false;
     QMenu contextMenu_;
     vector<QPointF> subdividedCurve_;
-
-
-    vector<QPointF> subdCurve(const vector<QPointF> &spline, int steps = 3, bool closed = false);
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // CANVASITEMLINE_H
