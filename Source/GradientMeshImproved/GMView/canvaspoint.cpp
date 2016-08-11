@@ -132,25 +132,6 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
 
             pointA->setPos(0,-10);
             pointB->setPos(0,10);
-            double factor;
-
-            for(QGraphicsItem *item: childItems())
-            {
-                CanvasPointConstraint *constraint = dynamic_cast<CanvasPointConstraint*> (item);
-                if(constraint != nullptr)
-                {
-                    constraint->setInactive(true);
-                    CanvasItemLine *consEdge = constraint->edge();
-                    factor = (this == consEdge->startPoint()) ? 0.2 : -0.2;
-
-                    CanvasPointConstraint *pointAConstraint = new CanvasPointConstraint(pointA, consEdge);
-                    pointAConstraint->setPos(QPointF(consEdge->line().dx()*factor, consEdge->line().dy()*factor));
-
-                    CanvasPointConstraint *pointBConstraint = new CanvasPointConstraint(pointB, consEdge);
-                    pointBConstraint->setPos(QPointF(consEdge->line().dx()*factor, consEdge->line().dy()*factor));
-                }
-
-            }
 
             canvasPointDiscontinuedChildren_.push_back(pointA);
             canvasPointDiscontinuedChildren_.push_back(pointB);

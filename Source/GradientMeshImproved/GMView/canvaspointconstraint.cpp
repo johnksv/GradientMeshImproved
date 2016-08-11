@@ -9,30 +9,10 @@
 
 using namespace GMView;
 
-CanvasPointConstraint::CanvasPointConstraint(QGraphicsItem *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
-    : edge_(edge), QGraphicsItem(parent)
+CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, CanvasItemLine *edge, QGraphicsItem *parent)
+    : controlPoint_(controlPoint), edge_(edge), QGraphicsItem(parent)
 {
     setParentItem(controlPoint);
-
-    CanvasItemPoint* point = dynamic_cast<CanvasItemPoint*> (controlPoint);
-    if(point == nullptr)
-    {
-        CanvasPointDiscontinued* pointDis = dynamic_cast<CanvasPointDiscontinued*> (controlPoint);
-        if(pointDis != nullptr)
-        {
-            controlPointDis_ = pointDis;
-        }
-        else
-        {
-            throw "Illegal parent type";
-        }
-
-    }
-    else
-    {
-        controlPoint_ = point;
-    }
-
     setZValue(2);
     setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges);
 }
@@ -53,16 +33,8 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
             painter->setBrush(color);
             painter->drawEllipse(boundingRect());
             //For debugging purposes TODO: remove
-            if(controlPoint_ != nullptr)
-            {
                 painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
                 painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
-            }else if(controlPointDis_ != nullptr)
-            {
-                QPointF startPosition = mapFromItem(controlPointDis_, controlPointDis_->pos()) - controlPointDis_->pos();
-                painter->drawLine(startPosition, QPoint(0,0));
-                painter->drawText(QPointF(10,10),QString(QString::number(controlPointDis_->vertexHandleIdx())));
-            }
         }
     }
 }
@@ -74,7 +46,7 @@ QPainterPath CanvasPointConstraint::shape() const
     return path;
 }
 
-QGraphicsItem *CanvasPointConstraint::controlPoint()
+CanvasItemPoint *CanvasPointConstraint::controlPoint()
 {
     return controlPoint_;
 }

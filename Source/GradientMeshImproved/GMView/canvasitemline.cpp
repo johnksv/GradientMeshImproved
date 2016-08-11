@@ -32,7 +32,7 @@ void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     //For drawing orginal line
-    QGraphicsLineItem::paint(painter,option,widget);
+    //QGraphicsLineItem::paint(painter,option,widget);
 }
 
 QPainterPath CanvasItemLine::shape() const
