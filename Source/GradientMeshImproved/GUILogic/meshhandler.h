@@ -46,6 +46,7 @@ public:
     vector<QVector4D> vertices();
     int addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
     void removeVertex(int idx);
+    QVector3D vertexPoint(int idx);
     void setVertexPoint(int idx, const QPointF& position);
     QVector3D vertexColor(int idx);
     void setVertexColor(int idx, QColor vertexColor);

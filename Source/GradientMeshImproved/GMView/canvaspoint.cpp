@@ -129,7 +129,7 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
             CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
             //TODO: set position of A and B on the normal of the incoming edge for visual look.
             //TODO: Double constraints only for "spliting"-edge (edge on the middle)
-
+            //This does not effect position in underlaying mesh.
             pointA->setPos(0,-10);
             pointB->setPos(0,10);
 
@@ -190,8 +190,8 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
             {
                 CanvasPointDiscontinued *disPoint = static_cast<CanvasPointDiscontinued*> (item);
                 int vertIdx = disPoint->vertexHandleIdx();
-                //Use same position as parent
-                canvas->currentMeshHandler()->setVertexPoint(vertIdx, pos());
+                //Use same position as parent (+ minor offset, for opnmesh not to crash)
+                canvas->currentMeshHandler()->setVertexPoint(vertIdx, pos()-QPointF(0.01,0.01));
             }
         }
         else

@@ -21,7 +21,8 @@ CanvasPointDiscontinued::CanvasPointDiscontinued(bool sameIdxAsParent, QGraphics
         else
         {
             GMCanvas *canvas = static_cast<GMCanvas*> (parentPoint->scene());
-            QPointF position = mapToScene(pos());
+            //Minor offset for not crashing normals with OpenMesh
+            QPointF position = mapToScene(pos())-QPointF(0.01,0.01);
             vertexHandleIdx_ = canvas->currentMeshHandler()->addVertex(position);
         }
     }
@@ -29,6 +30,8 @@ CanvasPointDiscontinued::CanvasPointDiscontinued(bool sameIdxAsParent, QGraphics
     {
         throw "Parent should be a CanvasItemPoint";
     }
+
+    //Position is updated by parents ItemChange-function
 }
 
 QRectF CanvasPointDiscontinued::boundingRect() const
@@ -47,12 +50,6 @@ QPainterPath CanvasPointDiscontinued::shape() const
     QPainterPath path;
     path.addEllipse(boundingRect());
     return path;
-}
-
-QVariant CanvasPointDiscontinued::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
-{
-    //TODO: Change of position
-    return value;
 }
 
 void CanvasPointDiscontinued::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)

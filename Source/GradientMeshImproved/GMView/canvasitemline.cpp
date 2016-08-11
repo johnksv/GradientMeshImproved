@@ -68,7 +68,7 @@ bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
 
 CanvasItemPoint *CanvasItemLine::startPoint()
 {
-	return startPoint_;
+    return startPoint_;
 }
 
 CanvasItemPoint *CanvasItemLine::endPoint()
@@ -99,27 +99,45 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     int startIdx = startPoint()->vertexHandleIdx();
     int endIdx = endPoint()->vertexHandleIdx();
 
+    QMenu menu;
+    QAction *setDiscontinuous = menu.addAction("Discontinuous/Hard edge");
 
+    setDiscontinuous->setCheckable(true);
+    setDiscontinuous->setChecked(discontinuous_);
+    if(canvas->currentMeshHandler()->isBoundaryEdge(startIdx, endIdx))
+    {
+        setDiscontinuous->setEnabled(false);
+    }
 
-        QMenu menu;
-        QAction *setDiscontinuous = menu.addAction("Discontinuous/Hard edge");
+    QAction *selectedAction = menu.exec(event->screenPos());
 
-        setDiscontinuous->setCheckable(true);
-        setDiscontinuous->setChecked(discontinuous_);
-        if(canvas->currentMeshHandler()->isBoundaryEdge(startIdx, endIdx))
+    if (selectedAction == setDiscontinuous)
+    {
+        bool value = setDiscontinuous->isChecked();
+        discontinuous_ = value;
+        startPoint_->setDiscontinuous(value, this);
+        endPoint_->setDiscontinuous(value, this);
+
+        if(discontinuous_)
         {
-            setDiscontinuous->setEnabled(false);
+            vector<int> disconVertIdx;
+
+            int disPointIdx1 = static_cast<CanvasPointDiscontinued*> (startPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
+            int disPointIdx2 = static_cast<CanvasPointDiscontinued*> (endPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
+
+
+            disconVertIdx.push_back(startPoint_->vertexHandleIdx());
+            disconVertIdx.push_back(disPointIdx1);
+            disconVertIdx.push_back(disPointIdx2);
+            disconVertIdx.push_back(endPoint_->vertexHandleIdx());
+
+            qDebug() << canvas->currentMeshHandler()->makeFace(disconVertIdx, true);
         }
-
-        QAction *selectedAction = menu.exec(event->screenPos());
-
-        if (selectedAction == setDiscontinuous)
+        else
         {
-            bool value = setDiscontinuous->isChecked();
-            discontinuous_ = value;
-            startPoint_->setDiscontinuous(value, this);
-            endPoint_->setDiscontinuous(value, this);
+            //TODO: Delete discontinued point in underlaying mesh.
         }
+    }
 }
 
 void CanvasItemLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

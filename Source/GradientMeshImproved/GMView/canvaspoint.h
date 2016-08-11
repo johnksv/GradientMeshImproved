@@ -52,7 +52,10 @@ private:
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;
-    //Must be of type QGraphicsItem to avoid header collision.
+
+    /*Must be of type QGraphicsItem to avoid header collision.
+     * The first element should always have the same vertexIDX as this point.
+     */
     vector<QGraphicsItem*> discontinuedChildren_;
 };
 

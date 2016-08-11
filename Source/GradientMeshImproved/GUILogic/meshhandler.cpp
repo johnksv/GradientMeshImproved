@@ -64,6 +64,13 @@ void MeshHandler::removeVertex(int idx)
     vertexHandlers_.erase(vertexHandlers_.begin()+index);
 }
 
+QVector3D MeshHandler::vertexPoint(int idx)
+{
+    vertexHandle vhandle = vertexHandlers_.at(findVertexHandler(idx));
+    OpnMesh::Point point = guiMesh.point(vhandle);
+    return QVector3D(point[0], point[1],point[2]);
+}
+
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
 {
         float x = static_cast <float> (position.x());
@@ -264,7 +271,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 
                 newFace = guiMesh.add_face(vHandlersToBeFace);
 
-                //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
+                //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid ( guiMesh.delete_face(oldFace, false) above)
                 if (faceHandlers_.size() > 1)
                 {
                     //Check if newFace has correct orientation, else, make correct face
@@ -463,6 +470,14 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
 {		
     bool isValidFace = newFace.is_valid();
     OpnMesh::Normal newFaceNormal;
+
+    //TODO: remove. Only for purposes.
+    for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(newFace); fv_ite != guiMesh.fv_end(newFace); fv_ite++)
+    {
+        OpnMesh::Point point = guiMesh.point(fv_ite);
+        qDebug() << "x:" << point[0] << "y:" << point[1] << "z:" << point[2];
+    }
+
     if(isValidFace)
     {
         newFaceNormal = guiMesh.calc_face_normal(newFace);

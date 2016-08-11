@@ -120,7 +120,6 @@
                     CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
                     currentLayer()->addToGroup(line);
 
-                    //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
                     //TODO: Get constraints from import file.
                     CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
                     startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
@@ -439,7 +438,6 @@
                {
                    currentLayer()->addToGroup(line);
 
-                   //TODO:Fix Linker error in VS Community Update 3, but not QTCreator...
                    CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
                    startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
 
