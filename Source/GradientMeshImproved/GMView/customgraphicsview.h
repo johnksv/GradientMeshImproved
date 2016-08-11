@@ -17,6 +17,6 @@ private:
     qreal zoomValue_ = 0;
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // CUSTOMGRAPHICSVIEW_H

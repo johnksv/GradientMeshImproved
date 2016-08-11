@@ -21,6 +21,6 @@ private:
     vector<CanvasItemPoint*> pointsInFace_;
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // CANVASITEMFACE_H

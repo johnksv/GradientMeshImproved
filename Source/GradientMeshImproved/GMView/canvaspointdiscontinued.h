@@ -33,5 +33,5 @@ private:
     QColor color_ =QColor(123,158,92);
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 #endif // CANVASPOINTDISCONTINUED_H

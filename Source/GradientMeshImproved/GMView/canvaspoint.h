@@ -54,6 +54,6 @@ private:
     vector<QGraphicsItem*> canvasPointDiscontinuedChildren_;
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // GMCANVASITEM_H

@@ -29,6 +29,6 @@ private:
 
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // CANVASITEMGROUP_H

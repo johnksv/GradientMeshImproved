@@ -93,6 +93,6 @@ private:
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // GMCANVAS_H

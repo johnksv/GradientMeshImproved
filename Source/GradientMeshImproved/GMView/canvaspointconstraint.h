@@ -34,6 +34,6 @@ private:
     int radius_ = 3;
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // CANVASPOINTCONSTRAINT_H

@@ -29,6 +29,6 @@ private:
     GLdouble glWidth, glHeight;
 };
 
-} // end of namespace GUIView
+} // end of namespace GMView
 
 #endif // GMOPENGLWIDGET_H
