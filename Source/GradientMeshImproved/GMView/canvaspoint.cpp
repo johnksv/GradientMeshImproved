@@ -112,7 +112,7 @@ void CanvasItemPoint::setHighlighted(bool highlighted)
     highlighted_ = highlighted;
 }
 
-bool CanvasItemPoint::discontinuous() const
+bool CanvasItemPoint::isDiscontinuous() const
 {
     return discontinuous_;
 }
@@ -133,28 +133,17 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
             pointA->setPos(0,-10);
             pointB->setPos(0,10);
 
-            canvasPointDiscontinuedChildren_.push_back(pointA);
-            canvasPointDiscontinuedChildren_.push_back(pointB);
+            discontinuedChildren_.push_back(pointA);
+            discontinuedChildren_.push_back(pointB);
         }
     }
     else
     {
-        for(QGraphicsItem* item : canvasPointDiscontinuedChildren_)
+        for(QGraphicsItem* item : discontinuedChildren_)
         {
             delete item;
         }
-        canvasPointDiscontinuedChildren_.clear();
-
-        for(QGraphicsItem *item: childItems())
-        {
-            CanvasPointConstraint *constraint = dynamic_cast<CanvasPointConstraint*> (item);
-            if(constraint != nullptr)
-            {
-                constraint->setInactive(false);
-            }
-
-        }
-
+        discontinuedChildren_.clear();
 
         //TODO: Delete the discontinued points (Internaly maybe with collapsing edges)
     }
@@ -162,7 +151,12 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
     update();
 }
 
-QGraphicsItem *CanvasItemPoint::controlPoint(QGraphicsItem *_edge)
+vector<QGraphicsItem *> CanvasItemPoint::discontinuedChildren()
+{
+    return discontinuedChildren_;
+}
+
+QGraphicsItem *CanvasItemPoint::constraintPoint(QGraphicsItem *_edge)
 {
     CanvasItemLine *edge = dynamic_cast<CanvasItemLine*> (_edge);
     if(edge != nullptr)
@@ -192,7 +186,7 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
         GMCanvas* canvas = static_cast <GMCanvas*> (scene());
         if(discontinuous_)
         {
-            for(QGraphicsItem * item : canvasPointDiscontinuedChildren_)
+            for(QGraphicsItem * item : discontinuedChildren_)
             {
                 CanvasPointDiscontinued *disPoint = static_cast<CanvasPointDiscontinued*> (item);
                 int vertIdx = disPoint->vertexHandleIdx();

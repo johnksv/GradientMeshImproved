@@ -78,8 +78,8 @@ CanvasItemPoint *CanvasItemLine::endPoint()
 
 void CanvasItemLine::updateSubdivisonCurve()
 {
-    QGraphicsItem *startConstraint = startPoint_->controlPoint(this);
-    QGraphicsItem *endConstraint = endPoint_->controlPoint(this);
+    QGraphicsItem *startConstraint = startPoint_->constraintPoint(this);
+    QGraphicsItem *endConstraint = endPoint_->constraintPoint(this);
     vector<QPointF> inputPoints;
     inputPoints.push_back(startPoint_->pos());
 
