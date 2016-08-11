@@ -25,7 +25,7 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
 
 private:
-    CanvasItemPoint *controlPoint_ = nullptr;
+    CanvasItemPoint *controlPoint_;
     CanvasItemLine *edge_;
 
     bool inactive_ = false;

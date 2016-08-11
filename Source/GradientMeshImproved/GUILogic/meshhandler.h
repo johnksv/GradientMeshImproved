@@ -53,6 +53,8 @@ public:
     bool isBoundaryVertex(int idx);
 
     bool isBoundaryEdge(int startIdx, int endIdx);
+    void setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector3D constraints);
+    QVector3D constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx);
 
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();

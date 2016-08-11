@@ -57,7 +57,7 @@ void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem*, Q
 {
     //TODO: Remove Face from drawing.
     painter->setBrush(QColor(225,225,225,100));
-
+    painter->setPen(Qt::NoPen);
     painter->drawPath(shape());
 }
 

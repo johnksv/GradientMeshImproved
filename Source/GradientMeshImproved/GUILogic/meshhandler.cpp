@@ -113,6 +113,33 @@ bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
     return true;
 }
 
+void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector3D constraints)
+{
+    vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
+    vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
+    for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(outgoingVert); voh_ite != guiMesh.voh_end(outgoingVert); voh_ite++)
+    {
+        if(guiMesh.to_vertex_handle(voh_ite) == endVert)
+        {
+            guiMesh.data(voh_ite).setConstraint(constraints);
+            return;
+        }
+    }
+}
+
+QVector3D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx)
+{
+    vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
+    vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
+    for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(outgoingVert); voh_ite != guiMesh.voh_end(outgoingVert); voh_ite++)
+    {
+        if(guiMesh.to_vertex_handle(voh_ite) == endVert)
+        {
+            return guiMesh.data(voh_ite).constraint();
+        }
+    }
+}
+
 vector<QVector4D> MeshHandler::edges()
 {
     vector<QVector4D> result;
@@ -139,7 +166,6 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 {
-
     vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
     for(int idx : vertexHandlersIdx)
     {
@@ -231,7 +257,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 //Iterate over vertices in oldFace
                 for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(oldFace); fv_ite != guiMesh.fv_end(oldFace); fv_ite++)
                 {
-                    qDebug() << "Old face vertexHandleIdx: " << fv_ite->idx();
                     verticesOldFace.push_back(fv_ite);
                 }
                 //delete old face
@@ -281,16 +306,10 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 */
                 if (startIndex != -1 && endIndex != -1 && startIndex > endIndex)
                 {
-                    if (startIndex-verticesOldFace.size() > 0)
-                    {
-
-                    }
                     vector<vertexHandle> behindVerts;
                     for (auto v_ite = verticesOldFace.begin()+startIndex+1; v_ite != verticesOldFace.end(); v_ite++)
                     {
                         behindVerts.push_back(*v_ite);
-
-                        qDebug() << v_ite->idx();
                     }
                     verticesOldFace.erase(verticesOldFace.begin() + endIndex, verticesOldFace.end());
                     verticesOldFace.insert(verticesOldFace.begin(), behindVerts.begin(), behindVerts.end());
@@ -330,7 +349,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 OpnMesh::FaceHandle boundaryFace = guiMesh.add_face(verticesOldFace);
                 qDebug() << "BoundaryFace made. Checking rotation.";
                 //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid
-                if (faceHandlers_.size() > 1)
+                if (guiMesh.n_faces() > 1)
                 {
                     //Should be OK, but needs testing.
                     if (faceOrientation(orginalvHandlersFace, boundaryFace, vHandlersToBeFace))
@@ -362,8 +381,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
             newFace = guiMesh.add_face(vHandlersToBeFace);
             loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
         }
-
-        //Call helper function to check if a loop is required.
     }while(loopToFixOrientation);
 
     faceHandlers_.push_back(newFace);
@@ -376,17 +393,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
         vertexHandlersIdx.push_back(fv_ite->idx());
     }
-
-    for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
-    {
-        QString tempString;
-        for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
-        {
-            tempString += QString::number(fv_ite->idx());
-        }
-        qDebug() << tempString;
-    }
-
     return true;
 }
 
@@ -549,11 +555,10 @@ void MeshHandler::prepareGuiMeshForSubd()
 
         }
 
-        //TODO: {constraint_vec_x, constraint_vec_y} := the colour gradient constraint towards the given neighbour (according to list of ids)
-        for(unsigned int i = 0; i < valence; i++)
+        for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(ite); voh_ite != guiMesh.voh_end(ite); voh_ite++)
         {
-            // HENRIK: ENDRING
-            tempString += "0.1 0.1 ";
+            QVector3D constraint = guiMesh.data(voh_ite).constraint();
+            tempString += to_string(constraint.x()) + " " + to_string(constraint.y()) + " ";
         }
 
 

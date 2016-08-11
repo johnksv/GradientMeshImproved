@@ -25,17 +25,8 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     VertexTraits
     {
         private:
-            QVector3D constraint_;
             QVector3D color_;
         public:
-            QVector3D constraint() const
-			{
-                return constraint_;
-            }
-            void setConstraint(QVector3D &constraint)
-			{
-                constraint_ = constraint;
-            }
 
             QVector3D color() const
 			{
@@ -45,6 +36,20 @@ struct CustomTraits : public OpenMesh::DefaultTraits
 			{
                 this->color_ = color;
             }
+    };
+    HalfedgeTraits
+    {
+        private:
+            QVector3D constraint_ = QVector3D(0.1,0.1,0.1);
+        public:
+        QVector3D constraint() const
+        {
+            return constraint_;
+        }
+        void setConstraint(QVector3D &constraint)
+        {
+            constraint_ = constraint;
+        }
     };
 };
 

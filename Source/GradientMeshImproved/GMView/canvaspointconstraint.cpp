@@ -66,6 +66,22 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
     if(change == ItemPositionChange || change == ItemScenePositionHasChanged)
     {
         edge_->updateSubdivisonCurve();
+        GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+        int controlPointIdx = controlPoint_->vertexHandleIdx();
+        int toVertexIdx;
+        if(controlPoint_ == edge_->startPoint())
+        {
+            toVertexIdx = edge_->endPoint()->vertexHandleIdx();
+        }
+        else
+        {
+            toVertexIdx = edge_->startPoint()->vertexHandleIdx();
+        }
+
+        QVector3D constraint(pos());
+        qDebug() << constraint;
+        canvas->currentMeshHandler()->setConstraints(controlPointIdx, toVertexIdx, constraint);
+
     }
     return value;
 }
