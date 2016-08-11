@@ -34,7 +34,7 @@ private:
     vector<QPointF> subdividedCurve_;
 
 
-    vector<QPointF> subdCurve(vector<QPointF> spline, int steps = 3, bool closed = false);
+    vector<QPointF> subdCurve(const vector<QPointF> &spline, int steps = 3, bool closed = false);
 };
 
 } // end of namespace GUIView
