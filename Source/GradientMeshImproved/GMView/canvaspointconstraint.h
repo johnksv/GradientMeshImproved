@@ -15,11 +15,8 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
 
-    //Of type CanvasItemPoint or CanvasPointDiscontinued
     CanvasItemPoint *controlPoint();
     CanvasItemLine *edge();
-
-    void setInactive(bool value);
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;

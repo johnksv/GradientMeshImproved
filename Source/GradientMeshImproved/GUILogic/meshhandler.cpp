@@ -113,7 +113,7 @@ bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
     return true;
 }
 
-void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector3D constraints)
+void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints)
 {
     vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
     vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
@@ -127,7 +127,7 @@ void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx,
     }
 }
 
-QVector3D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx)
+QVector2D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx)
 {
     vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
     vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
@@ -555,6 +555,7 @@ void MeshHandler::prepareGuiMeshForSubd()
 
         }
 
+        //{constraint_vec_x, constraint_vec_y}
         for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(ite); voh_ite != guiMesh.voh_end(ite); voh_ite++)
         {
             QVector3D constraint = guiMesh.data(voh_ite).constraint();

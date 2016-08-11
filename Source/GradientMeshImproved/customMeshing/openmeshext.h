@@ -3,6 +3,7 @@
 
 #include <OpenMesh/Core/Mesh/Traits.hh>
 #include <QVector3D>
+#include <QVector2D>
 
 /*! Namespace for classes and data structures extending
  *  and customising the OpenMesh library
@@ -40,13 +41,13 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     HalfedgeTraits
     {
         private:
-            QVector3D constraint_ = QVector3D(0.1,0.1,0.1);
+            QVector2D constraint_ = QVector2D(0.1,0.1);
         public:
-        QVector3D constraint() const
+        QVector2D constraint() const
         {
             return constraint_;
         }
-        void setConstraint(QVector3D &constraint)
+        void setConstraint(QVector2D &constraint)
         {
             constraint_ = constraint;
         }

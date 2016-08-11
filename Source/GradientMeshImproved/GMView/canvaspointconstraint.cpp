@@ -24,8 +24,6 @@ QRectF CanvasPointConstraint::boundingRect() const
 
 void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    if(!inactive_)
-    {
         GMCanvas *canvas = static_cast<GMCanvas*>(scene());
         if(canvas->renderConstraintHandlers())
         {
@@ -36,7 +34,6 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
                 painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
                 painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
         }
-    }
 }
 
 QPainterPath CanvasPointConstraint::shape() const
@@ -56,31 +53,49 @@ CanvasItemLine *CanvasPointConstraint::edge()
     return edge_;
 }
 
-void CanvasPointConstraint::setInactive(bool value)
-{
-    inactive_ = value;
-}
-
 QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVariant &value)
 {
     if(change == ItemPositionChange || change == ItemScenePositionHasChanged)
     {
         edge_->updateSubdivisonCurve();
+
+        //Update position in underlying mesh
         GMCanvas *canvas = static_cast<GMCanvas*>(scene());
-        int controlPointIdx = controlPoint_->vertexHandleIdx();
-        int toVertexIdx;
-        if(controlPoint_ == edge_->startPoint())
+
+        int timesToLoop = 1;
+        int controlPointIdx;
+
+        //If discontinued: go thorugh each childPoint and assign this gradientConstriant vector.
+        //TODO: Test (should probably implement support for discontinuity first.
+        bool discontinued = controlPoint_->isDiscontinuous();
+        if(discontinued) timesToLoop = controlPoint_->discontinuedChildren().size();
+
+        for(int i =0; i < timesToLoop; i++)
         {
-            toVertexIdx = edge_->endPoint()->vertexHandleIdx();
-        }
-        else
-        {
-            toVertexIdx = edge_->startPoint()->vertexHandleIdx();
+            if(discontinued)
+            {
+                controlPointIdx = static_cast<CanvasPointDiscontinued*>(controlPoint_->discontinuedChildren().at(i))->vertexHandleIdx();
+            }
+            else
+            {
+                controlPointIdx = controlPoint_->vertexHandleIdx();
+            }
+
+            int toVertexIdx;
+            if(controlPoint_ == edge_->startPoint())
+            {
+                toVertexIdx = edge_->endPoint()->vertexHandleIdx();
+            }
+            else
+            {
+                toVertexIdx = edge_->startPoint()->vertexHandleIdx();
+            }
+
+            QVector2D constraint(pos());
+            canvas->currentMeshHandler()->setConstraints(controlPointIdx, toVertexIdx, constraint);
         }
 
-        QVector3D constraint(pos());
-        qDebug() << constraint;
-        canvas->currentMeshHandler()->setConstraints(controlPointIdx, toVertexIdx, constraint);
+
 
     }
     return value;
