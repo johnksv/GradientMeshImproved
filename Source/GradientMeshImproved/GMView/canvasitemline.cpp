@@ -115,11 +115,13 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
         bool value = setDiscontinuous->isChecked();
         discontinuous_ = value;
-        startPoint_->setDiscontinuous(value, this);
-        endPoint_->setDiscontinuous(value, this);
 
         if(discontinuous_)
         {
+            //Discontinued points are created
+            startPoint_->setDiscontinuous(value, this);
+            endPoint_->setDiscontinuous(value, this);
+
             vector<int> disconVertIdx;
 
             int disPointIdx1 = static_cast<CanvasPointDiscontinued*> (startPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
@@ -135,7 +137,23 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         }
         else
         {
-            //TODO: Delete discontinued point in underlaying mesh.
+            vector<int> disconVertIdx;
+
+            int disPointIdx1 = static_cast<CanvasPointDiscontinued*> (startPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
+            int disPointIdx2 = static_cast<CanvasPointDiscontinued*> (endPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
+
+
+            disconVertIdx.push_back(startPoint_->vertexHandleIdx());
+            disconVertIdx.push_back(disPointIdx1);
+            disconVertIdx.push_back(disPointIdx2);
+            disconVertIdx.push_back(endPoint_->vertexHandleIdx());
+
+            canvas->currentMeshHandler()->deleteDiscontinuedFace(disconVertIdx);
+
+            //Discontinued are deleted in canvasPoint
+            startPoint_->setDiscontinuous(value, this);
+            endPoint_->setDiscontinuous(value, this);
+
         }
     }
 }

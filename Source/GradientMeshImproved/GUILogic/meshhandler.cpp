@@ -147,6 +147,48 @@ QVector2D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertId
     }
 }
 
+void MeshHandler::deleteDiscontinuedFace(vector<int> &vertexHandlersIdx)
+{
+    assert(vertexHandlersIdx.size() == 4);
+
+    //TODO: Ugly function. Make it prettier.
+    for(int i = 1; i <=2; i++)
+    {
+        vertexHandle mainVertex;
+        vertexHandle toCollapse;
+        if(i == 1)
+        {
+            int startVertIdx = vertexHandlersIdx.front();
+            mainVertex = vertexHandlers_.at(findVertexHandler(startVertIdx));
+
+            int startDiscontinuedIdx =  vertexHandlersIdx.at(1);
+            toCollapse = vertexHandlers_.at(findVertexHandler(startDiscontinuedIdx));
+        }
+        else
+        {
+            int endVertIdx = vertexHandlersIdx.back();
+            mainVertex = vertexHandlers_.at(findVertexHandler(endVertIdx));
+
+            int endDiscontinuedIdx =  vertexHandlersIdx.at(2);
+            toCollapse = vertexHandlers_.at(findVertexHandler(endDiscontinuedIdx));
+        }
+
+        for (OpnMesh::VertexIHalfedgeIter vih_ite = guiMesh.vih_begin(mainVertex); vih_ite != guiMesh.vih_end(mainVertex); vih_ite++)
+        {
+            if(guiMesh.from_vertex_handle(vih_ite) == toCollapse)
+            {
+                if(guiMesh.is_collapse_ok(vih_ite))
+                {
+                    qDebug() << "Collapse is OKAY!";
+                    guiMesh.collapse(vih_ite);
+                }
+                break;
+            }
+        }
+    }
+    guiMesh.garbage_collection();
+}
+
 vector<QVector4D> MeshHandler::edges()
 {
     vector<QVector4D> result;

@@ -56,6 +56,8 @@ public:
     bool isBoundaryEdge(int startIdx, int endIdx);
     void setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints);
     QVector2D constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx);
+    //First and last element is expected to be actual control point idx
+    void deleteDiscontinuedFace(vector<int> &vertexHandlersIdx);
 
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();

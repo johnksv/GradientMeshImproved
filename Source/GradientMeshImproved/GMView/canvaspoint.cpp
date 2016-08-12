@@ -144,8 +144,6 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
             delete item;
         }
         discontinuedChildren_.clear();
-
-        //TODO: Delete the discontinued points (Internaly maybe with collapsing edges)
     }
 
     update();
