@@ -85,12 +85,6 @@ private:
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 
-    /*	Returns the index (in "vertexHandlers") to the vertexhandler with idx == idxToFind
-    *	If no match is found, -1 is returned (which will lead to an error as it should)
-    */
-    int findVertexHandler(int idxToFind);
-    int findFaceHandler(int idxToFind);
-
 
      /* Check if new face has same orientation as first face (CW or CCW), if NOT, true is returned (which means an extra loop in makeFace is required).
      */

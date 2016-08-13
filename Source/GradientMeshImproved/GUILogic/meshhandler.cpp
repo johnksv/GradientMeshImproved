@@ -51,63 +51,58 @@ int MeshHandler::addVertex(const QPointF &position, const QColor color)
     float x = static_cast <float> (position.x());
     float y = static_cast <float> (position.y());
     vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
-    vertexHandlers_.push_back(handler);
     setVertexColor(handler.idx(), color);
     return handler.idx();
 }
 
 void MeshHandler::removeVertex(int idx)
 {
-    int index = findVertexHandler(idx);
-    vertexHandle handle = vertexHandlers_.at(index);
+    vertexHandle handle = guiMesh.vertex_handle(idx);
     guiMesh.delete_vertex(handle);
-    vertexHandlers_.erase(vertexHandlers_.begin()+index);
+    vertexHandlers_.erase(vertexHandlers_.begin()+idx);
 }
 
 QVector3D MeshHandler::vertexPoint(int idx)
 {
-    vertexHandle vhandle = vertexHandlers_.at(findVertexHandler(idx));
+    vertexHandle vhandle = guiMesh.vertex_handle(idx);
     OpnMesh::Point point = guiMesh.point(vhandle);
     return QVector3D(point[0], point[1],point[2]);
 }
 
 void MeshHandler::setVertexPoint(int idx, const QPointF &position)
 {
-        float x = static_cast <float> (position.x());
-        float y = static_cast <float> (position.y());
-        int index = findVertexHandler(idx);
-        guiMesh.set_point(vertexHandlers_.at(index), OpnMesh::Point(x, y, .0f));
+    float x = static_cast <float> (position.x());
+    float y = static_cast <float> (position.y());
+
+    guiMesh.set_point(guiMesh.vertex_handle(idx), OpnMesh::Point(x, y, .0f));
 }
 
 QVector3D MeshHandler::vertexColor(int idx)
 {
-    int index = findVertexHandler(idx);
-    return guiMesh.data(vertexHandlers_.at(index)).color();
+    return guiMesh.data(guiMesh.vertex_handle(idx)).color();
 }
 
 void MeshHandler::setVertexColor(int idx, QColor color)
 {
-    int index = findVertexHandler(idx);
     QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
-    guiMesh.data(vertexHandlers_.at(index)).setColor(color_);
+    guiMesh.data(guiMesh.vertex_handle(idx)).setColor(color_);
 }
 
 uint MeshHandler::vertexValence(int idx)
 {
-    int index = findVertexHandler(idx);
-    return guiMesh.valence(vertexHandlers_.at(index));
+    return guiMesh.valence(guiMesh.vertex_handle(idx));
 }
 
 bool MeshHandler::isBoundaryVertex(int idx)
 {
-    vertexHandle vh = vertexHandlers_.at(findVertexHandler(idx));
+    vertexHandle vh = guiMesh.vertex_handle((idx));
     return guiMesh.is_boundary(vh);
 }
 
 bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
 {
-    vertexHandle startHandle = vertexHandlers_.at(findVertexHandler(startIdx));
-    vertexHandle endHandle = vertexHandlers_.at(findVertexHandler(endIdx));
+    vertexHandle startHandle = guiMesh.vertex_handle(startIdx);
+    vertexHandle endHandle = guiMesh.vertex_handle(endIdx);
 
     for(OpnMesh::ConstVertexEdgeIter ve_ite = guiMesh.cve_iter(startHandle); ve_ite != guiMesh.cve_end(startHandle); ve_ite++)
     {
@@ -122,8 +117,8 @@ bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
 
 void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints)
 {
-    vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
-    vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
+    vertexHandle outgoingVert = guiMesh.vertex_handle(halfedgeFromVertIdx);
+    vertexHandle endVert = guiMesh.vertex_handle(halfedgeToVertIdx);
     for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(outgoingVert); voh_ite != guiMesh.voh_end(outgoingVert); voh_ite++)
     {
         if(guiMesh.to_vertex_handle(voh_ite) == endVert)
@@ -136,8 +131,8 @@ void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx,
 
 QVector2D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertIdx)
 {
-    vertexHandle outgoingVert = vertexHandlers_.at(findVertexHandler(halfedgeFromVertIdx));
-    vertexHandle endVert = vertexHandlers_.at(findVertexHandler(halfedgeToVertIdx));
+    vertexHandle outgoingVert = guiMesh.vertex_handle(halfedgeFromVertIdx);
+    vertexHandle endVert = guiMesh.vertex_handle(halfedgeToVertIdx);
     for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(outgoingVert); voh_ite != guiMesh.voh_end(outgoingVert); voh_ite++)
     {
         if(guiMesh.to_vertex_handle(voh_ite) == endVert)
@@ -159,18 +154,18 @@ void MeshHandler::deleteDiscontinuedFace(vector<int> &vertexHandlersIdx)
         if(i == 1)
         {
             int startVertIdx = vertexHandlersIdx.front();
-            mainVertex = vertexHandlers_.at(findVertexHandler(startVertIdx));
+            mainVertex = guiMesh.vertex_handle((startVertIdx));
 
             int startDiscontinuedIdx =  vertexHandlersIdx.at(1);
-            toCollapse = vertexHandlers_.at(findVertexHandler(startDiscontinuedIdx));
+            toCollapse = guiMesh.vertex_handle((startDiscontinuedIdx));
         }
         else
         {
             int endVertIdx = vertexHandlersIdx.back();
-            mainVertex = vertexHandlers_.at(findVertexHandler(endVertIdx));
+            mainVertex = guiMesh.vertex_handle((endVertIdx));
 
             int endDiscontinuedIdx =  vertexHandlersIdx.at(2);
-            toCollapse = vertexHandlers_.at(findVertexHandler(endDiscontinuedIdx));
+            toCollapse = guiMesh.vertex_handle((endDiscontinuedIdx));
         }
 
         for (OpnMesh::VertexIHalfedgeIter vih_ite = guiMesh.vih_begin(mainVertex); vih_ite != guiMesh.vih_end(mainVertex); vih_ite++)
@@ -208,7 +203,6 @@ vector<QVector4D> MeshHandler::edges()
 
 void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 {
-    int vertexIndex = findVertexHandler(vertexIdx);
     //TODO: implement
 
 }
@@ -216,10 +210,10 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 {
     vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
-    for(int idx : vertexHandlersIdx)
+    for(int i = 0; i < vertexHandlersIdx.size(); i++)
     {
-        int index = findVertexHandler(idx);
-        vHandlersToBeFace.push_back(vertexHandlers_.at(index));
+        int index = vertexHandlersIdx.at(i);
+        vHandlersToBeFace.push_back(guiMesh.vertex_handle(index));
     }
     //Used if rotation of added vertices are wrong
     orginalvHandlersFace = vHandlersToBeFace;
@@ -389,8 +383,8 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 reverse(vertexHandlersIdx.begin(), vertexHandlersIdx.end());
                 for (int i = 0; i < vertexHandlersIdx.size(); i++)
                 {
-                    int index = findVertexHandler(vertexHandlersIdx.at(i));
-                    vertexHandle vertex = vertexHandlers_.at(index);
+                    int index = vertexHandlersIdx.at(i);
+                    vertexHandle vertex = guiMesh.vertex_handle(index);
                     verticesOldFace.push_back(vertex);
                 }
 
@@ -452,8 +446,8 @@ size_t MeshHandler::numberOfFaces()
 
 bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
 {
-    vertexHandle vert1 = vertexHandlers_.at(findVertexHandler(vertIdx1));
-    vertexHandle vert2 = vertexHandlers_.at(findVertexHandler(vertIdx2));
+    vertexHandle vert1 = guiMesh.vertex_handle((vertIdx1));
+    vertexHandle vert2 = guiMesh.vertex_handle((vertIdx2));
     OpnMesh::FaceHandle faceHandle1;
 
     //Chech if same facehandler.
@@ -483,30 +477,6 @@ void MeshHandler::clearAll()
 /********************************************
  * HELPER METHODS
 ********************************************/
-
-int MeshHandler::findVertexHandler(int idxToFind)
-{
-    for (int i = 0; i < vertexHandlers_.size(); i++)
-    {
-        if (vertexHandlers_.at(i).idx() == idxToFind)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-int MeshHandler::findFaceHandler(int idxToFind)
-{
-    for (int i = 0; i < faceHandlers_.size(); i++)
-    {
-        if (faceHandlers_.at(i).idx() == idxToFind)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
 
 bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace)
 {		
