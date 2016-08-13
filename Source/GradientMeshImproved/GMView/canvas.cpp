@@ -167,6 +167,18 @@
             mouseLineTool(mouseEvent);
             mouseEvent->accept();
             break;
+        case drawModeCanvas::circleTool:
+            clearSelection();
+
+            if(mouseEvent->modifiers() & Qt::ControlModifier)
+            {
+                QGraphicsScene::mousePressEvent(mouseEvent);
+                break;
+            }
+
+            mouseCircleTool(mouseEvent);
+            mouseEvent->accept();
+            break;
         }
 
     }
@@ -455,6 +467,149 @@
         }
         //No use for item. Delete it from heap.
         delete itemPoint;
+    }
+
+    void GMCanvas::mouseCircleTool(QGraphicsSceneMouseEvent *event)
+    {
+        bool madeFace = false;
+        bool collide = false;
+        int collideWithIndex;
+
+        CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
+        itemPoint->setPos(event->scenePos());
+
+        for(int i = 0; i < currentLayer()->points.size();i++)
+        {
+            if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
+                collide = true;
+                collideWithIndex = i;
+                i = currentLayer()->points.size();
+            }
+        }
+        if(event->button() == Qt::LeftButton)
+        {
+            //If collide check if face should be made, else add point
+            if(collide)
+            {
+                CanvasItemPoint *collidePoint = currentLayer()->points.at(collideWithIndex);
+                if(vertsToAddFace_.size() == 0)
+                {
+                    //Add point to list
+                    vertsToAddFace_.push_back(collidePoint);
+                }
+                else if (collidePoint != vertsToAddFace_.front())
+                {
+                    //Add point to list
+                    vertsToAddFace_.push_back(collidePoint);
+                }
+                else
+                {
+                    //Make Face
+
+                    vector<int> vertesToAddFaceIdx;
+                    for (int i = 0; i < vertsToAddFace_.size(); i++)
+                    {
+                        CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
+                        vertesToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
+                    }
+
+                    if (vertsToAddFace_.size() < 3)
+                    {
+                        showMessage("Face must consist of 3 vertecies minimum 3 vertecies");
+                    }
+
+                    qDebug() << "Made face?" << currentMeshHandler()->addFaceClosed(vertesToAddFaceIdx);
+
+                    //For debugging purposes
+                    CanvasItemFace * face = new CanvasItemFace();
+                    currentLayer()->faces.push_back(face);
+
+                    for(int handle : vertesToAddFaceIdx)
+                    {
+                        for(CanvasItemPoint *point : currentLayer()->points)
+                        {
+                            if(point->vertexHandleIdx() == handle)
+                            {
+                                face->addCanvasPoint(point);
+                            }
+                        }
+                    }
+                    currentLayer()->addToGroup(face); //End debugging purposes
+                    madeFace = true;
+                    vertsToAddFace_.clear();
+
+                }
+            }
+            else
+            {
+                addControlPoint(itemPoint);
+
+                //The point is new, and should be added to a new face.
+                vertsToAddFace_.push_back(itemPoint);
+            }
+
+
+
+           if(lineStartPoint_ == nullptr){
+               if(collide){
+                    lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
+               }else{
+                   lineStartPoint_ = itemPoint;
+               }
+           }else{
+               if(collide) {
+                    lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+               }else{
+                   lineEndPoint_ = itemPoint;
+               }
+           }
+
+           //Make line between the two points.
+           if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr && lineStartPoint_ != lineEndPoint_)
+           {
+               CanvasItemLine *line = new CanvasItemLine(lineStartPoint_, lineEndPoint_);
+
+               //Check if line exists
+               bool exists = false;
+               int size = currentLayer()->lines.size();
+               for(int i = 0; i < size; i++ )
+               {
+                   if(*(currentLayer()->lines.at(i)) == *line	||
+                            ( currentLayer()->lines.at(i)->endPoint() == line->startPoint() &&
+                              currentLayer()->lines.at(i)->startPoint() == line->endPoint()))
+                   {
+                        exists = true;
+                        i = size;
+                   }
+               }//End check line exists
+
+               if(exists)
+               {
+                  //Delete line from heap
+                  delete line;
+               }
+               else
+               {
+                   currentLayer()->addToGroup(line);
+
+                   CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
+                   startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+                   CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
+                   endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+               }
+               lineStartPoint_ = lineEndPoint_;
+               lineEndPoint_ = nullptr;
+           }
+           //Startpoint should be reset if a face was made.
+           if(madeFace) lineStartPoint_ = nullptr;
+
+           //Should not delete ItemPoint from heap.
+           return;
+        }
+        //No use for item. Delete it from heap.
+        delete itemPoint;
+
     }
 
     void GMCanvas::addControlPoint(CanvasItemPoint *item)

@@ -63,6 +63,8 @@ public:
     vector<QVector4D> edges();
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
 
+    //TODO move face functions to openmesh.
+    bool addFaceClosed(vector<int> &vertexHandlersIdx);
     bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
     size_t numberOfFaces();
     bool vertsOnSameFace(int vertIdx1, int vertIdx2);
@@ -77,11 +79,9 @@ public:
 
 
 private:
-    //Each elemnt in this vector correspond to the same index in item_points (canvas.h)
-    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::VertexHandle> vertexHandlers_;
-    vector<OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits>::FaceHandle> faceHandlers_;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
+    subdivMesh::Mesh* oneStepSubdMesh = nullptr;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 

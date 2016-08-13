@@ -12,7 +12,7 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool
+    move, lineTool, circleTool
 };
 enum class renderModeCanvas{
     fullRender
@@ -89,6 +89,7 @@ private:
      * \param CanvasItemPoint position of the item point
      */
     void mouseLineTool(QGraphicsSceneMouseEvent *event);
+    void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
 };

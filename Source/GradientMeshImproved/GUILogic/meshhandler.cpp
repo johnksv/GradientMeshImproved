@@ -59,7 +59,6 @@ void MeshHandler::removeVertex(int idx)
 {
     vertexHandle handle = guiMesh.vertex_handle(idx);
     guiMesh.delete_vertex(handle);
-    vertexHandlers_.erase(vertexHandlers_.begin()+idx);
 }
 
 QVector3D MeshHandler::vertexPoint(int idx)
@@ -207,6 +206,29 @@ void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 
 }
 
+bool MeshHandler::addFaceClosed(vector<int> &vertexHandlersIdx)
+{
+    //assumes the user has pressed legal verts.
+    vector<vertexHandle> toBeFace;
+    bool shouldLoop = false;
+    do
+    {
+        vector<vertexHandle> resetFace;
+        for(int i = 0; i < vertexHandlersIdx.size(); i++)
+        {
+            int idx = vertexHandlersIdx.at(i);
+            toBeFace.push_back(guiMesh.vertex_handle(idx));
+            resetFace.push_back(guiMesh.vertex_handle(idx));
+            qDebug() << "added" << idx;
+        }
+        OpnMesh::FaceHandle newFace = guiMesh.add_face(toBeFace);
+        shouldLoop = faceOrientation(resetFace,newFace,toBeFace);
+
+    }while(shouldLoop);
+
+    return true;
+}
+
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
 {
     vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
@@ -308,7 +330,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                 newFace = guiMesh.add_face(vHandlersToBeFace);
 
                 //Special case. If you are adding a face inside the first face. That means the first face is deleted and invalid ( guiMesh.delete_face(oldFace, false) above)
-                if (faceHandlers_.size() > 1)
+                if (guiMesh.n_faces() > 1)
                 {
                     //Check if newFace has correct orientation, else, make correct face
                     if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
@@ -400,7 +422,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
                         qDebug() << "Wrong orientation... TODO: Handle";
                     }
                 }
-                faceHandlers_.push_back(boundaryFace);
 
                 //Print vertex IDX for debugging.
                 qDebug() << "Vertices in boundaryFace:";
@@ -425,8 +446,6 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
             loopToFixOrientation = faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace);
         }
     }while(loopToFixOrientation);
-
-    faceHandlers_.push_back(newFace);
 
     //Check which vertices are in current face, for debugging
     vertexHandlersIdx.clear();
@@ -468,8 +487,6 @@ bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
 
 void MeshHandler::clearAll()
 {
-    vertexHandlers_.clear();
-    faceHandlers_.clear();
     guiMesh.clear();
     guiMesh.garbage_collection();
 }
@@ -482,13 +499,6 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
 {		
     bool isValidFace = newFace.is_valid();
     OpnMesh::Normal newFaceNormal;
-
-    //TODO: remove. Only for purposes.
-    for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(newFace); fv_ite != guiMesh.fv_end(newFace); fv_ite++)
-    {
-        OpnMesh::Point point = guiMesh.point(fv_ite);
-        qDebug() << "x:" << point[0] << "y:" << point[1] << "z:" << point[2];
-    }
 
     if(isValidFace)
     {
@@ -527,7 +537,14 @@ void MeshHandler::subdivide(signed int steps)
         currentMsh->CatmullClarkColour(nextMesh);
 
         // delete old mesh from heap and swap
-        delete currentMsh;
+        if(i==0)
+        {
+           oneStepSubdMesh = nextMesh;
+        }
+        else
+        {
+            delete currentMsh;
+        }
         currentMsh = nextMesh;
     }
 
@@ -654,14 +671,6 @@ bool MeshHandler::importGuiMesh(QString location)
         qDebug() << "Error: Cannot read mesh from " << location;
         return false;
       }
-
-    for(OpnMesh::VertexIter v_ite = guiMesh.vertices_sbegin (); v_ite != guiMesh.vertices_end(); v_ite++)
-    {
-        vertexHandlers_.push_back(*v_ite);
-    }
-    for(OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin (); f_ite != guiMesh.faces_end(); f_ite++)
-    {
-        faceHandlers_.push_back(*f_ite);
-    }
     return true;
 }
+

@@ -64,6 +64,8 @@ private slots:
 
     void on_actionHelpAbout_Qt_triggered();
 
+    void on_actionDraw_Circle_tool_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();
