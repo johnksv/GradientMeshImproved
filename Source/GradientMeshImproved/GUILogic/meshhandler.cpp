@@ -52,7 +52,7 @@ int MeshHandler::addVertex(const QPointF &position, const QColor color)
     float y = static_cast <float> (position.y());
     vertexHandle handler = guiMesh.add_vertex(OpnMesh::Point(x, y, .0f));
     vertexHandlers_.push_back(handler);
-    setVertexColor(vertexHandlers_.size() - 1, color);
+    setVertexColor(handler.idx(), color);
     return handler.idx();
 }
 

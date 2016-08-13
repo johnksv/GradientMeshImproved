@@ -130,8 +130,8 @@ void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
             //TODO: set position of A and B on the normal of the incoming edge for visual look.
             //TODO: Double constraints only for "spliting"-edge (edge on the middle)
             //This does not effect position in underlaying mesh.
-            pointA->setPos(0,-10);
-            pointB->setPos(0,10);
+            pointA->setPos(0,10);
+            pointB->setPos(0,-10);
 
             discontinuedChildren_.push_back(pointA);
             discontinuedChildren_.push_back(pointB);

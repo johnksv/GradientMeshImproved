@@ -78,9 +78,17 @@ QColor CanvasPointDiscontinued::color() const
 void CanvasPointDiscontinued::setColor(QColor &color)
 {
     this->color_ = color;
-    GMCanvas* canvas = static_cast <GMCanvas*> (scene());
-    canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
-    update(boundingRect());
+    if(sameIdxAsParent_)
+    {
+        static_cast<CanvasItemPoint*>(parentItem())->setColor(color_);
+    }
+    else
+    {
+        GMCanvas* canvas = static_cast <GMCanvas*> (scene());
+        canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
+
+        update(boundingRect());
+    }
 }
 
 int CanvasPointDiscontinued::vertexHandleIdx() const
