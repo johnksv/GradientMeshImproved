@@ -67,7 +67,6 @@
         }
     }
 
-
     void GMCanvas::handleFileDialog(QString location, bool import)
     {
         if(import)
@@ -75,60 +74,7 @@
             qDebug() << "scne import";
             currentMeshHandler()->importGuiMesh(location);
             //x,y,z = position, w = vertexHandleIdx
-            vector<QVector4D> vertices = currentMeshHandler()->vertices();
-            for(QVector4D vertex : vertices){
-                CanvasItemPoint *item = new CanvasItemPoint();
-                QPointF point(vertex.x(), vertex.y());
-                item->setPos(point);
-                item->setVertexHandleIdx(vertex.w());
-
-                currentLayer()->addToGroup(item);
-            }
-
-            int startIdx,endIdx;
-            vector<QVector4D> edges = currentMeshHandler()->edges();
-            for(QVector4D edge : edges){
-                //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
-                startIdx = edge.x();
-                endIdx = edge.y();
-                CanvasItemPoint* startPoint = nullptr;
-                CanvasItemPoint* endPoint = nullptr;
-
-                for(CanvasItemPoint* point : currentLayer()->points)
-                {
-                    int pointIdx = point->vertexHandleIdx();
-
-                    if(pointIdx == startIdx)
-                    {
-                        startPoint = point;
-                    }
-
-                    if(pointIdx == endIdx)
-                    {
-                        endPoint = point;
-                    }
-
-                    if(startPoint != nullptr && endPoint != nullptr) break;
-                }
-
-                if(startPoint == nullptr || endPoint == nullptr)
-                {
-                    qDebug() << "Oh no..." << endIdx;
-                }
-                else
-                {
-                    CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
-                    currentLayer()->addToGroup(line);
-
-                    //TODO: Get constraints from import file.
-                    CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
-                    startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
-
-                    CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
-                    endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
-
-                }
-            }
+            constructGuiFromMeshHandler();
 
         }
         else
@@ -183,18 +129,6 @@
 
     }
 
-    void GMCanvas::drawOpenGlOnCanvas(bool drawOnCanvas)
-    {
-        opengl_->setVisible(drawOnCanvas);
-    }
-
-    void GMCanvas::prepareRendering()
-    {
-        currentMeshHandler()->prepareGuiMeshForSubd();
-        opengl_->paintGL();
-        update();
-    }
-
     void GMCanvas::setDrawColorVertex(QColor pointColor)
     {
         pointColor_ = pointColor;
@@ -234,13 +168,114 @@
         return renderConstraintHandlers_;
     }
 
-    void GMCanvas::showMessage(QString message, bool eraseLastVertToAddFace)
-    {
-        if(eraseLastVertToAddFace) vertsToAddFace_.pop_back();
-        QMessageBox msgBox;
-        msgBox.setText(message);
-        msgBox.exec();
+
+    void GMCanvas::setRenderingMode(renderModeCanvas mode){
+        renderingMode_ = mode;
     }
+    void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
+        resetLineStartEnd();
+        this->drawMode_ = drawMode;
+    }
+
+    vector<CanvasItemGroup *> GMCanvas::layers()
+    {
+        return layers_;
+    }
+
+    CanvasItemGroup *GMCanvas::currentLayer()
+    {
+        return layers_.at(currLayerIndex_);
+    }
+
+    vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
+    {
+        return &meshHandlers_;
+    }
+
+    GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
+    {
+        return meshHandlers_.at(currLayerIndex_);
+    }
+
+    void GMCanvas::setActiveLayer(unsigned char index)
+    {
+        if(index < 0 || index >= layers_.size())
+        {
+            currLayerIndex_ = 0;
+        }
+        else
+        {
+            currLayerIndex_ = index;
+        }
+    }
+
+    void GMCanvas::addLayer(QString name)
+    {
+        layers_.push_back(new CanvasItemGroup(name));
+        addItem(layers_.back());
+        meshHandlers_.push_back(new GUILogic::MeshHandler);
+    }
+
+    void GMCanvas::deleteLayer(int index)
+    {
+        if(layers_.size() > 1)
+        {
+            CanvasItemGroup *group = layers_.at(index);
+            QList<QGraphicsItem*> children = group->childItems();
+            for(int i = 0; i < children.size(); i++)
+            {
+                removeItem(children.at(i));
+            }
+            layers_.erase(layers_.begin()+index);
+            removeItem(group);
+
+            delete meshHandlers_.at(index);
+            meshHandlers_.erase(meshHandlers_.begin()+index);
+            setActiveLayer(layers_.size()-1);
+        }
+    }
+
+    void GMCanvas::toogleLayerVisibility(int index)
+    {
+        CanvasItemGroup *selectedLayer = layers_.at(index);
+        if(selectedLayer->isVisible())
+        {
+            selectedLayer->hide();
+        }
+        else
+        {
+            selectedLayer->show();
+        }
+    }
+
+	void GMCanvas::drawOpenGlOnCanvas(bool drawOnCanvas)
+	{
+		opengl_->setVisible(drawOnCanvas);
+	}
+
+	void GMCanvas::prepareRendering()
+	{
+		currentMeshHandler()->prepareGuiMeshForSubd();
+		opengl_->paintGL();
+		update();
+	}
+
+	void GMView::GMCanvas::multiResFirstStepMesh()
+	{
+        //Execute render.
+        currentMeshHandler()->prepareGuiMeshForSubd();
+
+        //Load mesh (that is one step subdivided) into openMesh
+		GUILogic::MeshHandler *multiresMesh = currentMeshHandler()->oneStepSubdMesh();
+
+        CanvasItemGroup *guiRepresentation = new CanvasItemGroup("First step subdivieded mesh");
+        layers_.push_back(guiRepresentation);
+        addItem(guiRepresentation);
+        meshHandlers_.push_back(multiresMesh);
+
+        setActiveLayer(layers_.size()-1);
+        constructGuiFromMeshHandler();
+	}
 
     void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
     {
@@ -621,81 +656,68 @@
         update(item->boundingRect());
     }
 
-    void GMCanvas::setRenderingMode(renderModeCanvas mode){
-        renderingMode_ = mode;
-    }
-    void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
-        resetLineStartEnd();
-        this->drawMode_ = drawMode;
+    void GMCanvas::showMessage(QString message, bool eraseLastVertToAddFace)
+    {
+        if(eraseLastVertToAddFace) vertsToAddFace_.pop_back();
+        QMessageBox msgBox;
+        msgBox.setText(message);
+        msgBox.exec();
     }
 
-    vector<CanvasItemGroup *> GMCanvas::layers()
+    void GMCanvas::constructGuiFromMeshHandler()
     {
-        return layers_;
-    }
+        vector<QVector4D> vertices = currentMeshHandler()->vertices();
+        for(QVector4D vertex : vertices){
+            CanvasItemPoint *item = new CanvasItemPoint();
+            QPointF point(vertex.x(), vertex.y());
+            item->setPos(point);
+            item->setVertexHandleIdx(vertex.w());
 
-    CanvasItemGroup *GMCanvas::currentLayer()
-    {
-        return layers_.at(currLayerIndex_);
-    }
-
-    vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
-    {
-        return &meshHandlers_;
-    }
-
-    GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
-    {
-        return meshHandlers_.at(currLayerIndex_);
-    }
-
-    void GMCanvas::setActiveLayer(unsigned char index)
-    {
-        if(index < 0 || index >= layers_.size())
-        {
-            currLayerIndex_ = 0;
+            currentLayer()->addToGroup(item);
         }
-        else
-        {
-            currLayerIndex_ = index;
-        }
-    }
 
-    void GMCanvas::addLayer(QString name)
-    {
-        layers_.push_back(new CanvasItemGroup(name));
-        addItem(layers_.back());
-        meshHandlers_.push_back(new GUILogic::MeshHandler);
-    }
+        int startIdx,endIdx;
+        vector<QVector4D> edges = currentMeshHandler()->edges();
+        for(QVector4D edge : edges){
+            //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
+            startIdx = edge.x();
+            endIdx = edge.y();
+            CanvasItemPoint* startPoint = nullptr;
+            CanvasItemPoint* endPoint = nullptr;
 
-    void GMCanvas::deleteLayer(int index)
-    {
-        if(layers_.size() > 1)
-        {
-            CanvasItemGroup *group = layers_.at(index);
-            QList<QGraphicsItem*> children = group->childItems();
-            for(int i = 0; i < children.size(); i++)
+            for(CanvasItemPoint* point : currentLayer()->points)
             {
-                removeItem(children.at(i));
+                int pointIdx = point->vertexHandleIdx();
+
+                if(pointIdx == startIdx)
+                {
+                    startPoint = point;
+                }
+
+                if(pointIdx == endIdx)
+                {
+                    endPoint = point;
+                }
+
+                if(startPoint != nullptr && endPoint != nullptr) break;
             }
-            layers_.erase(layers_.begin()+index);
-            removeItem(group);
 
-            delete meshHandlers_.at(index);
-            meshHandlers_.erase(meshHandlers_.begin()+index);
-            setActiveLayer(layers_.size()-1);
-        }
-    }
+            if(startPoint == nullptr || endPoint == nullptr)
+            {
+                qDebug() << "Oh no..." << endIdx;
+            }
+            else
+            {
+                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
+                currentLayer()->addToGroup(line);
 
-    void GMCanvas::toogleLayerVisibility(int index)
-    {
-        CanvasItemGroup *selectedLayer = layers_.at(index);
-        if(selectedLayer->isVisible())
-        {
-            selectedLayer->hide();
-        }
-        else
-        {
-            selectedLayer->show();
+                //TODO: Get constraints from import file.
+                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
+                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
+                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+
+            }
         }
     }

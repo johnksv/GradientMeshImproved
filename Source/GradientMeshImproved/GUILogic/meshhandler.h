@@ -75,13 +75,16 @@ public:
     bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 
+    //TODO: Rename function.
     void prepareGuiMeshForSubd();
+
+    MeshHandler *oneStepSubdMesh();
 
 
 private:
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
-    subdivMesh::Mesh* oneStepSubdMesh = nullptr;
+    subdivMesh::Mesh* oneStepSubdMesh_ = nullptr;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
 

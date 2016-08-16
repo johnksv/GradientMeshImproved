@@ -49,9 +49,11 @@ void MainWindow::initActionGroups()
 {
 
     renderModeGroup_ = new QActionGroup(this);
-    renderModeGroup_->addAction(ui->actionRender_Partial);
-    renderModeGroup_->addAction(ui->actionRender_Full);
+    renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
+    renderModeGroup_->addAction(ui->actionRender_multi_res_mesh);
     connect(renderModeGroup_, &QActionGroup::triggered, [=](QAction *selected) {selected->setChecked(true);});
+
+
 
     drawModeGroup_ = new QActionGroup(this);
     drawModeGroup_->addAction(ui->actionDraw_Line_tool);
@@ -115,10 +117,23 @@ void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
     scene_->update();
 }
 
-void MainWindow::on_actionRender_Partial_triggered()
+void MainWindow::on_actionRender_multi_res_mesh_changed()
 {
-//    ui->openGLWidget-> setRenderingMode(2);
-//    ui->openGLWidget-> paintGL();
+    if(ui->actionRender_multi_res_mesh->isChecked())
+    {
+        scene_->multiResFirstStepMesh();
+    }
+    else
+    {
+        QString message("This will delete changes made on the multi res mesh. Are you sure?");
+        QMessageBox::StandardButton response = QMessageBox::question(nullptr,"Multi resh mesh",message);
+        if(response == QMessageBox::Ok)
+        {
+            //TODO: Implement deletion of multi resh mesh from scene object
+
+        }
+    }
+    scene_->update();
 }
 
 void MainWindow::on_actionRender_Full_triggered()

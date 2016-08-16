@@ -25,7 +25,7 @@ private slots:
 
     void on_actionRender_Vertices_and_Edges_triggered();
 
-    void on_actionRender_Partial_triggered();
+    void on_actionRender_multi_res_mesh_changed();
 
     void on_actionExport_triggered();
 

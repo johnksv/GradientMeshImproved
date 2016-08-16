@@ -6,6 +6,7 @@
 #include <QtMath>
 #include <QApplication>
 #include "canvas.h"
+#include <QGraphicsSceneMouseEvent>
 
 using namespace GMView;
 
@@ -61,6 +62,11 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
 
         //Update position in underlying mesh
         GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+        if(canvas == nullptr)
+        {
+            qDebug() << "Scene" << parentItem()->scene();
+            return value;
+        }
 
         int timesToLoop = 1;
         int controlPointIdx;
@@ -99,4 +105,16 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
 
     }
     return value;
+}
+
+void CanvasPointConstraint::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+    if(!canvas->renderConstraintHandlers())
+    {
+        event->ignore();
+    }else
+    {
+        QGraphicsItem::mousePressEvent(event);
+    }
 }

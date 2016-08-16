@@ -99,7 +99,7 @@
     </property>
     <addaction name="actionRender_constraints_handlers"/>
     <addaction name="actionRender_Vertices_and_Edges"/>
-    <addaction name="actionRender_Partial"/>
+    <addaction name="actionRender_multi_res_mesh"/>
     <addaction name="actionRender_Full"/>
     <addaction name="separator"/>
     <addaction name="actionRender_in_split_window"/>
@@ -483,12 +483,15 @@
     <string>Full render (3 steps)</string>
    </property>
   </action>
-  <action name="actionRender_Partial">
+  <action name="actionRender_multi_res_mesh">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Partial render (1 step)</string>
+    <string>Multi res mesh</string>
+   </property>
+   <property name="toolTip">
+    <string>Multi res mesh</string>
    </property>
   </action>
   <action name="actionRender_Vertices_and_Edges">

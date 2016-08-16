@@ -61,7 +61,7 @@ public:
     //Temp. Should be moved when split-view
     void prepareRendering();
 
-
+	void multiResFirstStepMesh();
 
 
 protected:
@@ -92,6 +92,7 @@ private:
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
+    void constructGuiFromMeshHandler();
 };
 
 } // end of namespace GMView

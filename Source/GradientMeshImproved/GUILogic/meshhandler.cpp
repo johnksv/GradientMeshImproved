@@ -5,6 +5,7 @@
 #include <QColor>
 #include "subdivMesh/utils.h"
 #include <QLineF>
+#include "subdivMesh/mesh.h"
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 
@@ -537,12 +538,11 @@ void MeshHandler::subdivide(signed int steps)
         currentMsh->CatmullClarkColour(nextMesh);
 
         // delete old mesh from heap and swap
-        if(i==0)
-        {
-           oneStepSubdMesh = nextMesh;
-        }
-        else
-        {
+        if(i==0) oneStepSubdMesh_ = nextMesh;
+
+        
+		if(oneStepSubdMesh_ != currentMsh)
+		{
             delete currentMsh;
         }
         currentMsh = nextMesh;
@@ -655,6 +655,27 @@ void MeshHandler::prepareGuiMeshForSubd()
     std::remove("test.off");
 }
 
+MeshHandler *MeshHandler::oneStepSubdMesh()
+{
+    if(oneStepSubdMesh_ == nullptr) return nullptr;
+
+    MeshHandler *subdivedMesh = new MeshHandler();
+	
+	const char* filename = "tempSubdividedMesh.off";
+	fstream file;
+	file.open(filename, fstream::out);
+
+    oneStepSubdMesh_->build();
+	oneStepSubdMesh_->save(filename, subdivMesh::OFF);
+
+	subdivedMesh->importGuiMesh(QString::fromUtf8(filename));
+	
+    std::remove(filename);
+
+	return subdivedMesh;
+
+}
+
 bool MeshHandler::saveGuiMeshOff(QString location)
 {
     //TODO: Use save(const char *fileName, FileType ftype) in Mesh.cpp
@@ -666,6 +687,7 @@ bool MeshHandler::importGuiMesh(QString location)
 {
     //TODO: Support for multiple formats
     //TODO: If there alleready are vertices,edges and faces in guiMesh
+    //TODO: Support for custom data. (color etc).
     if ( ! OpenMesh::IO::read_mesh(guiMesh, location.toStdString()) )
       {
         qDebug() << "Error: Cannot read mesh from " << location;
