@@ -20,7 +20,7 @@ enum class renderModeCanvas{
 
 class GMCanvas : public QGraphicsScene
 {
-    Q_OBJECT
+
 public:
     GMCanvas(QObject * parent = 0);
     ~GMCanvas();
@@ -51,6 +51,7 @@ public:
     CanvasItemGroup *currentLayer();
     vector<GUILogic::MeshHandler *> *meshHandlers();
     GUILogic::MeshHandler *currentMeshHandler();
+    vector<GUILogic::MeshHandler *> *multiResMeshHandlers();
 
     void addLayer(QString name);
     void deleteLayer(int index);
@@ -62,6 +63,7 @@ public:
     void prepareRendering();
 
 	void multiResFirstStepMesh();
+    void resetMultiResMesh();
 
 
 protected:
@@ -71,6 +73,10 @@ protected:
 private:
     vector<GUILogic::MeshHandler*> meshHandlers_;
     vector<CanvasItemGroup*> layers_;
+
+    vector<GUILogic::MeshHandler*> multiRes_meshHandlers_;
+    vector<CanvasItemGroup*> multiRes_layers_;
+
     GMOpenGLWidget *opengl_;
     QColor pointColor_;
     CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
@@ -92,7 +98,7 @@ private:
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
-    void constructGuiFromMeshHandler();
+    void constructGuiFromMeshHandler(bool fromMultiRes = false, int indexOfMultiResLayer = 0);
 };
 
 } // end of namespace GMView

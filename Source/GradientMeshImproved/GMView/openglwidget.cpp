@@ -8,8 +8,8 @@ GMOpenGLWidget::GMOpenGLWidget(QWidget *parent) : QOpenGLWidget{parent}
 {
 }
 
-GMOpenGLWidget::GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers, QWidget *parent) :
-    meshHandlers_(meshHandlers), QOpenGLWidget{parent}
+GMOpenGLWidget::GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers,vector<GUILogic::MeshHandler *> *multiResMeshHandlers, QWidget *parent) :
+    meshHandlers_(meshHandlers),multiRes_meshHandlers_(multiResMeshHandlers), QOpenGLWidget{parent}
 {
 
 }
@@ -32,10 +32,25 @@ void GMOpenGLWidget::setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandle
     meshHandlers_ = meshHandlers;
 }
 
+void GMOpenGLWidget::setMultiResMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
+{
+    meshHandlers_ = meshHandlers;
+}
+
 void GMOpenGLWidget::paintGL()
 {
     if(meshHandlers_ != nullptr)
     {
+        vector<GUILogic::MeshHandler *> *meshHandle;
+        if(multiRes_meshHandlers_->empty())
+        {
+            meshHandle = meshHandlers_;
+        }
+        else
+        {
+            meshHandle = multiRes_meshHandlers_;
+        }
+
         QPainter qPainter;
         /******* Start painting with OpenGL ***********/
         qPainter.begin(this);
@@ -49,7 +64,7 @@ void GMOpenGLWidget::paintGL()
         glOrtho(0, 1200, 600, 0, -1.0, 1.0);
 
         // draw stuff
-        for(GUILogic::MeshHandler *layer : *meshHandlers_)
+        for(GUILogic::MeshHandler *layer : *meshHandle)
         {
             layer->drawGLMesh(this);
         }

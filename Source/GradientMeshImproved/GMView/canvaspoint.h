@@ -46,7 +46,6 @@ protected:
 
 private:
     QColor color_;
-    double weight_;
     int radius_ = 5;
     bool hovered_ = false;
     bool highlighted_ = false;

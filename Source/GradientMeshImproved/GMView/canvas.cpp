@@ -16,7 +16,7 @@
         QGraphicsScene(parent)
     {
         meshHandlers_.push_back(new GUILogic::MeshHandler);
-        opengl_ = new GMOpenGLWidget(&meshHandlers_);
+        opengl_ = new GMOpenGLWidget(&meshHandlers_, &multiRes_meshHandlers_);
         QGraphicsProxyWidget *openGLWidget = addWidget(opengl_);
         openGLWidget->setPos(0,0);
         openGLWidget->setZValue(0);
@@ -185,6 +185,8 @@
     CanvasItemGroup *GMCanvas::currentLayer()
     {
         return layers_.at(currLayerIndex_);
+		if (multiRes_layers_.empty()) return layers_.at(currLayerIndex_);
+		return multiRes_layers_.at(currLayerIndex_);
     }
 
     vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
@@ -194,7 +196,13 @@
 
     GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
     {
-        return meshHandlers_.at(currLayerIndex_);
+		if(multiRes_meshHandlers_.empty()) return meshHandlers_.at(currLayerIndex_);
+        return multiRes_meshHandlers_.at(currLayerIndex_);
+    }
+
+    vector<GUILogic::MeshHandler *> *GMCanvas::multiResMeshHandlers()
+    {
+        return &multiRes_meshHandlers_;
     }
 
     void GMCanvas::setActiveLayer(unsigned char index)
@@ -262,20 +270,42 @@
 
 	void GMView::GMCanvas::multiResFirstStepMesh()
 	{
-        //Execute render.
-        currentMeshHandler()->prepareGuiMeshForSubd();
+        for(int i = 0; i < meshHandlers()->size(); i++)
+        {
+            //Execute render.
+            meshHandlers_.at(i)->prepareGuiMeshForSubd();
 
-        //Load mesh (that is one step subdivided) into openMesh
-		GUILogic::MeshHandler *multiresMesh = currentMeshHandler()->oneStepSubdMesh();
+            //Load mesh (that is one step subdivided) into openMesh
+            GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->oneStepSubdMesh();
 
-        CanvasItemGroup *guiRepresentation = new CanvasItemGroup("First step subdivieded mesh");
-        layers_.push_back(guiRepresentation);
-        addItem(guiRepresentation);
-        meshHandlers_.push_back(multiresMesh);
+            //Add first step subdivided mesh to containers.
+            CanvasItemGroup *guiRepresentation = new CanvasItemGroup("subdivieded mesh");
+            multiRes_layers_.push_back(guiRepresentation);
+            addItem(guiRepresentation);
+            multiRes_meshHandlers_.push_back(multiresMesh);
 
-        setActiveLayer(layers_.size()-1);
-        constructGuiFromMeshHandler();
-	}
+            //Hide "Orginal layer"
+            if(!currentLayer()->isVisible())
+            {
+                 multiRes_layers_.back()->hide();
+            }
+			currentLayer()->setVisible(false);
+							
+			constructGuiFromMeshHandler(true, i);
+        }
+    }
+
+    void GMCanvas::resetMultiResMesh()
+    {
+        for(int i = 0; i < multiRes_meshHandlers_.size(); i++)
+        {
+            delete multiRes_meshHandlers_.at(i);
+            delete multiRes_layers_.at(i);
+            layers().at(i)->setVisible(false);
+        }
+        multiRes_meshHandlers_.clear();
+        multiRes_layers_.clear();
+    }
 
     void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
     {
@@ -664,28 +694,41 @@
         msgBox.exec();
     }
 
-    void GMCanvas::constructGuiFromMeshHandler()
+    void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiResLayer)
     {
-        vector<QVector4D> vertices = currentMeshHandler()->vertices();
+        GUILogic::MeshHandler* meshhandler;
+        CanvasItemGroup *layer;
+        if(fromMultiRes)
+        {
+            meshhandler = multiRes_meshHandlers_.at(indexOfMultiResLayer);
+            layer = multiRes_layers_.at(indexOfMultiResLayer);
+        }
+        else
+        {
+            meshhandler = currentMeshHandler();
+            layer = currentLayer();
+        }
+        vector<QVector4D> vertices = meshhandler->vertices();
         for(QVector4D vertex : vertices){
             CanvasItemPoint *item = new CanvasItemPoint();
             QPointF point(vertex.x(), vertex.y());
             item->setPos(point);
             item->setVertexHandleIdx(vertex.w());
 
-            currentLayer()->addToGroup(item);
+            layer->addToGroup(item);
         }
 
         int startIdx,endIdx;
-        vector<QVector4D> edges = currentMeshHandler()->edges();
-        for(QVector4D edge : edges){
+        vector<QVector4D> edges = meshhandler->edges();
+        for(QVector4D edge : edges)
+		{
             //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
             startIdx = edge.x();
             endIdx = edge.y();
             CanvasItemPoint* startPoint = nullptr;
             CanvasItemPoint* endPoint = nullptr;
 
-            for(CanvasItemPoint* point : currentLayer()->points)
+            for(CanvasItemPoint* point : layer->points)
             {
                 int pointIdx = point->vertexHandleIdx();
 
@@ -709,7 +752,7 @@
             else
             {
                 CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
-                currentLayer()->addToGroup(line);
+                layer->addToGroup(line);
 
                 //TODO: Get constraints from import file.
                 CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);

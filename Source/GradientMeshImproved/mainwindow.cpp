@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitWidget->setVisible(false);
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
+    ui->openGLWidget->setMultiResMeshHandlers(scene_->multiResMeshHandlers());
 
     //TODO: implement undoStack
     undoStack = new QUndoStack(this);
@@ -122,15 +123,19 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
     if(ui->actionRender_multi_res_mesh->isChecked())
     {
         scene_->multiResFirstStepMesh();
+        ui->actionDraw_move_and_select->setChecked(true);
+        ui->actionDraw_Line_tool->setEnabled(false);
+        ui->actionDraw_Circle_tool->setEnabled(false);
     }
     else
     {
         QString message("This will delete changes made on the multi res mesh. Are you sure?");
         QMessageBox::StandardButton response = QMessageBox::question(nullptr,"Multi resh mesh",message);
-        if(response == QMessageBox::Ok)
+        if(response == QMessageBox::Yes)
         {
-            //TODO: Implement deletion of multi resh mesh from scene object
-
+            scene_->resetMultiResMesh();
+            ui->actionDraw_Line_tool->setEnabled(true);
+            ui->actionDraw_Circle_tool->setEnabled(true);
         }
     }
     scene_->update();
