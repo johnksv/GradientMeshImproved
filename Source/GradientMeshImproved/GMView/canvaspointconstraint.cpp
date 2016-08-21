@@ -7,6 +7,7 @@
 #include <QApplication>
 #include "canvas.h"
 #include <QGraphicsSceneMouseEvent>
+#include <QStyleOptionGraphicsItem>
 
 using namespace GMView;
 
@@ -28,12 +29,16 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
         GMCanvas *canvas = static_cast<GMCanvas*>(scene());
         if(canvas->renderConstraintHandlers())
         {
-            QColor color = QColor(125,125,125,125);
+            const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
+            radius_ = 3 / detailLevel;
+            if(radius_ < 0.3) radius_ = 0.3;
+
+            QColor color = controlPoint()->color();
+            painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
+            painter->setPen(color);
             painter->setBrush(color);
             painter->drawEllipse(boundingRect());
             //For debugging purposes TODO: remove
-                painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
-                painter->drawText(QPointF(10,10),QString(QString::number(controlPoint_->vertexHandleIdx())));
         }
 }
 

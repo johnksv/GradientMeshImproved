@@ -26,9 +26,7 @@ private:
     CanvasItemPoint *controlPoint_;
     CanvasItemLine *edge_;
 
-    bool inactive_ = false;
-
-    int radius_ = 3;
+    double radius_ = 3;
 };
 
 } // end of namespace GMView

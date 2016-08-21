@@ -10,6 +10,7 @@
 #include <QToolTip>
 #include "canvas.h"
 #include "GMView/utils.h"
+#include <QStyleOptionGraphicsItem>
 
 using namespace GMView;
 
@@ -25,6 +26,10 @@ void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
     //Nasty solution for always updating the line position accordingly to the points.
     setLine(QLineF(startPoint_->pos(), endPoint_->pos()));
+
+    const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
+    double width = 1 / detailLevel;
+    painter->setPen(QPen(Qt::black,width));
 
     //For drawing the subdivided line
     for (int i = 1; i < subdividedCurve_.size(); i++){

@@ -46,8 +46,7 @@ protected:
 
 private:
     QColor color_;
-    int radius_ = 5;
-    bool hovered_ = false;
+    double radius_ = 5;
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;

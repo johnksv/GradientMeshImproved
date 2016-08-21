@@ -12,6 +12,7 @@
 #include "canvas.h"
 #include <QPen>
 #include "canvaspointdiscontinued.h"
+#include <QStyleOptionGraphicsItem>
 
 using namespace GMView;
 
@@ -29,36 +30,44 @@ QRectF CanvasItemPoint::boundingRect() const
     return QRectF(-radius_, -radius_,radius_*2,radius_*2);
 }
 
-void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem*, QWidget*)
+void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* option, QWidget*)
 {
-    if(isSelected()){
-        //TODO: Fix selected color
-        QColor temp = QColor(color_);
-        temp.setAlpha(150);
-        painter->setBrush(temp);
-    }
-    else
+    if(!discontinuous_)
     {
-        if(highlighted_)
-        {
-            QPen pen(Qt::red);
-            pen.setWidth(2);
-            painter->setPen(pen);
+        painter->setPen(QPen(color_));
+
+
+        const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
+        radius_ = 5 / detailLevel;
+        if(radius_ < 0.5) radius_ = 0.5;
+
+        if(option->state & QStyle::State_Selected){
+            //TODO: Fix selected color
+            QColor temp = QColor(color_);
+            temp.setAlpha(150);
+            painter->setPen(QPen(temp));
         }
-        painter->setBrush(color_);
-    }
+        else
+        {
+            if(highlighted_)
+            {
+                QPen pen(Qt::red);
+                pen.setWidth(2);
+                painter->setPen(pen);
+            }
+            painter->setBrush(color_);
+        }
 
-    if(hovered_){
-        painter->setOpacity(0.5);
-        //For debugging purposes TODO: remove
-        painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
-        QString stringPos = QString::number(pos().x()).append(", ").append(QString::number(pos().y()));
-        painter->drawText(QPointF(10,20),stringPos);
-    }else{
-        painter->setOpacity(1);
-    }
+        if(option->state & QStyle::State_MouseOver){
+            painter->setOpacity(0.5);
+            //For debugging purposes TODO: remove
+            painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
+            QString stringPos = QString::number(pos().x()).append(", ").append(QString::number(pos().y()));
+            painter->drawText(QPointF(10,20),stringPos);
+        }
 
-    if(!discontinuous_) painter->drawEllipse(boundingRect());
+        painter->drawEllipse(boundingRect());
+    }
 }
 
 QPainterPath CanvasItemPoint::shape() const
@@ -207,13 +216,11 @@ void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent*)
 {
-    hovered_ = true;
     update();
 }
 
 void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent*)
 {
-    hovered_ = false;
     update();
 }
 
