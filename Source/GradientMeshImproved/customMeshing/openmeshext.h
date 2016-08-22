@@ -17,27 +17,12 @@ namespace OpenMeshExt
 struct CustomTraits : public OpenMesh::DefaultTraits
 {
     // Add variables here...
-    VertexAttributes(OpenMesh::Attributes::Status);
+    VertexAttributes(OpenMesh::Attributes::Status | OpenMesh::Attributes::Color);
 
     EdgeAttributes(OpenMesh::Attributes::Status);
 
     FaceAttributes(OpenMesh::Attributes::Status);
 
-    VertexTraits
-    {
-        private:
-            QVector3D color_;
-        public:
-
-            QVector3D color() const
-			{
-                return color_;
-            }
-            void setColor(QVector3D &color)
-			{
-                this->color_ = color;
-            }
-    };
     HalfedgeTraits
     {
         private:

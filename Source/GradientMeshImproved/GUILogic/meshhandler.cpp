@@ -79,13 +79,14 @@ void MeshHandler::setVertexPoint(int idx, const QPointF &position)
 
 QVector3D MeshHandler::vertexColor(int idx)
 {
-    return guiMesh.data(guiMesh.vertex_handle(idx)).color();
+    OpnMesh::Color color = guiMesh.color(guiMesh.vertex_handle(idx));
+    return QVector3D(color[0],color[1], color[2]);
 }
 
 void MeshHandler::setVertexColor(int idx, QColor color)
 {
-    QVector3D color_ = QVector3D(color.red(), color.green(), color.blue());
-    guiMesh.data(guiMesh.vertex_handle(idx)).setColor(color_);
+    OpnMesh::Color colr(color.red(), color.green(), color.blue());
+    guiMesh.set_color(guiMesh.vertex_handle(idx), colr);
 }
 
 uint MeshHandler::vertexValence(int idx)
@@ -572,7 +573,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin(); ite != guiMesh.vertices_end(); ite++ )
     {
         OpnMesh::Point point = guiMesh.point(ite);
-        QVector3D color = guiMesh.data(ite).color();
+        OpnMesh::Color color = guiMesh.color(ite);
         //x y z
         // HENRIK: ENDRING TIL 1.0 (Z-VERDI)
         tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(1.0);
@@ -581,7 +582,7 @@ void MeshHandler::prepareGuiMeshForSubd()
         //l a b
         double l, a, b;
         // HENRIK: NORMALISER TIL (0-1)
-        subdivMesh::RGB2LAB(color.x()/255, color.y()/255, color.z()/255, l, a, b);
+        subdivMesh::RGB2LAB(color[0]/255, color[1]/255, color[2]/255, l, a, b);
         tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
         tempString += " ";
 
