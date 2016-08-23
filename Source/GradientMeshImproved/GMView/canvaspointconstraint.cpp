@@ -29,16 +29,25 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
         GMCanvas *canvas = static_cast<GMCanvas*>(scene());
         if(canvas->renderConstraintHandlers())
         {
+            painter->setPen(Qt::NoPen);
+
             const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
             radius_ = 3 / detailLevel;
             if(radius_ < 0.3) radius_ = 0.3;
 
             QColor color = controlPoint()->color();
-            painter->drawLine(mapFromScene(controlPoint_->pos()), QPoint(0,0));
-            painter->setPen(color);
             painter->setBrush(color);
             painter->drawEllipse(boundingRect());
-            //For debugging purposes TODO: remove
+
+            QPen pen;
+            QVector<qreal> dashes;
+            QLineF line(mapFromScene(controlPoint_->pos()), QPoint(0,0));
+            dashes << 0 << controlPoint()->radius() << line.length()-radius_ << 0;
+
+            pen.setDashPattern(dashes);
+            pen.setWidthF(1/detailLevel);
+            painter->setPen(pen);
+            painter->drawLine(line);
         }
 }
 

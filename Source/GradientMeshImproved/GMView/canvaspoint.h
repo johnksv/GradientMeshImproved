@@ -21,6 +21,7 @@ public:
     int vertexHandleIdx() const;
     void setVertexHandleIdx(int idx);
 
+    double radius() const;
     void setRadius(int);
 
     bool isHighlighted() const;
@@ -46,7 +47,7 @@ protected:
 
 private:
     QColor color_;
-    double radius_ = 5;
+    double radius_ = 0.01;
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;

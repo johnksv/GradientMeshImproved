@@ -34,7 +34,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
 {
     if(!discontinuous_)
     {
-        painter->setPen(QPen(color_));
+        painter->setPen(Qt::NoPen);
 
 
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
@@ -45,7 +45,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
             //TODO: Fix selected color
             QColor temp = QColor(color_);
             temp.setAlpha(150);
-            painter->setPen(QPen(temp));
+            painter->setBrush(temp);
         }
         else
         {
@@ -98,7 +98,12 @@ int CanvasItemPoint::vertexHandleIdx() const
 
 void CanvasItemPoint::setVertexHandleIdx(int idx)
 {
-	vertexHandleIdx_ = idx;
+    vertexHandleIdx_ = idx;
+}
+
+double CanvasItemPoint::radius() const
+{
+    return radius_;
 }
 
 void CanvasItemPoint::setRadius(int _radius)
