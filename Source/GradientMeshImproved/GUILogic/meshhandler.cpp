@@ -85,7 +85,6 @@ QVector3D MeshHandler::vertexColor(int idx)
 
 void MeshHandler::setVertexColor(int idx, QColor color)
 {
-    color = color.toRgb();
     OpnMesh::Color colr(color.red(), color.green(), color.blue());
     guiMesh.set_color(guiMesh.vertex_handle(idx), colr);
 }
