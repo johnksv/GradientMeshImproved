@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QOpenGLFunctions_1_0>
 #include "GUILogic/meshhandler.h"
+#include "canvas.h"
 
 namespace GMView{
 
@@ -14,19 +15,18 @@ class GMOpenGLWidget : public QOpenGLWidget, public QOpenGLFunctions_1_0
 
 public:
     GMOpenGLWidget(QWidget *parent = nullptr);
-    GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers_, vector<GUILogic::MeshHandler *> *multiResMeshHandlers, QWidget *parent = nullptr);
+    GMOpenGLWidget(GMCanvas *scene, QWidget *parent = nullptr);
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int, int) override;
-    void setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers_);
-    void setMultiResMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers_);
+    void setScene(GMCanvas* scene);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    vector<GUILogic::MeshHandler *> *meshHandlers_;
-    vector<GUILogic::MeshHandler *> *multiRes_meshHandlers_;
+    GMCanvas *scene_;
+
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
 };

@@ -21,8 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initWindowAction();
     ui->splitWidget->setVisible(false);
     ui->actionRender_constraints_handlers->setChecked(true);
-    ui->openGLWidget->setMeshHandlers(scene_->meshHandlers());
-    ui->openGLWidget->setMultiResMeshHandlers(scene_->multiResMeshHandlers());
+    ui->openGLWidget->setScene(scene_);
 
     //TODO: implement undoStack
     undoStack = new QUndoStack(this);

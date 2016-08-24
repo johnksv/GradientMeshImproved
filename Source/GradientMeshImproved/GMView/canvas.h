@@ -2,7 +2,6 @@
 #define GMCANVAS_H
 
 #include <QGraphicsScene>
-#include "openglwidget.h"
 #include "canvasitemgroup.h"
 
 
@@ -77,7 +76,7 @@ private:
     vector<GUILogic::MeshHandler*> multiRes_meshHandlers_;
     vector<CanvasItemGroup*> multiRes_layers_;
 
-    GMOpenGLWidget *opengl_;
+    QGraphicsProxyWidget *opengl_;
     QColor pointColor_;
     CanvasItemPoint *lineStartPoint_ = nullptr, *lineEndPoint_ = nullptr;
 

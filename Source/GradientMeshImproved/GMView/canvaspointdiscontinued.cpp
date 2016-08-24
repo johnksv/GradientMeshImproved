@@ -3,6 +3,7 @@
 #include <QGraphicsSceneContextMenuEvent>
 #include <QAction>
 #include <QColorDialog>
+#include <QPainter>
 #include "canvas.h"
 
 using namespace GMView;

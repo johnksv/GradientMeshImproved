@@ -1,5 +1,5 @@
-        #include "canvas.h"
-
+    #include "canvas.h"
+    #include "openglwidget.h"
     #include <QGraphicsSceneMouseEvent>
     #include <QDebug>
     #include <QGraphicsProxyWidget>
@@ -16,10 +16,10 @@
         QGraphicsScene(parent)
     {
         meshHandlers_.push_back(new GUILogic::MeshHandler);
-        opengl_ = new GMOpenGLWidget(&meshHandlers_, &multiRes_meshHandlers_);
-        QGraphicsProxyWidget *openGLWidget = addWidget(opengl_);
-        openGLWidget->setPos(0,0);
-        openGLWidget->setZValue(0);
+        GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
+        opengl_ = addWidget(openglWidget);
+        opengl_->setPos(0,0);
+        opengl_->setZValue(0);
 
         CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
         layers_.push_back(layer);
@@ -258,13 +258,13 @@
 
 	void GMCanvas::drawOpenGlOnCanvas(bool drawOnCanvas)
 	{
-		opengl_->setVisible(drawOnCanvas);
+        static_cast<GMOpenGLWidget*>(opengl_->widget())->setVisible(drawOnCanvas);
 	}
 
 	void GMCanvas::prepareRendering()
 	{
 		currentMeshHandler()->prepareGuiMeshForSubd();
-		opengl_->paintGL();
+        static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
 		update();
 	}
 

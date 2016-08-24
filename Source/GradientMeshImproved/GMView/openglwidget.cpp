@@ -8,8 +8,8 @@ GMOpenGLWidget::GMOpenGLWidget(QWidget *parent) : QOpenGLWidget{parent}
 {
 }
 
-GMOpenGLWidget::GMOpenGLWidget(vector<GUILogic::MeshHandler *> *meshHandlers,vector<GUILogic::MeshHandler *> *multiResMeshHandlers, QWidget *parent) :
-    meshHandlers_(meshHandlers),multiRes_meshHandlers_(multiResMeshHandlers), QOpenGLWidget{parent}
+GMOpenGLWidget::GMOpenGLWidget(GMCanvas *scene, QWidget *parent) :
+     scene_(scene), QOpenGLWidget{parent}
 {
 
 }
@@ -27,51 +27,47 @@ void GMOpenGLWidget::resizeGL(int, int)
 {
 }
 
-void GMOpenGLWidget::setMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
+void GMOpenGLWidget::setScene(GMCanvas *scene)
 {
-    meshHandlers_ = meshHandlers;
-}
-
-void GMOpenGLWidget::setMultiResMeshHandlers(vector<GUILogic::MeshHandler *> *meshHandlers)
-{
-    meshHandlers_ = meshHandlers;
+    scene_ = scene;
 }
 
 void GMOpenGLWidget::paintGL()
 {
-    if(meshHandlers_ != nullptr)
+
+    vector<GUILogic::MeshHandler *> *meshHandle;
+    if (scene_->multiResMeshHandlers()->empty())
     {
-        vector<GUILogic::MeshHandler *> *meshHandle;
-        if(multiRes_meshHandlers_->empty())
-        {
-            meshHandle = meshHandlers_;
-        }
-        else
-        {
-            meshHandle = multiRes_meshHandlers_;
-        }
-
-        QPainter qPainter;
-        /******* Start painting with OpenGL ***********/
-        qPainter.begin(this);
-        qPainter.beginNativePainting();
-
-        // set background colour and clear framebuffer
-        glClearColor(1.0f,1.0f,1.0f,1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        glLoadIdentity();
-        glOrtho(0, 1200, 600, 0, -1.0, 1.0);
-
-        // draw stuff
-        for(GUILogic::MeshHandler *layer : *meshHandle)
-        {
-            layer->drawGLMesh(this);
-        }
-
-        /******* Start painting with Qt ***********/
-        qPainter.endNativePainting();
+        meshHandle = scene_->meshHandlers();
     }
+    else
+    {
+        meshHandle = scene_->multiResMeshHandlers();
+    }
+
+    QRectF boundingRect = scene_->itemsBoundingRect();
+
+    QPainter qPainter;
+    /******* Start painting with OpenGL ***********/
+    qPainter.begin(this);
+    qPainter.beginNativePainting();
+
+    // set background colour and clear framebuffer
+    glClearColor(1.0f,1.0f,1.0f,1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glLoadIdentity();
+    glOrtho(boundingRect.left(),boundingRect.right() ,boundingRect.bottom(),boundingRect.top(), -1.0, 1.0);
+
+    // draw stuff
+    for(GUILogic::MeshHandler *layer : *meshHandle)
+    {
+        layer->drawGLMesh(this);
+    }
+
+    /******* Start painting with Qt ***********/
+    qPainter.endNativePainting();
+
 }
 
 void GMOpenGLWidget::mousePressEvent(QMouseEvent* event){
