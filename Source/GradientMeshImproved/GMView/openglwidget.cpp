@@ -35,16 +35,15 @@ void GMOpenGLWidget::setScene(GMCanvas *scene)
 void GMOpenGLWidget::paintGL()
 {
 
-    vector<GUILogic::MeshHandler *> *meshHandle;
+    vector<GUILogic::MeshHandler *> meshHandlers;
     if (scene_->multiResMeshHandlers()->empty())
     {
-        meshHandle = scene_->meshHandlers();
+        meshHandlers = *scene_->meshHandlers();
     }
     else
     {
-        meshHandle = scene_->multiResMeshHandlers();
+        meshHandlers = *scene_->multiResMeshHandlers();
     }
-
     QRectF boundingRect = scene_->itemsBoundingRect();
 
     QPainter qPainter;
@@ -60,9 +59,9 @@ void GMOpenGLWidget::paintGL()
     glOrtho(boundingRect.left(),boundingRect.right() ,boundingRect.bottom(),boundingRect.top(), -1.0, 1.0);
 
     // draw stuff
-    for(GUILogic::MeshHandler *layer : *meshHandle)
+    for (int i = 0; i < meshHandlers.size(); ++i)
     {
-        layer->drawGLMesh(this);
+        meshHandlers.at(i)->drawGLMesh(this);
     }
 
     /******* Start painting with Qt ***********/

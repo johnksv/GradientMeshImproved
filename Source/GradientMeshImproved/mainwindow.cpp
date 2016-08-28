@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     initWindowAction();
     ui->splitWidget->setVisible(false);
+    ui->splitWidget->setParent(parent);
+
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setScene(scene_);
 

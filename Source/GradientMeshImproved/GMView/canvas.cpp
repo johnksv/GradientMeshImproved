@@ -55,6 +55,7 @@
 
          vertsToAddFace_.clear();
          resetLineStartEnd();
+         static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
          update();
     }
 
@@ -185,8 +186,6 @@
     CanvasItemGroup *GMCanvas::currentLayer()
     {
         return layers_.at(currLayerIndex_);
-		if (multiRes_layers_.empty()) return layers_.at(currLayerIndex_);
-		return multiRes_layers_.at(currLayerIndex_);
     }
 
     vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
@@ -207,6 +206,7 @@
 
     void GMCanvas::setActiveLayer(unsigned char index)
     {
+        currentLayer()->QGraphicsItem::setEnabled(false);
         if(index < 0 || index >= layers_.size())
         {
             currLayerIndex_ = 0;
@@ -215,6 +215,7 @@
         {
             currLayerIndex_ = index;
         }
+        currentLayer()->QGraphicsItem::setEnabled(true);
     }
 
     void GMCanvas::addLayer(QString name)
@@ -263,7 +264,14 @@
 
 	void GMCanvas::prepareRendering()
 	{
-		currentMeshHandler()->prepareGuiMeshForSubd();
+        vector<GUILogic::MeshHandler*> tempMeshHandler;
+
+        if(multiRes_meshHandlers_.empty()) tempMeshHandler = meshHandlers_;
+        else tempMeshHandler = multiRes_meshHandlers_;
+
+        for (int i = 0; i < tempMeshHandler.size(); ++i) {
+            tempMeshHandler.at(i)->prepareGuiMeshForSubd();
+        }
         static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
 		update();
 	}
@@ -358,6 +366,13 @@
                             return;
                         }
                     }
+					else if (currentMeshHandler()->numberOfFaces() != 0)
+					{
+						//TODO: Discusse; implement good solution for face start and end at same vert
+						showMessage("Face can not start and end on same vertex..");
+						return;
+						
+					}
 
                     vector<int> vertesToAddFaceIdx;
                     //If the face to be should be added inside an already existing face

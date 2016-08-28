@@ -73,6 +73,7 @@ private:
     vector<GUILogic::MeshHandler*> meshHandlers_;
     vector<CanvasItemGroup*> layers_;
 
+
     vector<GUILogic::MeshHandler*> multiRes_meshHandlers_;
     vector<CanvasItemGroup*> multiRes_layers_;
 

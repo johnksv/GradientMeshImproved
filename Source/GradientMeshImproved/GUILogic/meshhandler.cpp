@@ -489,6 +489,12 @@ bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
 
 void MeshHandler::clearAll()
 {
+    delete subdMesh;
+    delete oneStepSubdMesh_;
+
+    subdMesh = nullptr;
+    oneStepSubdMesh_ = nullptr;
+
     guiMesh.clear();
     guiMesh.garbage_collection();
 }
