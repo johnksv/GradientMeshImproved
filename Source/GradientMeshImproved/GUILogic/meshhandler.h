@@ -61,6 +61,7 @@ public:
 
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();
+    bool collapseEdge(int startVertIdx, int endVertIdx);
 	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
 
     //TODO move face functions to openmesh.

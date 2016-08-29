@@ -55,7 +55,6 @@ private slots:
 
     void on_actionRender_in_split_window_changed();
 
-
     void on_colorSec_clicked();
 
     void on_colorTert_clicked();
@@ -65,6 +64,8 @@ private slots:
     void on_actionHelpAbout_Qt_triggered();
 
     void on_actionDraw_Circle_tool_triggered();
+
+    void on_actionDraw_Collapse_Edge_triggered();
 
 private:
     Ui::MainWindow *ui;

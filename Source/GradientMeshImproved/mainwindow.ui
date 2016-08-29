@@ -82,6 +82,7 @@
     <addaction name="actionDraw_move_and_select"/>
     <addaction name="actionDraw_Line_tool"/>
     <addaction name="actionDraw_Circle_tool"/>
+    <addaction name="actionDraw_Collapse_Edge"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -131,6 +132,7 @@
    <addaction name="actionDraw_move_and_select"/>
    <addaction name="actionDraw_Line_tool"/>
    <addaction name="actionDraw_Circle_tool"/>
+   <addaction name="actionDraw_Collapse_Edge"/>
    <addaction name="separator"/>
    <addaction name="actionColor_Choose"/>
    <addaction name="actionExecuteRender"/>
@@ -573,6 +575,14 @@
    </property>
    <property name="text">
     <string>Circle tool</string>
+   </property>
+  </action>
+  <action name="actionDraw_Collapse_Edge">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Collapse Edge</string>
    </property>
   </action>
  </widget>

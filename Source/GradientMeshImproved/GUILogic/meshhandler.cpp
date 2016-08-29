@@ -203,6 +203,29 @@ vector<QVector4D> MeshHandler::edges()
     return result;
 }
 
+bool MeshHandler::collapseEdge(int startVertIdx, int endVertIdx)
+{
+    OpnMesh::VertexHandle startVert = guiMesh.vertex_handle(startVertIdx);
+    OpnMesh::VertexHandle endVert = guiMesh.vertex_handle(endVertIdx);
+    for (OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(startVert); voh_ite != guiMesh.voh_end(startVert); voh_ite++)
+    {
+		if (guiMesh.to_vertex_handle(voh_ite) == endVert)
+		{
+			if (guiMesh.is_collapse_ok(voh_ite))
+			{
+				guiMesh.collapse(voh_ite);
+				guiMesh.garbage_collection();
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+    }
+	throw - 1;
+}
+
 void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
 {
     //TODO: implement

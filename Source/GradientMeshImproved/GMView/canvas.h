@@ -11,7 +11,7 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool, circleTool
+    move, lineTool, circleTool, collapseEdge
 };
 enum class renderModeCanvas{
     fullRender
@@ -99,6 +99,7 @@ private:
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
+    int findCollideWithIndex(CanvasItemPoint* itemPoint);
 };
 
 } // end of namespace GMView

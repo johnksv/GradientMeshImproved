@@ -20,6 +20,7 @@ public:
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override;
     void addToGroup(QGraphicsItem *item);
     void removeFromGroup(QGraphicsItem *item);
+    void resetPointsHighlighted();
     friend class GMCanvas;
 
 private:

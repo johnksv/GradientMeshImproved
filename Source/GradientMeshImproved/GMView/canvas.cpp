@@ -126,6 +126,63 @@
             mouseCircleTool(mouseEvent);
             mouseEvent->accept();
             break;
+
+        case drawModeCanvas::collapseEdge:
+            CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
+            itemPoint->setPos(mouseEvent->scenePos());
+
+            int collideWithIndex = findCollideWithIndex(itemPoint);
+            bool collide = collideWithIndex != -1 ? true : false;
+
+
+            if(lineStartPoint_ == nullptr){
+                if(collide)
+                {
+                    lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
+                    vector<CanvasItemLine*> edges = currentLayer()->lines;
+                    for (int i = 0; i < edges.size(); ++i)
+                    {
+                        if(edges.at(i)->startPoint() == lineStartPoint_ )
+                        {
+                            edges.at(i)->endPoint()->setHighlighted(true);
+                        }
+                        else if(edges.at(i)->endPoint()== lineStartPoint_)
+                        {
+                            edges.at(i)->startPoint()->setHighlighted(true);
+                        }
+                    }
+
+                }
+            }else{
+                if(collide)
+                {
+                    lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+                    if(! lineEndPoint_ ->isHighlighted())
+                    {
+                        showMessage("Illegal endPoint. Must be direct neighbour to the first point-");
+                        resetLineStartEnd();
+                        currentLayer()->resetPointsHighlighted();
+                    }
+                }
+            }
+
+            //Make line between the two points.
+            if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr && lineStartPoint_ != lineEndPoint_)
+            {
+
+                bool collapse = currentMeshHandler()->collapseEdge(lineStartPoint_->vertexHandleIdx(),lineEndPoint_->vertexHandleIdx());
+                if(collapse)
+                {
+                    clearAllCurrLayer(false);
+                    constructGuiFromMeshHandler();
+                }
+                else
+                {
+                    showMessage("Collapse not possible. Will make mesh inconsistent!");
+                }
+            }
+
+            break;
         }
 
     }
@@ -384,25 +441,20 @@
 
             }
         }
+
+        //TODO: Faces (for face inside face to work)
     }
 
     void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
     {
         bool madeFace = false;
-        bool collide = false;
-        int collideWithIndex;
 
         CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
         itemPoint->setPos(event->scenePos());
 
-        for(int i = 0; i < currentLayer()->points.size();i++)
-        {
-            if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
-                collide = true;
-                collideWithIndex = i;
-                i = currentLayer()->points.size();
-            }
-        }
+        int collideWithIndex = findCollideWithIndex(itemPoint);
+        bool collide = collideWithIndex != -1 ? true : false;
+
         if(event->button() == Qt::LeftButton)
         {
             //If collide check if face should be made, else add point
@@ -623,20 +675,13 @@
     void GMCanvas::mouseCircleTool(QGraphicsSceneMouseEvent *event)
     {
         bool madeFace = false;
-        bool collide = false;
-        int collideWithIndex;
 
         CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
         itemPoint->setPos(event->scenePos());
 
-        for(int i = 0; i < currentLayer()->points.size();i++)
-        {
-            if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
-                collide = true;
-                collideWithIndex = i;
-                i = currentLayer()->points.size();
-            }
-        }
+        int collideWithIndex = findCollideWithIndex(itemPoint);
+        bool collide = collideWithIndex != -1 ? true : false;
+
         if(event->button() == Qt::LeftButton)
         {
             //If collide check if face should be made, else add point
@@ -778,4 +823,15 @@
         QMessageBox msgBox;
         msgBox.setText(message);
         msgBox.exec();
+    }
+
+    int GMCanvas::findCollideWithIndex(CanvasItemPoint *itemPoint)
+    {
+        for(int i = 0; i < currentLayer()->points.size();i++)
+        {
+            if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
+                return i;
+            }
+        }
+        return -1;
     }

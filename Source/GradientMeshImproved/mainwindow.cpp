@@ -61,6 +61,7 @@ void MainWindow::initActionGroups()
     drawModeGroup_->addAction(ui->actionDraw_Line_tool);
     drawModeGroup_->addAction(ui->actionDraw_Circle_tool);
     drawModeGroup_->addAction(ui->actionDraw_move_and_select);
+    drawModeGroup_->addAction(ui->actionDraw_Collapse_Edge);
     connect(drawModeGroup_, &QActionGroup::triggered, [=](QAction *selected) { selected->setChecked(true);});
 
 }
@@ -158,10 +159,14 @@ void MainWindow::on_actionDraw_Circle_tool_triggered()
     scene_->setDrawingMode(GMView::drawModeCanvas::circleTool);
 }
 
-
 void MainWindow::on_actionDraw_move_and_select_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::move);
+}
+
+void MainWindow::on_actionDraw_Collapse_Edge_triggered()
+{
+    scene_->setDrawingMode(GMView::drawModeCanvas::collapseEdge);
 }
 
 void MainWindow::on_actionExport_triggered()

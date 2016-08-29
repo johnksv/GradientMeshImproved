@@ -106,3 +106,10 @@ void CanvasItemGroup::removeFromGroup(QGraphicsItem *item)
 
     item->setParentItem(0);
 }
+
+void CanvasItemGroup::resetPointsHighlighted()
+{
+    for (int i = 0; i < points.size(); ++i) {
+        points.at(i)->setHighlighted(false);
+    }
+}
