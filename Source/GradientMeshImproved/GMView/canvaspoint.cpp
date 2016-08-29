@@ -231,11 +231,15 @@ void CanvasItemPoint::hoverLeaveEvent(QGraphicsSceneHoverEvent*)
 
 void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+    GMCanvas* canvas = static_cast <GMCanvas*> (scene());
+
     QMenu menu;
     QAction *chooseColorAction = menu.addAction("Choose color");
     menu.addSeparator();
 
     QAction *deletePointAction = menu.addAction("Delete");
+    if(canvas->currentMeshHandler()->vertexValence(vertexHandleIdx_) < 1) deletePointAction->setEnabled(false);
+
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == chooseColorAction)
     {
@@ -248,6 +252,9 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     }
     else if(selectedAction == deletePointAction)
     {
-        //TODO Implement delete point
+
+        canvas->currentMeshHandler()->removeVertex(vertexHandleIdx_);
+        canvas->clearAllCurrLayer(false);
+        canvas->constructGuiFromMeshHandler();
     }
 }

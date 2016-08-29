@@ -60,6 +60,7 @@ void MeshHandler::removeVertex(int idx)
 {
     vertexHandle handle = guiMesh.vertex_handle(idx);
     guiMesh.delete_vertex(handle);
+    guiMesh.garbage_collection();
 }
 
 QVector3D MeshHandler::vertexPoint(int idx)

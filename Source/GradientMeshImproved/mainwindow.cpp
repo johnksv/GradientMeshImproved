@@ -182,7 +182,7 @@ void MainWindow::on_actionImport_triggered()
 
 void MainWindow::on_actionClear_all_triggered()
 {
-    scene_->clearAll();
+    scene_->clearAllCurrLayer();
 }
 
 void MainWindow::on_actionColor_Choose_triggered()

@@ -37,7 +37,7 @@
         }
     }
 
-    void GMCanvas::clearAll()
+    void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
     {
          CanvasItemGroup* layer = currentLayer();
          layer->faces.clear();
@@ -51,7 +51,7 @@
          }
 
 
-         currentMeshHandler()->clearAll();
+         if(clearMeshHandler) currentMeshHandler()->clearAll();
 
          vertsToAddFace_.clear();
          resetLineStartEnd();
@@ -313,6 +313,77 @@
         }
         multiRes_meshHandlers_.clear();
         multiRes_layers_.clear();
+    }
+
+    void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiResLayer)
+    {
+        GUILogic::MeshHandler* meshhandler;
+        CanvasItemGroup *layer;
+        if(fromMultiRes)
+        {
+            meshhandler = multiRes_meshHandlers_.at(indexOfMultiResLayer);
+            layer = multiRes_layers_.at(indexOfMultiResLayer);
+        }
+        else
+        {
+            meshhandler = currentMeshHandler();
+            layer = currentLayer();
+        }
+        vector<QVector4D> vertices = meshhandler->vertices();
+        for(QVector4D vertex : vertices){
+            CanvasItemPoint *item = new CanvasItemPoint();
+            QPointF point(vertex.x(), vertex.y());
+            item->setPos(point);
+            item->setVertexHandleIdx(vertex.w());
+
+            layer->addToGroup(item);
+        }
+
+        int startIdx,endIdx;
+        vector<QVector4D> edges = meshhandler->edges();
+        for(QVector4D edge : edges)
+        {
+            //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
+            startIdx = edge.x();
+            endIdx = edge.y();
+            CanvasItemPoint* startPoint = nullptr;
+            CanvasItemPoint* endPoint = nullptr;
+
+            for(CanvasItemPoint* point : layer->points)
+            {
+                int pointIdx = point->vertexHandleIdx();
+
+                if(pointIdx == startIdx)
+                {
+                    startPoint = point;
+                }
+
+                if(pointIdx == endIdx)
+                {
+                    endPoint = point;
+                }
+
+                if(startPoint != nullptr && endPoint != nullptr) break;
+            }
+
+            if(startPoint == nullptr || endPoint == nullptr)
+            {
+                qDebug() << "Oh no..." << endIdx;
+            }
+            else
+            {
+                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
+                layer->addToGroup(line);
+
+                //TODO: Get constraints from import file.
+                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
+                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
+                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+
+            }
+        }
     }
 
     void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
@@ -707,75 +778,4 @@
         QMessageBox msgBox;
         msgBox.setText(message);
         msgBox.exec();
-    }
-
-    void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiResLayer)
-    {
-        GUILogic::MeshHandler* meshhandler;
-        CanvasItemGroup *layer;
-        if(fromMultiRes)
-        {
-            meshhandler = multiRes_meshHandlers_.at(indexOfMultiResLayer);
-            layer = multiRes_layers_.at(indexOfMultiResLayer);
-        }
-        else
-        {
-            meshhandler = currentMeshHandler();
-            layer = currentLayer();
-        }
-        vector<QVector4D> vertices = meshhandler->vertices();
-        for(QVector4D vertex : vertices){
-            CanvasItemPoint *item = new CanvasItemPoint();
-            QPointF point(vertex.x(), vertex.y());
-            item->setPos(point);
-            item->setVertexHandleIdx(vertex.w());
-
-            layer->addToGroup(item);
-        }
-
-        int startIdx,endIdx;
-        vector<QVector4D> edges = meshhandler->edges();
-        for(QVector4D edge : edges)
-		{
-            //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
-            startIdx = edge.x();
-            endIdx = edge.y();
-            CanvasItemPoint* startPoint = nullptr;
-            CanvasItemPoint* endPoint = nullptr;
-
-            for(CanvasItemPoint* point : layer->points)
-            {
-                int pointIdx = point->vertexHandleIdx();
-
-                if(pointIdx == startIdx)
-                {
-                    startPoint = point;
-                }
-
-                if(pointIdx == endIdx)
-                {
-                    endPoint = point;
-                }
-
-                if(startPoint != nullptr && endPoint != nullptr) break;
-            }
-
-            if(startPoint == nullptr || endPoint == nullptr)
-            {
-                qDebug() << "Oh no..." << endIdx;
-            }
-            else
-            {
-                CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
-                layer->addToGroup(line);
-
-                //TODO: Get constraints from import file.
-                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
-                startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
-
-                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
-                endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
-
-            }
-        }
     }

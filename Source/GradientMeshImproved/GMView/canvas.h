@@ -24,7 +24,7 @@ public:
     GMCanvas(QObject * parent = 0);
     ~GMCanvas();
 
-    void clearAll();
+    void clearAllCurrLayer(bool clearMeshHandler = true);
     void resetLineStartEnd();
 
     /*! Handel action from File Dialog related to the mesh, such as import and export.
@@ -64,6 +64,7 @@ public:
 	void multiResFirstStepMesh();
     void resetMultiResMesh();
 
+    void constructGuiFromMeshHandler(bool fromMultiRes = false, int indexOfMultiResLayer = 0);
 
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
@@ -98,7 +99,6 @@ private:
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
-    void constructGuiFromMeshHandler(bool fromMultiRes = false, int indexOfMultiResLayer = 0);
 };
 
 } // end of namespace GMView
