@@ -26,7 +26,6 @@ public:
 private:
     vector<CanvasItemPoint*> points;
     vector<CanvasItemLine*> lines;
-    vector<CanvasItemFace*> faces;
 
 };
 

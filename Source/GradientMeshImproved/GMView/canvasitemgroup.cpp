@@ -21,10 +21,6 @@ QPainterPath CanvasItemGroup::shape() const
 {
     QPainterPath result;
 
-    for (int i = 0; i < faces.size(); i++)
-    {
-        result.addPath(faces.at(i)->shape());
-    }
     return result;
 }
 
@@ -45,14 +41,6 @@ void CanvasItemGroup::addToGroup(QGraphicsItem *item)
         if(line != nullptr)
         {
             lines.push_back(line);
-        }
-        else
-        {
-            CanvasItemFace *face = dynamic_cast<CanvasItemFace*> (item);
-            if(face != nullptr)
-            {
-                faces.push_back(face);
-            }
         }
     }
 
@@ -84,21 +72,6 @@ void CanvasItemGroup::removeFromGroup(QGraphicsItem *item)
                 {
                     lines.erase(lines.begin()+i);
                     break;
-                }
-            }
-        }
-        else
-        {
-            CanvasItemFace *face = dynamic_cast<CanvasItemFace*> (item);
-            if(face != nullptr)
-            {
-                for(int i = 0 ; i < faces.size(); i++)
-                {
-                    if(faces.at(i) == face)
-                    {
-                        faces.erase(faces.begin()+i);
-                        break;
-                    }
                 }
             }
         }

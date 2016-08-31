@@ -40,7 +40,7 @@
     void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
     {
          CanvasItemGroup* layer = currentLayer();
-         layer->faces.clear();
+
          layer->lines.clear();
          layer->points.clear();
 
@@ -66,6 +66,7 @@
             lineStartPoint_ = nullptr;
             lineEndPoint_ = nullptr;
         }
+        currentLayer()->resetPointsHighlighted();
     }
 
     void GMCanvas::handleFileDialog(QString location, bool import)
@@ -161,7 +162,6 @@
                     {
                         showMessage("Illegal endPoint. Must be direct neighbour to the first point-");
                         resetLineStartEnd();
-                        currentLayer()->resetPointsHighlighted();
                     }
                 }
             }
@@ -500,6 +500,7 @@
                     vector<int> vertesToAddFaceIdx;
                     //If the face to be should be added inside an already existing face
                     bool faceInsideFace = false;
+					vector<QPolygonF> faces = currentMeshHandler()->faces();
                     for (int i = 0; i < vertsToAddFace_.size(); i++)
                     {
                         CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
@@ -507,12 +508,13 @@
                         //No need to check last or first item,.
                         if (i != 0 && i < vertsToAddFace_.size() - 1)
                         {
-                            for(QGraphicsItem *item: itemPoint->collidingItems())
+                            for (int i = 0; i < faces.size(); i++)
                             {
-                                if(dynamic_cast<CanvasItemFace*>(item))
+                                if(faces.at(i).containsPoint(itemPoint->pos(),Qt::OddEvenFill))
                                 {
-                                    faceInsideFace = true;
+                                faceInsideFace = true;
                                 }
+
                             }
                         }
                     }
@@ -558,21 +560,6 @@
 
                         if(sucsess)
                         {
-                            //For debugging purposes
-                            CanvasItemFace * face = new CanvasItemFace();
-                            currentLayer()->faces.push_back(face);
-
-                            for(int handle : vertesToAddFaceIdx)
-                            {
-                                for(CanvasItemPoint *point : currentLayer()->points)
-                                {
-                                    if(point->vertexHandleIdx() == handle)
-                                    {
-                                        face->addCanvasPoint(point);
-                                    }
-                                }
-                            }
-                            currentLayer()->addToGroup(face); //End debugging purposes
                             madeFace = true;
                             vertsToAddFace_.clear();
                         }
@@ -715,22 +702,6 @@
                     }
 
                     qDebug() << "Made face?" << currentMeshHandler()->addFaceClosed(vertesToAddFaceIdx);
-
-                    //For debugging purposes
-                    CanvasItemFace * face = new CanvasItemFace();
-                    currentLayer()->faces.push_back(face);
-
-                    for(int handle : vertesToAddFaceIdx)
-                    {
-                        for(CanvasItemPoint *point : currentLayer()->points)
-                        {
-                            if(point->vertexHandleIdx() == handle)
-                            {
-                                face->addCanvasPoint(point);
-                            }
-                        }
-                    }
-                    currentLayer()->addToGroup(face); //End debugging purposes
                     madeFace = true;
                     vertsToAddFace_.clear();
 
