@@ -5,7 +5,6 @@
 #include <QStandardItem>
 #include <QString>
 #include "canvasitemline.h"
-#include "canvasitemface.h"
 #include "canvaspointconstraint.h"
 
 namespace GMView{

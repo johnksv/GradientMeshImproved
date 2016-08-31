@@ -23,7 +23,6 @@ SOURCES += main.cpp\
     GMView/openglwidget.cpp \
     GMView/canvasitemline.cpp \
     GMView/canvaspoint.cpp \
-    GMView/canvasitemface.cpp \
     GMView/canvasitemgroup.cpp \
     undoCommands/movevertex.cpp \
     undoCommands/undocolor.cpp \
@@ -45,7 +44,6 @@ HEADERS  += mainwindow.h \
     GMView/openglwidget.h \
     GMView/canvasitemline.h \
     GMView/canvaspoint.h \
-    GMView/canvasitemface.h \
     GMView/canvasitemgroup.h \
     undoCommands/movevertex.h \
     undoCommands/undocolor.h \
