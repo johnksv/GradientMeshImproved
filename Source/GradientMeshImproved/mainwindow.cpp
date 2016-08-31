@@ -125,9 +125,10 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
     if(ui->actionRender_multi_res_mesh->isChecked())
     {
         scene_->multiResFirstStepMesh();
-        ui->actionDraw_move_and_select->setChecked(true);
         ui->actionDraw_Line_tool->setEnabled(false);
         ui->actionDraw_Circle_tool->setEnabled(false);
+        ui->actionDraw_Collapse_Edge->setEnabled(false);
+        ui->actionDraw_move_and_select->trigger();
     }
     else
     {
@@ -138,6 +139,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             scene_->resetMultiResMesh();
             ui->actionDraw_Line_tool->setEnabled(true);
             ui->actionDraw_Circle_tool->setEnabled(true);
+            ui->actionDraw_Collapse_Edge->setEnabled(true);
         }
     }
     scene_->update();
