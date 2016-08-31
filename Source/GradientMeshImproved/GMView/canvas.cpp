@@ -81,7 +81,7 @@
         }
         else
         {
-            currentMeshHandler()->saveGuiMeshOff(location);
+            currentMeshHandler()->prepareGuiMeshForSubd(true, location);
         }
     }
 

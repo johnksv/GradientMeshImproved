@@ -73,12 +73,10 @@ public:
 
     void clearAll();
 
-
-    bool saveGuiMeshOff(QString);
     bool importGuiMesh(QString);
 
     //TODO: Rename function.
-    void prepareGuiMeshForSubd();
+    void prepareGuiMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 
     MeshHandler *oneStepSubdMesh();
 

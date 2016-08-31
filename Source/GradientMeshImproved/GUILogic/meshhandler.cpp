@@ -601,7 +601,7 @@ void MeshHandler::subdivide(signed int steps)
     subdMesh = currentMsh;
 }
 
-void MeshHandler::prepareGuiMeshForSubd()
+void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
 {
     guiMesh.garbage_collection();
     string tempString;
@@ -624,7 +624,6 @@ void MeshHandler::prepareGuiMeshForSubd()
         OpnMesh::Color color = guiMesh.color(ite);
 
         //x y z
-        // HENRIK: ENDRING TIL 1.0 (Z-VERDI)
         tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(1.0);
         tempString += " ";
 
@@ -697,7 +696,7 @@ void MeshHandler::prepareGuiMeshForSubd()
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
 
-    //Make a file, for testing
+    //Make a file, used for export to SubdMesh
 	fstream file;
 	file.open("test.off", fstream::out);
 	file << tempString.c_str();
@@ -705,6 +704,12 @@ void MeshHandler::prepareGuiMeshForSubd()
 	
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
+
+    if(saveFileOFF) //Save mesh to OFF before subdividing
+    {
+        subdMesh->save(qPrintable(location), subdivMesh::FileType::OFF);
+    }
+
     subdivide();
     std::remove("test.off");
 }
@@ -728,13 +733,6 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 
 	return subdivedMesh;
 
-}
-
-bool MeshHandler::saveGuiMeshOff(QString location)
-{
-    //TODO: Use save(const char *fileName, FileType ftype) in Mesh.cpp
-    
-    return true;
 }
 
 bool MeshHandler::importGuiMesh(QString location)
