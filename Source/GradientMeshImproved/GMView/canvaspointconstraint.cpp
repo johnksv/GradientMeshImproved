@@ -86,7 +86,7 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
         int controlPointIdx;
 
         //If discontinued: go thorugh each childPoint and assign this gradientConstriant vector.
-        //TODO: Test (should probably implement support for discontinuity first.
+        //TODO:
         bool discontinued = controlPoint_->isDiscontinuous();
         if(discontinued) timesToLoop = controlPoint_->discontinuedChildren().size();
 
@@ -131,4 +131,10 @@ void CanvasPointConstraint::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         QGraphicsItem::mousePressEvent(event);
     }
+}
+
+void CanvasPointConstraint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+    static_cast<GMCanvas*>(scene())->autoRenderOnMeshChanged();
 }

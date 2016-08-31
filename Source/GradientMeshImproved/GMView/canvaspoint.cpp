@@ -88,6 +88,7 @@ void CanvasItemPoint::setColor(QColor color)
     this->color_ = color;
     GMCanvas* canvas = static_cast <GMCanvas*> (scene());
     canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
+        canvas->autoRenderOnMeshChanged();
     update(boundingRect());
 }
 
@@ -209,14 +210,19 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
         {
             canvas->currentMeshHandler()->setVertexPoint(vertexHandleIdx_, pos());
         }
-
-
     }
+
     return QGraphicsItem::itemChange(change, value);
 }
 
 void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+}
+
+void CanvasItemPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsItem::mouseReleaseEvent(event);
+    static_cast<GMCanvas*>(scene())->autoRenderOnMeshChanged();
 }
 
 void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent*)
@@ -256,5 +262,6 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         canvas->currentMeshHandler()->removeVertex(vertexHandleIdx_);
         canvas->clearAllCurrLayer(false);
         canvas->constructGuiFromMeshHandler();
+        canvas->autoRenderOnMeshChanged();
     }
 }

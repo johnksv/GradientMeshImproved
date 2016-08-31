@@ -103,6 +103,7 @@
     <addaction name="actionRender_multi_res_mesh"/>
     <addaction name="actionRender_Full"/>
     <addaction name="separator"/>
+    <addaction name="actionRender_auto"/>
     <addaction name="actionRender_in_split_window"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -583,6 +584,17 @@
    </property>
    <property name="text">
     <string>Collapse Edge</string>
+   </property>
+  </action>
+  <action name="actionRender_auto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto render</string>
    </property>
   </action>
  </widget>

@@ -27,6 +27,8 @@ private slots:
 
     void on_actionRender_multi_res_mesh_changed();
 
+    void on_actionRender_auto_toggled(bool checked);
+
     void on_actionExport_triggered();
 
     void on_actionDraw_Line_tool_triggered();

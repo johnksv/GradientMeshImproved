@@ -24,6 +24,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setScene(scene_);
+    connect(scene_, &GMView::GMCanvas::GUIMeshChanged, [=] ()
+    { if(ui->openGLWidget->isVisible())
+        {
+            //TODO: AUTO DRAW
+            qDebug() << "IsVisible";
+            ui->openGLWidget->update();
+        }
+    });
 
     //TODO: implement undoStack
     undoStack = new QUndoStack(this);
@@ -113,6 +121,12 @@ void MainWindow::on_actionRender_constraints_handlers_triggered()
     scene_->setRenderConstraintHandlers(ui->actionRender_constraints_handlers->isChecked());
     scene_->update();
 }
+
+void MainWindow::on_actionRender_auto_toggled(bool checked)
+{
+    scene_->setRenderAuto(checked);
+}
+
 
 void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
 {

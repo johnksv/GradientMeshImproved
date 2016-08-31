@@ -19,6 +19,7 @@ enum class renderModeCanvas{
 
 class GMCanvas : public QGraphicsScene
 {
+    Q_OBJECT
 
 public:
     GMCanvas(QObject * parent = 0);
@@ -39,11 +40,12 @@ public:
     void setDrawColorVertex(QColor pointColor);
     void setRenderConstraintHandlers(bool value);
     void setRenderVertsEdges(bool renderVertsEdges);
+    void setRenderAuto(bool renderAutoUpdate);
 
     drawModeCanvas drawingMode() const;
     renderModeCanvas renderMode() const;
     bool renderConstraintHandlers() const;
-    bool renderVertsEdges() const;
+
 
 
     vector<CanvasItemGroup *> layers();
@@ -65,6 +67,11 @@ public:
     void resetMultiResMesh();
 
     void constructGuiFromMeshHandler(bool fromMultiRes = false, int indexOfMultiResLayer = 0);
+
+
+    /* Calls appropriate functions to render the changed mesh.
+     */
+    void autoRenderOnMeshChanged();
 
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
@@ -90,7 +97,7 @@ private:
     drawModeCanvas drawMode_ = drawModeCanvas::lineTool;
     renderModeCanvas renderingMode_ =  renderModeCanvas::fullRender;
     bool renderConstraintHandlers_;
-    bool renderVertsEdges_;
+    bool renderAutoUpdate_ = true;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point
@@ -99,7 +106,13 @@ private:
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
+    /*!
+     * Helper function for mouse tools.
+     */
     int findCollideWithIndex(CanvasItemPoint* itemPoint);
+
+signals:
+    void GUIMeshChanged();
 };
 
 } // end of namespace GMView

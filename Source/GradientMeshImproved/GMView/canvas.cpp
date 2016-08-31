@@ -199,11 +199,15 @@
 
     void GMCanvas::setRenderVertsEdges(bool renderVertsEdges)
     {
-        renderVertsEdges_ = renderVertsEdges;
         for(CanvasItemGroup* itemGroup : layers_)
         {
-            itemGroup->setVisible(renderVertsEdges_);
+            itemGroup->setVisible(renderVertsEdges);
         }
+    }
+
+    void GMCanvas::setRenderAuto(bool renderAutoUpdate)
+    {
+        renderAutoUpdate_ = renderAutoUpdate;
     }
 
     drawModeCanvas GMCanvas::drawingMode() const
@@ -214,11 +218,6 @@
     renderModeCanvas GMCanvas::renderMode() const
     {
         return renderingMode_;
-    }
-
-    bool GMCanvas::renderVertsEdges() const
-    {
-        return renderVertsEdges_;
     }
 
     bool GMCanvas::renderConstraintHandlers() const
@@ -560,6 +559,7 @@
 
                         if(sucsess)
                         {
+                            autoRenderOnMeshChanged();
                             madeFace = true;
                             vertsToAddFace_.clear();
                         }
@@ -805,4 +805,13 @@
             }
         }
         return -1;
+    }
+
+    void GMCanvas::autoRenderOnMeshChanged()
+    {
+        if(renderAutoUpdate_)
+        {
+            prepareRendering();
+            emit GUIMeshChanged();
+        }
     }
