@@ -66,6 +66,7 @@ void GMOpenGLWidget::paintGL()
 
     /******* Start painting with Qt ***********/
     qPainter.endNativePainting();
+    qPainter.end();
 
 }
 

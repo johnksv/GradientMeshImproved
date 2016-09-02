@@ -90,10 +90,11 @@ void CanvasItemLine::updateSubdivisonCurve()
 
     if(startConstraint != nullptr && endConstraint != nullptr)
     {
-        inputPoints.push_back(startConstraint->mapToScene(startConstraint->pos()));
-        inputPoints.push_back(endConstraint->mapToScene(endConstraint->pos()));
+        inputPoints.push_back(startConstraint->mapToScene(startConstraint->pos())-startConstraint->pos());
+        inputPoints.push_back(endConstraint->mapToScene(endConstraint->pos())-endConstraint->pos());
     }
     inputPoints.push_back(endPoint_->pos());
+
 
     subdividedCurve_ = GMView::subdCurve(inputPoints,3);
 }
