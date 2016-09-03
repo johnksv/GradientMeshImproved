@@ -73,50 +73,7 @@ QVariant CanvasPointConstraint::itemChange(GraphicsItemChange change, const QVar
     if(change == ItemPositionChange || change == ItemScenePositionHasChanged)
     {
         edge_->updateSubdivisonCurve();
-
-        //Update position in underlying mesh
-        GMCanvas *canvas = static_cast<GMCanvas*>(scene());
-        if(canvas == nullptr)
-        {
-            qDebug() << "Scene" << parentItem()->scene();
-            return value;
-        }
-
-        int timesToLoop = 1;
-        int controlPointIdx;
-
-        //If discontinued: go thorugh each childPoint and assign this gradientConstriant vector.
-        //TODO:
-        bool discontinued = controlPoint_->isDiscontinuous();
-        if(discontinued) timesToLoop = controlPoint_->discontinuedChildren().size();
-
-        for(int i =0; i < timesToLoop; i++)
-        {
-            if(discontinued)
-            {
-                controlPointIdx = static_cast<CanvasPointDiscontinued*>(controlPoint_->discontinuedChildren().at(i))->vertexHandleIdx();
-            }
-            else
-            {
-                controlPointIdx = controlPoint_->vertexHandleIdx();
-            }
-
-            int toVertexIdx;
-            if(controlPoint_ == edge_->startPoint())
-            {
-                toVertexIdx = edge_->endPoint()->vertexHandleIdx();
-            }
-            else
-            {
-                toVertexIdx = edge_->startPoint()->vertexHandleIdx();
-            }
-
-            QVector2D constraint(pos());
-            canvas->currentMeshHandler()->setConstraints(controlPointIdx, toVertexIdx, constraint);
-        }
-
-
-
+        updatePosInOpenMesh();
     }
     return value;
 }
@@ -137,4 +94,45 @@ void CanvasPointConstraint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
     static_cast<GMCanvas*>(scene())->autoRenderOnMeshChanged();
+    edge_->updateSubdivisonCurve();
+}
+
+void CanvasPointConstraint::updatePosInOpenMesh()
+{
+    //Update position in underlying mesh
+    GMCanvas *canvas = static_cast<GMCanvas*>(scene());
+
+    int timesToLoop = 1;
+    int controlPointIdx;
+
+    //If discontinued: go thorugh each childPoint and assign this gradientConstriant vector.
+    //TODO:
+    bool discontinued = controlPoint_->isDiscontinuous();
+    if(discontinued) timesToLoop = controlPoint_->discontinuedChildren().size();
+
+    for(int i =0; i < timesToLoop; i++)
+    {
+        if(discontinued)
+        {
+            controlPointIdx = static_cast<CanvasPointDiscontinued*>(controlPoint_->discontinuedChildren().at(i))->vertexHandleIdx();
+        }
+        else
+        {
+            controlPointIdx = controlPoint_->vertexHandleIdx();
+        }
+
+        int toVertexIdx;
+        if(controlPoint_ == edge_->startPoint())
+        {
+            toVertexIdx = edge_->endPoint()->vertexHandleIdx();
+        }
+        else
+        {
+            toVertexIdx = edge_->startPoint()->vertexHandleIdx();
+        }
+
+        QVector2D constraint(pos());
+        canvas->currentMeshHandler()->setConstraints(controlPointIdx, toVertexIdx, constraint);
+    }
+
 }

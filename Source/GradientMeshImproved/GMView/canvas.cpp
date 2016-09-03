@@ -85,8 +85,6 @@
         }
     }
 
-
-
     void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
         switch(drawMode_){
@@ -129,58 +127,7 @@
             break;
 
         case drawModeCanvas::collapseEdge:
-            CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
-            itemPoint->setPos(mouseEvent->scenePos());
-
-            int collideWithIndex = findCollideWithIndex(itemPoint);
-            bool collide = collideWithIndex != -1 ? true : false;
-
-
-            if(lineStartPoint_ == nullptr){
-                if(collide)
-                {
-                    lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
-                    vector<CanvasItemLine*> edges = currentLayer()->lines;
-                    for (int i = 0; i < edges.size(); ++i)
-                    {
-                        if(edges.at(i)->startPoint() == lineStartPoint_ )
-                        {
-                            edges.at(i)->endPoint()->setHighlighted(true);
-                        }
-                        else if(edges.at(i)->endPoint()== lineStartPoint_)
-                        {
-                            edges.at(i)->startPoint()->setHighlighted(true);
-                        }
-                    }
-
-                }
-            }else{
-                if(collide)
-                {
-                    lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
-                    if(! lineEndPoint_ ->isHighlighted())
-                    {
-                        showMessage("Illegal endPoint. Must be direct neighbour to the first point-");
-                        resetLineStartEnd();
-                    }
-                }
-            }
-
-            //Make line between the two points.
-            if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr && lineStartPoint_ != lineEndPoint_)
-            {
-
-                bool collapse = currentMeshHandler()->collapseEdge(lineStartPoint_->vertexHandleIdx(),lineEndPoint_->vertexHandleIdx());
-                if(collapse)
-                {
-                    clearAllCurrLayer(false);
-                    constructGuiFromMeshHandler();
-                }
-                else
-                {
-                    showMessage("Collapse not possible. Will make mesh inconsistent!");
-                }
-            }
+            mouseCollapseEdge(mouseEvent);
 
             break;
         }
@@ -226,10 +173,13 @@
     }
 
 
-    void GMCanvas::setRenderingMode(renderModeCanvas mode){
+    void GMCanvas::setRenderingMode(renderModeCanvas mode)
+    {
         renderingMode_ = mode;
     }
-    void GMCanvas::setDrawingMode(drawModeCanvas drawMode){
+
+    void GMCanvas::setDrawingMode(drawModeCanvas drawMode)
+    {
         resetLineStartEnd();
         this->drawMode_ = drawMode;
     }
@@ -559,6 +509,20 @@
 
                         if(sucsess)
                         {
+
+                            //TODO: Improve
+                            for (int i = 0; i < currentLayer()->points.size(); i++)
+							{
+                                QList<QGraphicsItem *> children = currentLayer()->points.at(i)->childItems();
+                                for (int i = 0; i < children.size(); ++i) {
+                                    CanvasPointConstraint* constraint = dynamic_cast<CanvasPointConstraint*> (children.at(i));
+                                    if(constraint)
+                                    {
+                                            constraint->updatePosInOpenMesh();
+                                    }
+
+                                }
+                            }
                             autoRenderOnMeshChanged();
                             madeFace = true;
                             vertsToAddFace_.clear();
@@ -813,5 +777,60 @@
         {
             prepareRendering();
             emit GUIMeshChanged();
+        }
+    }
+    void GMCanvas::mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent)
+    {
+        CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
+        itemPoint->setPos(mouseEvent->scenePos());
+
+        int collideWithIndex = findCollideWithIndex(itemPoint);
+        bool collide = collideWithIndex != -1 ? true : false;
+
+
+        if(lineStartPoint_ == nullptr){
+            if(collide)
+            {
+                lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
+                vector<CanvasItemLine*> edges = currentLayer()->lines;
+                for (int i = 0; i < edges.size(); ++i)
+                {
+                    if(edges.at(i)->startPoint() == lineStartPoint_ )
+                    {
+                        edges.at(i)->endPoint()->setHighlighted(true);
+                    }
+                    else if(edges.at(i)->endPoint()== lineStartPoint_)
+                    {
+                        edges.at(i)->startPoint()->setHighlighted(true);
+                    }
+                }
+
+            }
+        }else{
+            if(collide)
+            {
+                lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+                if(! lineEndPoint_ ->isHighlighted())
+                {
+                    showMessage("Illegal endPoint. Must be direct neighbour to the first point-");
+                    resetLineStartEnd();
+                }
+            }
+        }
+
+        //Make line between the two points.
+        if(lineStartPoint_ != nullptr && lineEndPoint_ != nullptr && lineStartPoint_ != lineEndPoint_)
+        {
+
+            bool collapse = currentMeshHandler()->collapseEdge(lineStartPoint_->vertexHandleIdx(),lineEndPoint_->vertexHandleIdx());
+            if(collapse)
+            {
+                clearAllCurrLayer(false);
+                constructGuiFromMeshHandler();
+            }
+            else
+            {
+                showMessage("Collapse not possible. Will make mesh inconsistent!");
+            }
         }
     }

@@ -111,6 +111,8 @@ private:
      */
     int findCollideWithIndex(CanvasItemPoint* itemPoint);
 
+    void mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent);
+    
 signals:
     void GUIMeshChanged();
 };

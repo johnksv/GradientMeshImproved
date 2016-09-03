@@ -222,7 +222,7 @@ void CanvasItemPoint::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void CanvasItemPoint::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     QGraphicsItem::mouseReleaseEvent(event);
-    static_cast<GMCanvas*>(scene())->autoRenderOnMeshChanged();
+    if(event->button() == Qt::LeftButton) static_cast<GMCanvas*>(scene())->autoRenderOnMeshChanged();
 }
 
 void CanvasItemPoint::hoverEnterEvent(QGraphicsSceneHoverEvent*)

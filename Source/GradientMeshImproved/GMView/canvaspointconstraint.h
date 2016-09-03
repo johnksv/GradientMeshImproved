@@ -18,6 +18,8 @@ public:
     CanvasItemPoint *controlPoint();
     CanvasItemLine *edge();
 
+        void updatePosInOpenMesh();
+
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -28,6 +30,8 @@ private:
     CanvasItemLine *edge_;
 
     double radius_ = 3;
+
+
 };
 
 } // end of namespace GMView
