@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(scene_, &GMView::GMCanvas::GUIMeshChanged, [=] ()
     { if(ui->openGLWidget->isVisible())
         {
-            //TODO: AUTO DRAW
-            qDebug() << "IsVisible";
             ui->openGLWidget->update();
         }
     });

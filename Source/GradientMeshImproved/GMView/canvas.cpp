@@ -74,16 +74,32 @@
         if(import)
         {
             qDebug() << "scne import";
-            currentMeshHandler()->importGuiMesh(location);
-            //x,y,z = position, w = vertexHandleIdx
-            constructGuiFromMeshHandler();
-
+			if (currentMeshHandler()->numberOfFaces() > 0)
+			{
+				QString message("Import of file will clean current mesh. Proceed?");
+				QMessageBox::StandardButton response = QMessageBox::question(nullptr, "Multi resh mesh", message);
+				if (response == QMessageBox::Yes)
+				{
+					importFile(location);
+				}
+			}
+			else
+			{
+				importFile(location);
+			}
         }
         else
         {
             currentMeshHandler()->prepareGuiMeshForSubd(true, location);
         }
     }
+
+	void GMCanvas::importFile(QString location)
+	{
+		clearAllCurrLayer();
+		currentMeshHandler()->importGuiMesh(location);
+		constructGuiFromMeshHandler();
+	}
 
     void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {
@@ -270,6 +286,7 @@
 
 	void GMCanvas::prepareRendering()
 	{
+        updateVertexConstraints();
         vector<GUILogic::MeshHandler*> tempMeshHandler;
 
         if(multiRes_meshHandlers_.empty()) tempMeshHandler = meshHandlers_;
@@ -289,7 +306,7 @@
             //Execute render.
             meshHandlers_.at(i)->prepareGuiMeshForSubd();
 
-            //Load mesh (that is one step subdivided) into openMesh
+            //Load mesh (which is one step subdivided) into openMesh
             GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->oneStepSubdMesh();
 
             //Add first step subdivided mesh to containers.
@@ -335,12 +352,15 @@
             meshhandler = currentMeshHandler();
             layer = currentLayer();
         }
-        vector<QVector4D> vertices = meshhandler->vertices();
-        for(QVector4D vertex : vertices){
-            CanvasItemPoint *item = new CanvasItemPoint();
-            QPointF point(vertex.x(), vertex.y());
+        vector<vector<QVector4D>> vertices = meshhandler->vertices();
+        for (int i = 0; i < vertices.size(); ++i) {
+			vector<QVector4D> vertData = vertices.at(i);
+
+			QPointF point(vertData.at(0).x(), vertData.at(0).y());
+			QColor color(vertData.at(1).x(), vertData.at(1).y(), vertData.at(1).z());
+            CanvasItemPoint *item = new CanvasItemPoint(color);
+            item->setVertexHandleIdx(vertData.at(0).w());
             item->setPos(point);
-            item->setVertexHandleIdx(vertex.w());
 
             layer->addToGroup(item);
         }
@@ -365,7 +385,7 @@
                 }
 
                 if(pointIdx == endIdx)
-                {
+				{
                     endPoint = point;
                 }
 
@@ -392,6 +412,23 @@
         }
 
         //TODO: Faces (for face inside face to work)
+    }
+
+    void GMCanvas::updateVertexConstraints()
+    {
+        //TODO: Improve effeciency
+        for (int i = 0; i < currentLayer()->points.size(); i++)
+        {
+            QList<QGraphicsItem *> children = currentLayer()->points.at(i)->childItems();
+            for (int i = 0; i < children.size(); ++i) {
+                CanvasPointConstraint* constraint = dynamic_cast<CanvasPointConstraint*> (children.at(i));
+                if(constraint)
+                {
+                        constraint->updatePosInOpenMesh();
+                }
+
+            }
+        }
     }
 
     void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
@@ -509,20 +546,6 @@
 
                         if(sucsess)
                         {
-
-                            //TODO: Improve
-                            for (int i = 0; i < currentLayer()->points.size(); i++)
-							{
-                                QList<QGraphicsItem *> children = currentLayer()->points.at(i)->childItems();
-                                for (int i = 0; i < children.size(); ++i) {
-                                    CanvasPointConstraint* constraint = dynamic_cast<CanvasPointConstraint*> (children.at(i));
-                                    if(constraint)
-                                    {
-                                            constraint->updatePosInOpenMesh();
-                                    }
-
-                                }
-                            }
                             autoRenderOnMeshChanged();
                             madeFace = true;
                             vertsToAddFace_.clear();

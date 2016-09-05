@@ -40,10 +40,11 @@ public:
      */
     void drawGLMesh(QOpenGLFunctions_1_0 *context);
     /*! Get verticies from the current guiMesh object.
-     * \return a vector of points. Each element contains x, y, z coordiantes respectively
+     * \return Vertices in first vector. Points and color of vert in second vector.
+     * Element at [i][0] is x,y,z = point, w = vertIdx. Element at [i][1] is x,y,z = color(rgb)
      *
      */
-    vector<QVector4D> vertices();
+    vector<vector<QVector4D> > vertices();
     int addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
     void removeVertex(int idx);
     QVector3D vertexPoint(int idx);

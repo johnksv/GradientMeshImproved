@@ -33,6 +33,7 @@ public:
      * \param import if the mesh should be imported or exported. True for import. False for export.
      */
     void handleFileDialog(QString location, bool import);
+	void importFile(QString location);
 
     void setDrawingMode(drawModeCanvas);
     void setRenderingMode(renderModeCanvas);
@@ -112,6 +113,8 @@ private:
     int findCollideWithIndex(CanvasItemPoint* itemPoint);
 
     void mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent);
+    
+    void updateVertexConstraints();
     
 signals:
     void GUIMeshChanged();

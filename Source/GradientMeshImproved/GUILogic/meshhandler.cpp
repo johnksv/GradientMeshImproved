@@ -34,15 +34,22 @@ void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
     }
 }
 
-vector<QVector4D> MeshHandler::vertices()
+vector<vector<QVector4D>> MeshHandler::vertices()
 {
-    vector<QVector4D> result;
+    vector<vector<QVector4D>> result;
 
     for (OpnMesh::VertexIter v_it = guiMesh.vertices_sbegin();
            v_it != guiMesh.vertices_end(); ++v_it)
     {
-        QVector4D point(guiMesh.point(v_it)[0], guiMesh.point(v_it)[1], guiMesh.point(v_it)[2], v_it->idx());
-        result.push_back(point);
+        OpnMesh::Point vertPoint = guiMesh.point(v_it);
+        OpnMesh::Color vertColor = guiMesh.color(v_it);
+        QVector4D point(vertPoint[0], vertPoint[1], vertPoint[2], v_it->idx());
+        QVector4D color(vertColor[0],vertColor[1], vertColor[2], .0f);
+
+        vector<QVector4D> vert;
+        vert.push_back(point);
+        vert.push_back(color);
+        result.push_back(vert);
 
     }
     return result;
@@ -737,14 +744,42 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 
 bool MeshHandler::importGuiMesh(QString location)
 {
-    //TODO: Support for multiple formats
+    //TODO: Discontinuity and gradient constraints.
     //TODO: If there alleready are vertices,edges and faces in guiMesh
-    //TODO: Support for custom data. (color etc).
-    if ( ! OpenMesh::IO::read_mesh(guiMesh, location.toStdString()) )
-      {
-        qDebug() << "Error: Cannot read mesh from " << location;
-        return false;
-      }
+	delete subdMesh; // delete from heap
+	subdMesh = new SbdvMesh();
+	qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(location.toStdString().c_str());
+    subdMesh->build(); // build mesh topology from data
+
+	vector <subdivMesh::MeshVertex>	&vertices = subdMesh->my_vertices;
+	vector <subdivMesh::MeshFacet>  &facets = subdMesh->my_facets;
+
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		subdivMesh::Point_3D point3d = vertices.at(i).my_point;
+		subdivMesh::Point_3D color3d = vertices.at(i).my_colour;
+		double r, g, b;
+		subdivMesh::LAB2RGB(color3d.getX(), color3d.getY(), color3d.getZ(), r, g, b);
+		r *= 255; b *= 255; g *= 255;
+		if (r > 255) r = 255;
+		if (g > 255) g = 255;
+		if (b > 255) b = 255;
+
+		QPointF point2d(point3d.getX(), point3d.getY());
+		QColor color(r, g, b);
+		guiMesh.vertex_handle(addVertex(point2d, color));
+	}
+
+	for (int i = 0; i < facets.size(); ++i) {
+		vector<vertexHandle> vertexIdx;
+
+		vector<unsigned int> &vertIndices = facets.at(i).my_vertIndices;
+		for (int j = 0; j < vertIndices.size(); ++j) {
+			vertexIdx.push_back(guiMesh.vertex_handle(vertIndices.at(j)));
+		}
+		guiMesh.add_face(vertexIdx);
+	}
+
     return true;
 }
 

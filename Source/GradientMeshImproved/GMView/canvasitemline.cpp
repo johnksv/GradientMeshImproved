@@ -166,14 +166,4 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void CanvasItemLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    GMCanvas* parent = static_cast <GMCanvas*> (scene());
-    if(parent->drawingMode() == drawModeCanvas::move)
-    {
-        QString toolTip("Line:");
-        toolTip.append("\n");
-        toolTip.append("Discontinuous: ");
-        discontinuous_ ? toolTip.append("yes.") : toolTip.append("no.");
-
-        QToolTip::showText(event->screenPos(), toolTip);
-    }
 }
