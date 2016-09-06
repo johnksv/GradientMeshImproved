@@ -26,6 +26,7 @@ public:
     ~GMCanvas();
 
     void clearAllCurrLayer(bool clearMeshHandler = true);
+    void resetToBeFaceVector();
     void resetLineStartEnd();
 
     /*! Handel action from File Dialog related to the mesh, such as import and export.

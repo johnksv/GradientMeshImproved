@@ -59,6 +59,25 @@
          update();
     }
 
+    void GMCanvas::resetToBeFaceVector()
+    {
+        for (int i = 0; i < vertsToAddFace_.size(); ++i) {
+            CanvasItemPoint* point = vertsToAddFace_.at(i);
+            int idx = point->vertexHandleIdx();
+            if(currentMeshHandler()->vertexValence(idx) < 1)
+            {
+                currentMeshHandler()->removeVertex(idx);
+
+                vector<QGraphicsItem*> edges = point->edges();
+                for (int i = 0; i < edges.size(); ++i) {
+                    delete edges.at(i);
+                }
+
+                delete vertsToAddFace_.at(i);
+            }
+        }
+    }
+
     void GMCanvas::resetLineStartEnd()
     {
         if(vertsToAddFace_.empty())
@@ -248,7 +267,8 @@
 
     void GMCanvas::setActiveLayer(unsigned char index)
     {
-        currentLayer()->QGraphicsItem::setEnabled(false);
+        //Disable other layers for editing when active layer is changed.
+        if(currLayerIndex_ < layers_.size()) currentLayer()->QGraphicsItem::setEnabled(false);
         if(index < 0 || index >= layers_.size())
         {
             currLayerIndex_ = 0;

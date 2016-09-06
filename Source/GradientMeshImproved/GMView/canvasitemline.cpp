@@ -11,12 +11,16 @@
 #include "canvas.h"
 #include "GMView/utils.h"
 #include <QStyleOptionGraphicsItem>
+#include <QMessageBox>
 
 using namespace GMView;
 
 CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint_(startPoint), endPoint_(endPoint)
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
+    startPoint->addEdge(this);
+    endPoint->addEdge(this);
+
     setZValue(1);
     setAcceptHoverEvents(true);
     //setFlags(ItemIsSelectable);
@@ -45,10 +49,8 @@ QPainterPath CanvasItemLine::shape() const
     QPainterPath path;
 
     path.moveTo(startPoint_->pos());
-
-    path.lineTo(endPoint_->pos());
     for (int i = 1; i < subdividedCurve_.size(); i++){
-    //   path.lineTo(subdividedCurve_.at(i));
+       path.lineTo(subdividedCurve_.at(i));
     }
 
     //Create stroke for mouseclick and tooltip detection
@@ -139,7 +141,15 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
             disconVertIdx.push_back(disPointIdx2);
             disconVertIdx.push_back(endPoint_->vertexHandleIdx());
 
-            qDebug() << canvas->currentMeshHandler()->makeFace(disconVertIdx, true);
+            try{
+                qDebug() << canvas->currentMeshHandler()->makeFace(disconVertIdx, true);
+            }
+            catch(int e)
+            {
+                QMessageBox msgBox;
+                msgBox.setText("Bug. Sorry. In backlog to be fixed");
+                msgBox.exec();
+            }
         }
         else
         {

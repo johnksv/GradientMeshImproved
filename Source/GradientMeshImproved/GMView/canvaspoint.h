@@ -36,6 +36,10 @@ public:
     //Can be casted to CanvasPointConstraint*
     QGraphicsItem *constraintPoint(QGraphicsItem *_edge);
 
+    vector<QGraphicsItem*> edges();
+    //Add the edge that this point is related with
+    void addEdge(QGraphicsItem* edge);
+
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant & value) override;
@@ -51,6 +55,8 @@ private:
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;
+    //CanvasItemLine*
+    vector<QGraphicsItem*> edges_;
 
     /*Must be of type QGraphicsItem to avoid header collision.
      * The first element should always have the same vertexIDX as this point.
