@@ -135,8 +135,8 @@
    <addaction name="actionDraw_Circle_tool"/>
    <addaction name="actionDraw_Collapse_Edge"/>
    <addaction name="separator"/>
-   <addaction name="actionColor_Choose"/>
    <addaction name="actionExecuteRender"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="toolsWidget">
    <property name="minimumSize">
@@ -367,22 +367,76 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="undoWidget">
+  <widget class="QDockWidget" name="imageWidget">
    <property name="windowTitle">
-    <string>Undo Stack</string>
+    <string>Image options</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="undoWidgetContents">
-    <widget class="QUndoView" name="undoView">
+   <widget class="QWidget" name="imageWidgetContents">
+    <widget class="QPushButton" name="imageImport">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>161</width>
-       <height>91</height>
+       <width>75</width>
+       <height>23</height>
       </rect>
+     </property>
+     <property name="text">
+      <string>Import</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="imageRemove">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>10</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Remove</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="imageOpacity">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>141</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="invertedAppearance">
+      <bool>false</bool>
+     </property>
+     <property name="invertedControls">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>47</width>
+       <height>13</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Opacity</string>
      </property>
     </widget>
    </widget>
@@ -527,14 +581,6 @@
     <string>Del</string>
    </property>
   </action>
-  <action name="actionColor_Choose">
-   <property name="text">
-    <string>Pick Color</string>
-   </property>
-   <property name="shortcut">
-    <string>C</string>
-   </property>
-  </action>
   <action name="actionExecuteRender">
    <property name="text">
     <string>executeRender</string>
@@ -609,11 +655,6 @@
    <class>GMView::GMOpenGLWidget</class>
    <extends>QOpenGLWidget</extends>
    <header>GMView/openglwidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QUndoView</class>
-   <extends>QListView</extends>
-   <header location="global">qundoview.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

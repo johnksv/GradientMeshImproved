@@ -34,6 +34,9 @@ public:
      */
     void handleFileDialog(QString location, bool import);
 	void importFile(QString location);
+    //If import = false, then image will be removed
+    void handleImageFileDialog(QString location, bool import);
+    QGraphicsPixmapItem *imageItem();
 
     void setDrawingMode(drawModeCanvas);
     void setRenderingMode(renderModeCanvas);
@@ -99,6 +102,8 @@ private:
     renderModeCanvas renderingMode_ =  renderModeCanvas::fullRender;
     bool renderConstraintHandlers_;
     bool renderAutoUpdate_ = true;
+
+    QGraphicsPixmapItem *imageItem_ = nullptr;
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point

@@ -19,7 +19,7 @@
         GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
         opengl_ = addWidget(openglWidget);
         opengl_->setPos(0,0);
-        opengl_->setZValue(0);
+        opengl_->setZValue(-1);
 
         CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
         layers_.push_back(layer);
@@ -98,8 +98,28 @@
 	{
 		clearAllCurrLayer();
 		currentMeshHandler()->importGuiMesh(location);
-		constructGuiFromMeshHandler();
-	}
+        constructGuiFromMeshHandler();
+    }
+
+    void GMCanvas::handleImageFileDialog(QString location, bool import)
+    {
+        delete imageItem_;
+        if(import)
+        {
+            imageItem_ = addPixmap(QPixmap(location));
+            imageItem_->setZValue(-1);
+        }
+		else
+		{
+            imageItem_ = nullptr;
+        }
+    }
+
+    QGraphicsPixmapItem *GMCanvas::imageItem()
+    {
+        return imageItem_;
+    }
+
 
     void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     {

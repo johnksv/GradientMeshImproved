@@ -736,7 +736,7 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 
 	subdivedMesh->importGuiMesh(QString::fromUtf8(filename));
 	
-    std::remove(filename);
+    std::remove("tempSubdividedMesh.off");
 
 	return subdivedMesh;
 

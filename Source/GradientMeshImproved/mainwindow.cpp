@@ -6,6 +6,9 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QApplication>
+#include <QImageReader>
+#include <QByteArrayList>
+#include <QGraphicsPixmapItem>
 #include <QDebug>
 
 
@@ -33,7 +36,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //TODO: implement undoStack
     undoStack = new QUndoStack(this);
-    ui->undoView->setStack(undoStack);
 
     initActionGroups();
     initLayoutContainer();
@@ -49,7 +51,6 @@ void MainWindow::initWindowAction()
 {
     ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
-    ui->menuWindow->addAction(ui->undoWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
 }
 
@@ -204,11 +205,6 @@ void MainWindow::on_actionClear_all_triggered()
     scene_->clearAllCurrLayer();
 }
 
-void MainWindow::on_actionColor_Choose_triggered()
-{
-    handleColorButtonClick(1);
-}
-
 void MainWindow::on_actionExecuteRender_triggered()
 {
     scene_->prepareRendering();
@@ -328,4 +324,36 @@ void MainWindow::on_actionClearSelection_triggered()
 void MainWindow::on_actionHelpAbout_Qt_triggered()
 {
      QApplication::aboutQt();
+}
+
+void MainWindow::on_imageImport_clicked()
+{
+    QFileDialog dialog(this, "Import image");
+
+    //Code below from: http://doc.qt.io/qt-5/qtwidgets-widgets-imageviewer-example.html
+    QStringList mimeTypeFilters;
+    const QByteArrayList supportedMimeTypes = QImageReader::supportedMimeTypes();
+    foreach (const QByteArray &mimeTypeName, supportedMimeTypes)
+        mimeTypeFilters.append(mimeTypeName);
+    mimeTypeFilters.sort();
+    mimeTypeFilters.append("application/octet-stream");
+    dialog.setMimeTypeFilters(mimeTypeFilters);
+    dialog.selectMimeTypeFilter("image/jpeg");
+
+    if(dialog.exec() == QDialog::Accepted)
+    {
+        QString filename = dialog.selectedFiles().first();
+        qDebug() << filename;
+        scene_->handleImageFileDialog(filename, true);
+    }
+}
+
+void MainWindow::on_imageRemove_clicked()
+{
+    scene_->handleImageFileDialog("", false);
+}
+
+void MainWindow::on_imageOpacity_valueChanged(int value)
+{
+    if(scene_->imageItem() != nullptr) scene_->imageItem()->setOpacity((double)value/100);
 }

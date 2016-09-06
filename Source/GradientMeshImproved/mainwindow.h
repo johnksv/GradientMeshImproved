@@ -41,8 +41,6 @@ private slots:
 
     void on_actionClear_all_triggered();
 
-    void on_actionColor_Choose_triggered();
-
     void on_actionExecuteRender_triggered();
 
     void on_layerToogleView_clicked();
@@ -68,6 +66,12 @@ private slots:
     void on_actionDraw_Circle_tool_triggered();
 
     void on_actionDraw_Collapse_Edge_triggered();
+
+    void on_imageImport_clicked();
+
+    void on_imageRemove_clicked();
+
+    void on_imageOpacity_valueChanged(int value);
 
 private:
     Ui::MainWindow *ui;
