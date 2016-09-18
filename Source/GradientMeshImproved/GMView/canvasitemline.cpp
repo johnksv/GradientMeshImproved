@@ -18,8 +18,6 @@ using namespace GMView;
 CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *endPoint, QGraphicsItem *parent) : QGraphicsLineItem(parent), startPoint_(startPoint), endPoint_(endPoint)
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
-    startPoint->addEdge(this);
-    endPoint->addEdge(this);
 
     setZValue(1);
     setAcceptHoverEvents(true);

@@ -41,15 +41,12 @@
     {
          CanvasItemGroup* layer = currentLayer();
 
-         layer->lines.clear();
-         layer->points.clear();
-
-
-         for(QGraphicsItem* item: layer->childItems())
-         {
+         foreach (QGraphicsItem* item, layer->lines.childItems()) {
              delete item;
          }
-
+         foreach (QGraphicsItem* item, layer->points.childItems()) {
+             delete item;
+         }
 
          if(clearMeshHandler) currentMeshHandler()->clearAll();
 
@@ -66,16 +63,38 @@
             int idx = point->vertexHandleIdx();
             if(currentMeshHandler()->vertexValence(idx) < 1)
             {
+                foreach (QGraphicsItem* item, currentLayer()->lines.childItems())
+                {
+                    CanvasItemLine* edge = static_cast<CanvasItemLine*> (item);
+                    if(point == edge->startPoint() || point == edge->endPoint())
+                    {
+                        delete edge;
+                        break;
+                    }
+                }
                 currentMeshHandler()->removeVertex(idx);
 
-                vector<QGraphicsItem*> edges = point->edges();
-                for (int i = 0; i < edges.size(); ++i) {
-                    delete edges.at(i);
-                }
 
                 delete vertsToAddFace_.at(i);
             }
+            else if(i==0 && vertsToAddFace_.size() > 1)
+            {
+                foreach (QGraphicsItem* pointChild, point->childItems())
+                {
+                    CanvasPointConstraint* pointConstraint = dynamic_cast<CanvasPointConstraint*>(pointChild);
+                    if(pointConstraint != nullptr)
+                    {
+                        if(pointConstraint->edge()->endPoint() == vertsToAddFace_.at(1)){
+                            delete pointConstraint;
+                        }
+                    }
+                }
+            }
         }
+        vertsToAddFace_.clear();
+        resetLineStartEnd();
+
+        currentMeshHandler()->garbageCollectOpenMesh();
     }
 
     void GMCanvas::resetLineStartEnd()
@@ -414,9 +433,9 @@
             endIdx = edge.y();
             CanvasItemPoint* startPoint = nullptr;
             CanvasItemPoint* endPoint = nullptr;
-
-            for(CanvasItemPoint* point : layer->points)
-            {
+            QList<QGraphicsItem*> items = layer->points.childItems();
+            for (int i = 0; i < items.size(); ++i) {
+                CanvasItemPoint* point = static_cast<CanvasItemPoint*> (items.at(i));
                 int pointIdx = point->vertexHandleIdx();
 
                 if(pointIdx == startIdx)
@@ -457,9 +476,11 @@
     void GMCanvas::updateVertexConstraints()
     {
         //TODO: Improve effeciency
-        for (int i = 0; i < currentLayer()->points.size(); i++)
-        {
-            QList<QGraphicsItem *> children = currentLayer()->points.at(i)->childItems();
+        QList<QGraphicsItem*> items = currentLayer()->points.childItems();
+        for (int i = 0; i < items.size(); ++i) {
+            CanvasItemPoint* point = static_cast<CanvasItemPoint*> (items.at(i));
+
+            QList<QGraphicsItem *> children = point->childItems();
             for (int i = 0; i < children.size(); ++i) {
                 CanvasPointConstraint* constraint = dynamic_cast<CanvasPointConstraint*> (children.at(i));
                 if(constraint)
@@ -478,15 +499,15 @@
         CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
         itemPoint->setPos(event->scenePos());
 
-        int collideWithIndex = findCollideWithIndex(itemPoint);
-        bool collide = collideWithIndex != -1 ? true : false;
+        CanvasItemPoint* collidePoint = dynamic_cast<CanvasItemPoint*>(findCollideWithPoint(itemPoint));
+
+        bool collide = collidePoint != nullptr ? true : false;
 
         if(event->button() == Qt::LeftButton)
         {
             //If collide check if face should be made, else add point
             if(collide)
             {
-                CanvasItemPoint *collidePoint = currentLayer()->points.at(collideWithIndex);
                 if (vertsToAddFace_.size() == 0)
                 {
                     //Face start at an already existing vertex
@@ -627,13 +648,13 @@
 
            if(lineStartPoint_ == nullptr){
                if(collide){
-                    lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
+                    lineStartPoint_ = collidePoint;
                }else{
                    lineStartPoint_ = itemPoint;
                }
            }else{
                if(collide) {
-                    lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+                    lineEndPoint_ = collidePoint;
                }else{
                    lineEndPoint_ = itemPoint;
                }
@@ -646,15 +667,16 @@
 
                //Check if line exists
                bool exists = false;
-               int size = currentLayer()->lines.size();
-               for(int i = 0; i < size; i++ )
+               QList<QGraphicsItem*> items = currentLayer()->lines.childItems();
+               for(int i = 0; i < items.size(); i++ )
                {
-                   if(*(currentLayer()->lines.at(i)) == *line	||
-                            ( currentLayer()->lines.at(i)->endPoint() == line->startPoint() &&
-                              currentLayer()->lines.at(i)->startPoint() == line->endPoint()))
+                   CanvasItemLine *itemLine  = static_cast<CanvasItemLine*>(items.at(i));
+                   if(*(itemLine) == *line	||
+                            ( itemLine->endPoint() == line->startPoint() &&
+                              itemLine->startPoint() == line->endPoint()))
                    {
                         exists = true;
-                        i = size;
+                        break;
                    }
                }//End check line exists
 
@@ -693,15 +715,14 @@
         CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
         itemPoint->setPos(event->scenePos());
 
-        int collideWithIndex = findCollideWithIndex(itemPoint);
-        bool collide = collideWithIndex != -1 ? true : false;
+        CanvasItemPoint* collidePoint = dynamic_cast<CanvasItemPoint*>(findCollideWithPoint(itemPoint));
+        bool collide = collidePoint != nullptr ? true : false;
 
         if(event->button() == Qt::LeftButton)
         {
             //If collide check if face should be made, else add point
             if(collide)
             {
-                CanvasItemPoint *collidePoint = currentLayer()->points.at(collideWithIndex);
                 if(vertsToAddFace_.size() == 0)
                 {
                     //Add point to list
@@ -746,13 +767,13 @@
 
            if(lineStartPoint_ == nullptr){
                if(collide){
-                    lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
+                    lineStartPoint_ = collidePoint;
                }else{
                    lineStartPoint_ = itemPoint;
                }
            }else{
                if(collide) {
-                    lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+                    lineEndPoint_ = collidePoint;
                }else{
                    lineEndPoint_ = itemPoint;
                }
@@ -765,17 +786,19 @@
 
                //Check if line exists
                bool exists = false;
-               int size = currentLayer()->lines.size();
-               for(int i = 0; i < size; i++ )
+               QList<QGraphicsItem*> items = currentLayer()->lines.childItems();
+               for(int i = 0; i < items.size(); i++ )
                {
-                   if(*(currentLayer()->lines.at(i)) == *line	||
-                            ( currentLayer()->lines.at(i)->endPoint() == line->startPoint() &&
-                              currentLayer()->lines.at(i)->startPoint() == line->endPoint()))
+                   CanvasItemLine *itemLine  = static_cast<CanvasItemLine*>(items.at(i));
+                   if(*(itemLine) == *line	||
+                            ( itemLine->endPoint() == line->startPoint() &&
+                              itemLine->startPoint() == line->endPoint()))
                    {
                         exists = true;
-                        i = size;
+                        break;
                    }
                }//End check line exists
+
 
                if(exists)
                {
@@ -823,15 +846,15 @@
         msgBox.exec();
     }
 
-    int GMCanvas::findCollideWithIndex(CanvasItemPoint *itemPoint)
+    QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
     {
-        for(int i = 0; i < currentLayer()->points.size();i++)
-        {
-            if(itemPoint->collidesWithItem(currentLayer()->points.at(i))){
-                return i;
+
+        foreach (QGraphicsItem* collidepoint, currentLayer()->points.childItems()) {
+            if(itemPoint->collidesWithItem(collidepoint)){
+                return collidepoint;
             }
         }
-        return -1;
+        return nullptr;
     }
 
     void GMCanvas::autoRenderOnMeshChanged()
@@ -847,24 +870,25 @@
         CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
         itemPoint->setPos(mouseEvent->scenePos());
 
-        int collideWithIndex = findCollideWithIndex(itemPoint);
-        bool collide = collideWithIndex != -1 ? true : false;
+        CanvasItemPoint* collidePoint = dynamic_cast<CanvasItemPoint*>(findCollideWithPoint(itemPoint));
+        bool collide = collidePoint != nullptr ? true : false;
 
 
         if(lineStartPoint_ == nullptr){
             if(collide)
             {
-                lineStartPoint_ = currentLayer()->points.at(collideWithIndex);
-                vector<CanvasItemLine*> edges = currentLayer()->lines;
+                lineStartPoint_ = collidePoint;
+                QList<QGraphicsItem*> edges = currentLayer()->lines.childItems();
                 for (int i = 0; i < edges.size(); ++i)
                 {
-                    if(edges.at(i)->startPoint() == lineStartPoint_ )
+                    CanvasItemLine* edge = static_cast<CanvasItemLine*>(edges.at(i));
+                    if(edge->startPoint() == lineStartPoint_ )
                     {
-                        edges.at(i)->endPoint()->setHighlighted(true);
+                        edge->endPoint()->setHighlighted(true);
                     }
-                    else if(edges.at(i)->endPoint()== lineStartPoint_)
+                    else if(edge->endPoint()== lineStartPoint_)
                     {
-                        edges.at(i)->startPoint()->setHighlighted(true);
+                        edge->startPoint()->setHighlighted(true);
                     }
                 }
 
@@ -872,7 +896,7 @@
         }else{
             if(collide)
             {
-                lineEndPoint_ = currentLayer()->points.at(collideWithIndex);
+                lineEndPoint_ = collidePoint;
                 if(! lineEndPoint_ ->isHighlighted())
                 {
                     showMessage("Illegal endPoint. Must be direct neighbour to the first point-");

@@ -68,7 +68,6 @@ void MeshHandler::removeVertex(int idx)
 {
     vertexHandle handle = guiMesh.vertex_handle(idx);
     guiMesh.delete_vertex(handle);
-    guiMesh.garbage_collection();
 }
 
 QVector3D MeshHandler::vertexPoint(int idx)
@@ -781,5 +780,10 @@ bool MeshHandler::importGuiMesh(QString location)
 	}
 
     return true;
+}
+
+void MeshHandler::garbageCollectOpenMesh()
+{
+    guiMesh.garbage_collection();
 }
 

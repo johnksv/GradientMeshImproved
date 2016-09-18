@@ -10,6 +10,17 @@ CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
     setHandlesChildEvents(false);
     setFlag(ItemIsSelectable, false);
     setFlag(ItemIsMovable, false);
+
+    points.setZValue(2);
+	points.setParentItem(this);
+    points.setHandlesChildEvents(false);
+    points.setFlag(ItemIsSelectable, false);
+    points.setFlag(ItemIsMovable, false);
+
+	lines.setParentItem(this);
+	lines.setHandlesChildEvents(false);
+    lines.setFlag(ItemIsSelectable, false);
+	lines.setFlag(ItemIsMovable, false);
 }
 
 QRectF CanvasItemGroup::boundingRect() const
@@ -33,56 +44,23 @@ void CanvasItemGroup::addToGroup(QGraphicsItem *item)
     CanvasItemPoint *point = dynamic_cast<CanvasItemPoint*> (item);
     if(point != nullptr)
     {
-        points.push_back(point);
+        points.addToGroup(point);
+		qDebug() << points.childItems();
     }
     else
     {
         CanvasItemLine *line = dynamic_cast<CanvasItemLine*> (item);
         if(line != nullptr)
         {
-            lines.push_back(line);
+            lines.addToGroup(line);
         }
     }
-
-    item->setParentItem(this);
 }
 
-void CanvasItemGroup::removeFromGroup(QGraphicsItem *item)
-{
-    CanvasItemPoint *point = dynamic_cast<CanvasItemPoint*> (item);
-    if(point != nullptr)
-    {
-        for(int i = 0 ; i < points.size(); i++)
-        {
-            if(points.at(i) == point)
-            {
-                points.erase(points.begin()+i);
-                break;
-            }
-        }
-    }
-    else
-    {
-        CanvasItemLine *line = dynamic_cast<CanvasItemLine*> (item);
-        if(line != nullptr)
-        {
-            for(int i = 0 ; i < lines.size(); i++)
-            {
-                if(lines.at(i) == line)
-                {
-                    lines.erase(lines.begin()+i);
-                    break;
-                }
-            }
-        }
-    }
-
-    item->setParentItem(0);
-}
 
 void CanvasItemGroup::resetPointsHighlighted()
 {
-    for (int i = 0; i < points.size(); ++i) {
-        points.at(i)->setHighlighted(false);
+    foreach (QGraphicsItem* point, points.childItems()) {
+        static_cast<CanvasItemPoint*> (point)->setHighlighted(false);
     }
 }

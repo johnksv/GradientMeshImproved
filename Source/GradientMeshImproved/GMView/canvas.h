@@ -116,7 +116,7 @@ private:
     /*!
      * Helper function for mouse tools.
      */
-    int findCollideWithIndex(CanvasItemPoint* itemPoint);
+    QGraphicsItem* findCollideWithPoint(CanvasItemPoint* itemPoint);
 
     void mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent);
     

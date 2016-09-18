@@ -76,6 +76,8 @@ public:
 
     bool importGuiMesh(QString);
 
+    void garbageCollectOpenMesh();
+
     //TODO: Rename function.
     void prepareGuiMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 

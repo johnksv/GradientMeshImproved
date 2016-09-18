@@ -36,9 +36,8 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
     {
         painter->setPen(Qt::NoPen);
 
-
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
-        radius_ = 5 / detailLevel;
+        radius_ = 5.5 / detailLevel;
         if(radius_ < 0.5) radius_ = 0.5;
 
         if(option->state & QStyle::State_Selected){
@@ -190,22 +189,6 @@ QGraphicsItem *CanvasItemPoint::constraintPoint(QGraphicsItem *_edge)
     throw "Input must be CanvasItemLine";
 }
 
-vector<QGraphicsItem *> CanvasItemPoint::edges()
-{
-    return edges_;
-}
-
-void CanvasItemPoint::addEdge(QGraphicsItem *edge)
-{
-    CanvasItemLine* line = dynamic_cast<CanvasItemLine*> (edge);
-    if(line == nullptr) throw -2;
-    //Should not be necessary to check
-    if(this == line->startPoint() || this == line->endPoint())
-    {
-        edges_.push_back(line);
-    }
-}
-
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if(change == ItemScenePositionHasChanged)
@@ -276,6 +259,7 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     {
 
         canvas->currentMeshHandler()->removeVertex(vertexHandleIdx_);
+        canvas->currentMeshHandler()->garbageCollectOpenMesh();
         canvas->clearAllCurrLayer(false);
         canvas->constructGuiFromMeshHandler();
         canvas->autoRenderOnMeshChanged();

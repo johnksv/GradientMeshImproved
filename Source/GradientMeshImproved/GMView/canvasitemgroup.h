@@ -18,13 +18,12 @@ public:
     QPainterPath shape() const override;
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override;
     void addToGroup(QGraphicsItem *item);
-    void removeFromGroup(QGraphicsItem *item);
     void resetPointsHighlighted();
     friend class GMCanvas;
 
 private:
-    vector<CanvasItemPoint*> points;
-    vector<CanvasItemLine*> lines;
+    QGraphicsItemGroup points;
+    QGraphicsItemGroup lines;
 
 };
 
