@@ -9,6 +9,14 @@
 
 namespace GMView{
 
+class CanvasItemContainer : public QGraphicsItem
+{
+public:
+    CanvasItemContainer();
+    QRectF boundingRect() const override;
+    QPainterPath shape() const override;
+    void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override;
+};
 
 class CanvasItemGroup : public QGraphicsItem, public QStandardItem
 {
@@ -19,11 +27,13 @@ public:
     void paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *) override;
     void addToGroup(QGraphicsItem *item);
     void resetPointsHighlighted();
+    CanvasItemContainer &points();
+    CanvasItemContainer &lines();
     friend class GMCanvas;
 
 private:
-    QGraphicsItemGroup points;
-    QGraphicsItemGroup lines;
+    CanvasItemContainer points_;
+    CanvasItemContainer lines_;
 
 };
 

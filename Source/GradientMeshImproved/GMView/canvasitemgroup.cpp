@@ -4,6 +4,23 @@
 
 using namespace GMView;
 
+CanvasItemContainer::CanvasItemContainer()
+{
+}
+QRectF CanvasItemContainer::boundingRect() const
+{
+    return childrenBoundingRect();
+}
+
+QPainterPath CanvasItemContainer::shape() const
+{
+    return QPainterPath();
+}
+
+void CanvasItemContainer::paint(QPainter *, const QStyleOptionGraphicsItem *, QWidget *)
+{
+}
+
 CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
     QGraphicsItem(parent), QStandardItem(layername)
 {
@@ -11,16 +28,16 @@ CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
     setFlag(ItemIsSelectable, false);
     setFlag(ItemIsMovable, false);
 
-    points.setZValue(2);
-	points.setParentItem(this);
-    points.setHandlesChildEvents(false);
-    points.setFlag(ItemIsSelectable, false);
-    points.setFlag(ItemIsMovable, false);
+    points_.setZValue(2);
+    points_.setParentItem(this);
+    points_.setHandlesChildEvents(false);
+    points_.setFlag(ItemIsSelectable, false);
+    points_.setFlag(ItemIsMovable, false);
 
-	lines.setParentItem(this);
-	lines.setHandlesChildEvents(false);
-    lines.setFlag(ItemIsSelectable, false);
-	lines.setFlag(ItemIsMovable, false);
+    lines_.setParentItem(this);
+    lines_.setHandlesChildEvents(false);
+    lines_.setFlag(ItemIsSelectable, false);
+    lines_.setFlag(ItemIsMovable, false);
 }
 
 QRectF CanvasItemGroup::boundingRect() const
@@ -44,15 +61,14 @@ void CanvasItemGroup::addToGroup(QGraphicsItem *item)
     CanvasItemPoint *point = dynamic_cast<CanvasItemPoint*> (item);
     if(point != nullptr)
     {
-        points.addToGroup(point);
-		qDebug() << points.childItems();
+        point->setParentItem(&points_);
     }
     else
     {
         CanvasItemLine *line = dynamic_cast<CanvasItemLine*> (item);
         if(line != nullptr)
         {
-            lines.addToGroup(line);
+            line->setParentItem(&lines_);
         }
     }
 }
@@ -60,7 +76,17 @@ void CanvasItemGroup::addToGroup(QGraphicsItem *item)
 
 void CanvasItemGroup::resetPointsHighlighted()
 {
-    foreach (QGraphicsItem* point, points.childItems()) {
+    foreach (QGraphicsItem* point, points_.childItems()) {
         static_cast<CanvasItemPoint*> (point)->setHighlighted(false);
     }
+}
+
+CanvasItemContainer &CanvasItemGroup::points()
+{
+    return points_;
+}
+
+CanvasItemContainer &CanvasItemGroup::lines()
+{
+    return lines_;
 }

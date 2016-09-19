@@ -41,10 +41,10 @@
     {
          CanvasItemGroup* layer = currentLayer();
 
-         foreach (QGraphicsItem* item, layer->lines.childItems()) {
+         foreach (QGraphicsItem* item, layer->lines().childItems()) {
              delete item;
          }
-         foreach (QGraphicsItem* item, layer->points.childItems()) {
+         foreach (QGraphicsItem* item, layer->points().childItems()) {
              delete item;
          }
 
@@ -63,7 +63,7 @@
             int idx = point->vertexHandleIdx();
             if(currentMeshHandler()->vertexValence(idx) < 1)
             {
-                foreach (QGraphicsItem* item, currentLayer()->lines.childItems())
+                foreach (QGraphicsItem* item, currentLayer()->lines().childItems())
                 {
                     CanvasItemLine* edge = static_cast<CanvasItemLine*> (item);
                     if(point == edge->startPoint() || point == edge->endPoint())
@@ -433,7 +433,7 @@
             endIdx = edge.y();
             CanvasItemPoint* startPoint = nullptr;
             CanvasItemPoint* endPoint = nullptr;
-            QList<QGraphicsItem*> items = layer->points.childItems();
+            QList<QGraphicsItem*> items = layer->points().childItems();
             for (int i = 0; i < items.size(); ++i) {
                 CanvasItemPoint* point = static_cast<CanvasItemPoint*> (items.at(i));
                 int pointIdx = point->vertexHandleIdx();
@@ -476,7 +476,7 @@
     void GMCanvas::updateVertexConstraints()
     {
         //TODO: Improve effeciency
-        QList<QGraphicsItem*> items = currentLayer()->points.childItems();
+        QList<QGraphicsItem*> items = currentLayer()->points().childItems();
         for (int i = 0; i < items.size(); ++i) {
             CanvasItemPoint* point = static_cast<CanvasItemPoint*> (items.at(i));
 
@@ -667,7 +667,7 @@
 
                //Check if line exists
                bool exists = false;
-               QList<QGraphicsItem*> items = currentLayer()->lines.childItems();
+               QList<QGraphicsItem*> items = currentLayer()->lines().childItems();
                for(int i = 0; i < items.size(); i++ )
                {
                    CanvasItemLine *itemLine  = static_cast<CanvasItemLine*>(items.at(i));
@@ -786,7 +786,7 @@
 
                //Check if line exists
                bool exists = false;
-               QList<QGraphicsItem*> items = currentLayer()->lines.childItems();
+               QList<QGraphicsItem*> items = currentLayer()->lines().childItems();
                for(int i = 0; i < items.size(); i++ )
                {
                    CanvasItemLine *itemLine  = static_cast<CanvasItemLine*>(items.at(i));
@@ -849,7 +849,7 @@
     QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
     {
 
-        foreach (QGraphicsItem* collidepoint, currentLayer()->points.childItems()) {
+        foreach (QGraphicsItem* collidepoint, currentLayer()->points().childItems()) {
             if(itemPoint->collidesWithItem(collidepoint)){
                 return collidepoint;
             }
@@ -878,7 +878,7 @@
             if(collide)
             {
                 lineStartPoint_ = collidePoint;
-                QList<QGraphicsItem*> edges = currentLayer()->lines.childItems();
+                QList<QGraphicsItem*> edges = currentLayer()->lines().childItems();
                 for (int i = 0; i < edges.size(); ++i)
                 {
                     CanvasItemLine* edge = static_cast<CanvasItemLine*>(edges.at(i));
