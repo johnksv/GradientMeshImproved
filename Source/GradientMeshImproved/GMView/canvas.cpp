@@ -208,6 +208,13 @@
 
     }
 
+    void GMCanvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+    {
+         if(drawMode_ !=drawModeCanvas::move){
+            event->accept();
+         }
+    }
+
     void GMCanvas::setDrawColorVertex(QColor pointColor)
     {
         pointColor_ = pointColor;

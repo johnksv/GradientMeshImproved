@@ -26,7 +26,7 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
     }
 
     event->accept();
-    if (event->delta() > 0)
+    if (event->angleDelta().y() > 0)
     {
         if(zoomValue_ <= 300) zoomValue_ += 5;
     }

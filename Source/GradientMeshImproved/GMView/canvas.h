@@ -81,6 +81,7 @@ public:
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
 private:
     vector<GUILogic::MeshHandler*> meshHandlers_;
