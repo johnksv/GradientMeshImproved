@@ -112,6 +112,8 @@ private:
      */
     void mouseLineTool(QGraphicsSceneMouseEvent *event);
     void mouseCircleTool(QGraphicsSceneMouseEvent *event);
+    void addItemLine(CanvasItemPoint* itemPoint, CanvasItemPoint* collidePoint, bool collide);
+
     void addControlPoint(CanvasItemPoint *item);
     void showMessage(QString message, bool eraseLastVertToAddFace = false);
     /*!
@@ -123,6 +125,8 @@ private:
     
     void updateVertexConstraints();
     
+    void addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx);
+
 signals:
     void GUIMeshChanged();
 };

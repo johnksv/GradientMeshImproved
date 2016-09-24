@@ -4,7 +4,7 @@
 #include <QGraphicsItemGroup>
 #include <QStandardItem>
 #include <QString>
-#include "canvasitemline.h"
+#include "canvasitemface.h"
 #include "canvaspointconstraint.h"
 
 namespace GMView{
@@ -34,6 +34,7 @@ public:
 private:
     CanvasItemContainer points_;
     CanvasItemContainer lines_;
+    vector<CanvasItemFace*> faces_;
 
 };
 

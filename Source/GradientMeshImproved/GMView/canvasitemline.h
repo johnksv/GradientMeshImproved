@@ -21,6 +21,7 @@ public:
 	CanvasItemPoint *endPoint();
 
     void updateSubdivisonCurve();
+    const vector<QPointF> &subdivededCurve() const;
 
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;

@@ -28,6 +28,7 @@ SOURCES += main.cpp\
     undoCommands/undocolor.cpp \
     GMView/canvaspointconstraint.cpp \
     GMView/canvaspointdiscontinued.cpp \
+    GMView/canvasitemface.cpp
 
 
 HEADERS  += mainwindow.h \
@@ -49,7 +50,8 @@ HEADERS  += mainwindow.h \
     undoCommands/undocolor.h \
     GMView/canvaspointconstraint.h \
     GMView/canvaspointdiscontinued.h \
-    GMView/utils.h
+    GMView/utils.h \
+    GMView/canvasitemface.h
 
 FORMS    += mainwindow.ui
 

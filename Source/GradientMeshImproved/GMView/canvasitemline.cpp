@@ -99,6 +99,11 @@ void CanvasItemLine::updateSubdivisonCurve()
     subdividedCurve_ = GMView::subdCurve(inputPoints,3);
 }
 
+const vector<QPointF> &CanvasItemLine::subdivededCurve() const
+{
+    return subdividedCurve_;
+}
+
 void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
     GMCanvas *canvas = static_cast<GMCanvas*> (scene());
