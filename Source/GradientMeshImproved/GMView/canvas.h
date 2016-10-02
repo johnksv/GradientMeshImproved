@@ -127,6 +127,8 @@ private:
     
     void addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx);
 
+    CanvasItemLine *edgeBetweenPoints(int vertIdPoint1, int vertIdPoint2);
+
 signals:
     void GUIMeshChanged();
 };

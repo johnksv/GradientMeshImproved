@@ -535,6 +535,22 @@ vector<QPolygonF> MeshHandler::faces()
 	
 }
 
+vector<vector<int>> MeshHandler::facesIdx()
+{
+    vector<vector<int>> result;
+    for (OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin(); f_ite != guiMesh.faces_end(); f_ite++)
+    {
+        vector<int> vectorIdx;
+        for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(f_ite); fv_ite != guiMesh.fv_end(f_ite); fv_ite++)
+        {
+            vectorIdx.push_back(fv_ite->idx());
+        }
+        result.push_back(vectorIdx);
+    }
+    return result;
+
+}
+
 void MeshHandler::clearAll()
 {
     delete subdMesh;

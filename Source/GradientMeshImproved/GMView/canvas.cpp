@@ -482,6 +482,10 @@
             }
         }
 
+        vector<vector<int>> faces = meshhandler->facesIdx();
+        foreach (vector<int> face, faces) {
+            addEdgesToCanvasFace(face);
+        }
         //TODO: Faces (for face inside face to work)
     }
 
@@ -897,37 +901,36 @@
     {
         CanvasItemFace * face = new CanvasItemFace(currentLayer());
         currentLayer()->faces_.push_back(face);
-        int counter=0;
 
+        vector<CanvasItemLine *> canvasEdges;
+
+        canvasEdges.push_back(edgeBetweenPoints(vertsToAddFaceIdx.front(), vertsToAddFaceIdx.back()));
+        for (int i = 1; i < vertsToAddFaceIdx.size(); ++i)
+        {
+            canvasEdges.push_back(edgeBetweenPoints(vertsToAddFaceIdx.at(i-1), vertsToAddFaceIdx.at(i)));
+        }
+
+        face->addCanvasEdge(canvasEdges);
+    }
+
+    CanvasItemLine *GMCanvas::edgeBetweenPoints(int vertIdPoint1, int vertIdPoint2)
+    {
         QList<QGraphicsItem*> edges = currentLayer()->lines().childItems();
-        for (int i = 0; i < edges.size() && counter <= vertsToAddFaceIdx.size(); ++i)
+        for (int i = 0; i < edges.size(); ++i)
         {
             CanvasItemLine* edge = static_cast<CanvasItemLine*> (edges.at(i));
-            if(edge->startPoint()->vertexHandleIdx() == vertsToAddFaceIdx.front()
-                || edge->startPoint()->vertexHandleIdx() == vertsToAddFaceIdx.back() )
+
+
+            if(     (edge->startPoint()->vertexHandleIdx() == vertIdPoint1
+                    && edge->endPoint()->vertexHandleIdx() == vertIdPoint2 )
+                ||
+                    (edge->endPoint()->vertexHandleIdx() == vertIdPoint1
+                    && edge->startPoint()->vertexHandleIdx() == vertIdPoint2 ))
             {
-                if(edge->endPoint()->vertexHandleIdx() == vertsToAddFaceIdx.front()
-                        || edge->endPoint()->vertexHandleIdx() == vertsToAddFaceIdx.back() )
-                {
-                    face->addCanvasEdge(edge);
-                    counter++;
-                    continue;
-                }
-            }
+                    return edge;
 
-
-            for (int j = 1; j < vertsToAddFaceIdx.size(); ++j)
-            {
-                if(
-                    (edge->startPoint()->vertexHandleIdx() == vertsToAddFaceIdx.at(j-1)
-                    && edge->endPoint()->vertexHandleIdx() == vertsToAddFaceIdx.at(j) )
-                || (edge->endPoint()->vertexHandleIdx() == vertsToAddFaceIdx.at(j-1)
-                    && edge->startPoint()->vertexHandleIdx() == vertsToAddFaceIdx.at(j) ))
-                {
-                        face->addCanvasEdge(edge);
-                        counter++;
-
-                }
             }
         }
+        return nullptr;
+
     }

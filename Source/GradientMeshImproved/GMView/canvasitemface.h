@@ -15,11 +15,14 @@ public:
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
-    void addCanvasEdge(CanvasItemLine* edge);
+    void addCanvasEdge(vector<CanvasItemLine *> &edges);
+
+    void updateFaceOutline();
 
 private:
     vector<CanvasItemLine*> edgesInFace_;
-
+    vector<QPointF> subdivedLines_;
+    vector<bool> reverseEdge_;
 };
 
 }// end of namespace GMView

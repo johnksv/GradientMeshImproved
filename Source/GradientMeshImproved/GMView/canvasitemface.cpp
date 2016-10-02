@@ -1,5 +1,7 @@
 #include "canvasitemface.h"
 #include <QPainter>
+#include <QDebug>
+#include "GMView/utils.h"
 
 using namespace GMView;
 
@@ -43,10 +45,18 @@ QPainterPath CanvasItemFace::shape() const
 {
     QPainterPath path;
     QPolygonF poly;
+
     for (int i = 0; i < edgesInFace_.size(); ++i) {
-        vector<QPointF> points = edgesInFace_.at(i)->subdivededCurve();
-        for (int j = 0; j < points.size(); ++j) {
-            poly.push_back(points.at(j));
+     vector<QPointF> points = edgesInFace_.at(i)->subdivededCurve();
+
+        if(reverseEdge_.at(i)){
+            for (int j = points.size()-1; j > 0; --j) {
+                poly.push_back(points.at(j));
+            }
+        }else{
+            for (int j = 0; j < points.size(); ++j) {
+                poly.push_back(points.at(j));
+            }
         }
     }
 
@@ -61,7 +71,53 @@ void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
      painter->drawPath(shape());
 }
 
-void CanvasItemFace::addCanvasEdge(CanvasItemLine *edge)
+
+void CanvasItemFace::addCanvasEdge(vector<CanvasItemLine *> &edges)
 {
-    edgesInFace_.push_back(edge);
+    if(edges.size() < 3){
+        throw "Not enough edges to make face";
+    }
+
+    edgesInFace_.insert(edgesInFace_.begin(), edges.begin(), edges.end());
+
+    for (int i = 0; i < edgesInFace_.size(); ++i) {
+        reverseEdge_.push_back(0);
+    }
+
+    CanvasItemLine*  frontEdge = edgesInFace_.front();
+    CanvasItemLine*  edge = edgesInFace_.back();
+
+    if(frontEdge->startPoint() != edge->endPoint())
+    {
+       reverseEdge_.front() = true;
+    }
+
+    for (int i = 1; i < edgesInFace_.size(); ++i)
+    {
+        CanvasItemLine*  prevEdge = edgesInFace_.at(i-1);
+        CanvasItemLine*  edge = edgesInFace_.at(i);
+        if(prevEdge->endPoint() != edge->startPoint())
+        {
+            if(!reverseEdge_.at(i-1))
+            {
+                reverseEdge_.at(i) = true;
+            }
+            else
+            {
+                if(prevEdge->startPoint() != edge->startPoint())
+                {
+                    reverseEdge_.at(i) = true;
+                }
+            }
+        }else if(i==1)
+        {
+            reverseEdge_.front() = false;
+        }
+    }
+
+    //TODO: For debugging: remove
+//    for (int i = 0; i < edgesInFace_.size(); ++i) {
+//        qDebug() << "startVert" << edgesInFace_.at(i)->startPoint()->vertexHandleIdx() << "endVert" << edgesInFace_.at(i)->endPoint()->vertexHandleIdx() <<"reverse" << reverseEdge_.at(i);
+//    }
 }
+
