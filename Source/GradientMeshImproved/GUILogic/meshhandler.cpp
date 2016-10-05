@@ -518,23 +518,6 @@ bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
     return false;
 }
 
-vector<QPolygonF> MeshHandler::faces()
-{
-	vector<QPolygonF> result;
-	for (OpnMesh::FaceIter f_ite = guiMesh.faces_sbegin(); f_ite != guiMesh.faces_end(); f_ite++)
-	{
-		QPolygonF facePolygon;
-		for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(f_ite); fv_ite != guiMesh.fv_end(f_ite); fv_ite++)
-		{
-			OpnMesh::Point vertPoint = guiMesh.point(fv_ite);
-			facePolygon << QPointF(vertPoint[0], vertPoint[1]);
-		}
-		result.push_back(facePolygon);
-	}
-	return result;
-	
-}
-
 vector<vector<int>> MeshHandler::facesIdx()
 {
     vector<vector<int>> result;

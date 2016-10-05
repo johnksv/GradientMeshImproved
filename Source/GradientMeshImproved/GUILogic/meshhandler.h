@@ -70,7 +70,6 @@ public:
     bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
     size_t numberOfFaces();
     bool vertsOnSameFace(int vertIdx1, int vertIdx2);
-    vector<QPolygonF> faces();
     vector<vector<int> > facesIdx();
 
     void clearAll();

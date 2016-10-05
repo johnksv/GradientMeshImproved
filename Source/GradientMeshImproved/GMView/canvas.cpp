@@ -564,21 +564,25 @@
 
                     //If the face to be should be added inside an already existing face
                     bool faceInsideFace = false;
-					vector<QPolygonF> faces = currentMeshHandler()->faces();
+                    vector<CanvasItemFace*> faces = currentLayer()->faces_;
+
+                    //push IDX to the vector that is passed to MeshHandler.
                     for (int i = 0; i < vertsToAddFace_.size(); i++)
                     {
                         CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
                         vertsToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
+
+                        //Check if face is inside face.
                         //No need to check last or first item,.
                         if (i != 0 && i < vertsToAddFace_.size() - 1)
                         {
                             for (int i = 0; i < faces.size(); i++)
                             {
-                                if(faces.at(i).containsPoint(itemPoint->pos(),Qt::OddEvenFill))
+                                if(faces.at(i)->contains(itemPoint->pos()))
                                 {
-                                faceInsideFace = true;
+                                    faceInsideFace = true;
+                                    break;
                                 }
-
                             }
                         }
                     }
