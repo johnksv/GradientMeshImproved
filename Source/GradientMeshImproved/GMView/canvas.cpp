@@ -140,7 +140,7 @@
 	void GMCanvas::importFile(QString location)
 	{
 		clearAllCurrLayer();
-		currentMeshHandler()->importGuiMesh(location);
+        currentMeshHandler()->importGuiMesh(location, renderAutoUpdate_);
         constructGuiFromMeshHandler();
     }
 
@@ -486,7 +486,6 @@
         foreach (vector<int> face, faces) {
             addEdgesToCanvasFace(face);
         }
-        //TODO: Faces (for face inside face to work)
     }
 
     void GMCanvas::updateVertexConstraints()

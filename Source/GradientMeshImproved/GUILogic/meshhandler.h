@@ -74,7 +74,7 @@ public:
 
     void clearAll();
 
-    bool importGuiMesh(QString);
+    bool importGuiMesh(QString, bool draw = true);
 
     void garbageCollectOpenMesh();
 

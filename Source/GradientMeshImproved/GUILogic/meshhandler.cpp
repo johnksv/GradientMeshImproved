@@ -740,7 +740,7 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 
 }
 
-bool MeshHandler::importGuiMesh(QString location)
+bool MeshHandler::importGuiMesh(QString location, bool draw)
 {
     //TODO: Discontinuity and gradient constraints.
     //TODO: If there alleready are vertices,edges and faces in guiMesh
@@ -777,6 +777,12 @@ bool MeshHandler::importGuiMesh(QString location)
 		}
 		guiMesh.add_face(vertexIdx);
 	}
+
+    if(!draw)
+    {
+        delete subdMesh;
+        subdMesh = nullptr;
+    }
 
     return true;
 }
