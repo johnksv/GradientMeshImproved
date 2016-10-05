@@ -29,6 +29,9 @@
 
         //TODO: Change sceneRect(?)
         setSceneRect(itemsBoundingRect());
+
+        //Faster?? TODO: Test if faster then BspTreeIndex (standard)
+        setItemIndexMethod(QGraphicsScene::NoIndex);
     }
 
     GMCanvas::~GMCanvas()

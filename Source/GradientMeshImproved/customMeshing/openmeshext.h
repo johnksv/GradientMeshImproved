@@ -28,7 +28,7 @@ struct CustomTraits : public OpenMesh::DefaultTraits
     HalfedgeTraits
     {
         private:
-            QVector2D constraint_ = QVector2D(0.1,0.1);
+            QVector2D constraint_ = QVector2D(0.1f,0.1f);
         public:
         QVector2D constraint() const
         {
