@@ -65,10 +65,11 @@ void MainWindow::initActionGroups()
 
 
     drawModeGroup_ = new QActionGroup(this);
-    drawModeGroup_->addAction(ui->actionDraw_Line_tool);
-    drawModeGroup_->addAction(ui->actionDraw_Circle_tool);
-    drawModeGroup_->addAction(ui->actionDraw_move_and_select);
-    drawModeGroup_->addAction(ui->actionDraw_Collapse_Edge);
+    drawModeGroup_->addAction(ui->actionMesh_Line_tool);
+    drawModeGroup_->addAction(ui->actionMesh_Circle_tool);
+    drawModeGroup_->addAction(ui->actionMesh_move_and_select);
+    drawModeGroup_->addAction(ui->actionMesh_Collapse_Edge);
+    drawModeGroup_->addAction(ui->actionMesh_Insert_on_Edge);
     connect(drawModeGroup_, &QActionGroup::triggered, [=](QAction *selected) { selected->setChecked(true);});
 
 }
@@ -138,10 +139,10 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
     if(ui->actionRender_multi_res_mesh->isChecked())
     {
         scene_->multiResFirstStepMesh();
-        ui->actionDraw_Line_tool->setEnabled(false);
-        ui->actionDraw_Circle_tool->setEnabled(false);
-        ui->actionDraw_Collapse_Edge->setEnabled(false);
-        ui->actionDraw_move_and_select->trigger();
+        ui->actionMesh_Line_tool->setEnabled(false);
+        ui->actionMesh_Circle_tool->setEnabled(false);
+        ui->actionMesh_Collapse_Edge->setEnabled(false);
+        ui->actionMesh_move_and_select->trigger();
     }
     else
     {
@@ -150,9 +151,9 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
         if(response == QMessageBox::Yes)
         {
             scene_->resetMultiResMesh();
-            ui->actionDraw_Line_tool->setEnabled(true);
-            ui->actionDraw_Circle_tool->setEnabled(true);
-            ui->actionDraw_Collapse_Edge->setEnabled(true);
+            ui->actionMesh_Line_tool->setEnabled(true);
+            ui->actionMesh_Circle_tool->setEnabled(true);
+            ui->actionMesh_Collapse_Edge->setEnabled(true);
         }
     }
     scene_->update();
@@ -164,22 +165,27 @@ void MainWindow::on_actionRender_Full_triggered()
     scene_->update();
 }
 
-void MainWindow::on_actionDraw_Line_tool_triggered()
+void MainWindow::on_actionMesh_Line_tool_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::lineTool);
 }
 
-void MainWindow::on_actionDraw_Circle_tool_triggered()
+void MainWindow::on_actionMesh_Circle_tool_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::circleTool);
 }
 
-void MainWindow::on_actionDraw_move_and_select_triggered()
+void MainWindow::on_actionMesh_move_and_select_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::move);
 }
 
-void MainWindow::on_actionDraw_Collapse_Edge_triggered()
+void MainWindow::on_actionMesh_Insert_on_Edge_triggered()
+{
+    scene_->setDrawingMode(GMView::drawModeCanvas::insertVert);
+}
+
+void MainWindow::on_actionMesh_Collapse_Edge_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::collapseEdge);
 }

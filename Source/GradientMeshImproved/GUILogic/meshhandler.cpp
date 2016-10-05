@@ -233,10 +233,22 @@ bool MeshHandler::collapseEdge(int startVertIdx, int endVertIdx)
 	throw - 1;
 }
 
-void GUILogic::MeshHandler::insertVertexOnEdge(int edgeIdx, int vertexIdx)
+int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndVertIdx, const QPointF &position, const QColor &color)
 {
-    //TODO: implement
+    int newVertIdx = addVertex(position, color);
+    OpnMesh::VertexHandle splitVert = guiMesh.vertex_handle(newVertIdx);
+    OpnMesh::VertexHandle startVert = guiMesh.vertex_handle(edgeStartVertIdx);
+    OpnMesh::VertexHandle endVert = guiMesh.vertex_handle(edgeEndVertIdx);
+    for (OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(startVert); voh_ite != guiMesh.voh_end(startVert); voh_ite++)
+    {
+        if(guiMesh.to_vertex_handle(voh_ite) == endVert)
+        {
+            guiMesh.split(guiMesh.edge_handle(voh_ite), splitVert);
+            break;
+        }
+    }
 
+    return newVertIdx;
 }
 
 bool MeshHandler::addFaceClosed(vector<int> &vertexHandlersIdx)

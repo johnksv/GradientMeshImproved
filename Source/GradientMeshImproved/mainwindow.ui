@@ -79,10 +79,11 @@
     <property name="title">
      <string>Mesh</string>
     </property>
-    <addaction name="actionDraw_move_and_select"/>
-    <addaction name="actionDraw_Line_tool"/>
-    <addaction name="actionDraw_Circle_tool"/>
-    <addaction name="actionDraw_Collapse_Edge"/>
+    <addaction name="actionMesh_move_and_select"/>
+    <addaction name="actionMesh_Line_tool"/>
+    <addaction name="actionMesh_Circle_tool"/>
+    <addaction name="actionMesh_Insert_on_Edge"/>
+    <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -130,10 +131,11 @@
     <bool>false</bool>
    </attribute>
    <addaction name="separator"/>
-   <addaction name="actionDraw_move_and_select"/>
-   <addaction name="actionDraw_Line_tool"/>
-   <addaction name="actionDraw_Circle_tool"/>
-   <addaction name="actionDraw_Collapse_Edge"/>
+   <addaction name="actionMesh_move_and_select"/>
+   <addaction name="actionMesh_Line_tool"/>
+   <addaction name="actionMesh_Circle_tool"/>
+   <addaction name="actionMesh_Insert_on_Edge"/>
+   <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
    <addaction name="actionExecuteRender"/>
    <addaction name="separator"/>
@@ -484,7 +486,7 @@
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="actionDraw_Line_tool">
+  <action name="actionMesh_Line_tool">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -562,7 +564,7 @@
     <string>Vertices and Edges</string>
    </property>
   </action>
-  <action name="actionDraw_move_and_select">
+  <action name="actionMesh_move_and_select">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -616,7 +618,7 @@
     <string>About Qt</string>
    </property>
   </action>
-  <action name="actionDraw_Circle_tool">
+  <action name="actionMesh_Circle_tool">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -624,7 +626,7 @@
     <string>Circle tool</string>
    </property>
   </action>
-  <action name="actionDraw_Collapse_Edge">
+  <action name="actionMesh_Collapse_Edge">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -641,6 +643,17 @@
    </property>
    <property name="text">
     <string>Auto render</string>
+   </property>
+  </action>
+  <action name="actionMesh_Insert_on_Edge">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Insert Vertex on Edge</string>
+   </property>
+   <property name="toolTip">
+    <string>Insert Vertex on Edge</string>
    </property>
   </action>
  </widget>

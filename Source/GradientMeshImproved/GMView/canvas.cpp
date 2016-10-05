@@ -9,6 +9,8 @@
     #include <QMessageBox>
     #include "canvaspointconstraint.h"
     #include "canvaspointdiscontinued.h"
+    #include <QToolTip>
+
 
     using namespace GMView;
 
@@ -207,10 +209,13 @@
 
         case drawModeCanvas::collapseEdge:
             mouseCollapseEdge(mouseEvent);
+            break;
 
+        case drawModeCanvas::insertVert:
+            mouseInsertVertOnEdge(mouseEvent);
+            mouseEvent->accept();
             break;
         }
-
     }
 
     void GMCanvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
@@ -502,7 +507,6 @@
                 {
                         constraint->updatePosInOpenMesh();
                 }
-
             }
         }
     }
@@ -898,6 +902,33 @@
                 showMessage("Collapse not possible. Will make mesh inconsistent!");
             }
         }
+    }
+
+    void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
+    {
+        QPointF position = event->scenePos();
+        CanvasItemLine *edge = dynamic_cast<CanvasItemLine*>(itemAt(position, QTransform()));
+        foreach (QGraphicsItem* item, items(position)) {
+            edge = dynamic_cast<CanvasItemLine*>(item);
+            if(edge !=nullptr) break;
+        }
+
+        if(edge != nullptr)
+        {
+            int startIdx = edge->startPoint()->vertexHandleIdx();
+            int endIdx = edge->endPoint()->vertexHandleIdx();
+            currentMeshHandler()->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
+
+            //TODO: Reimplement. that is: in GUI: make new edges, update face
+            //For now it's easiest to construct the mesh from the meshhandler
+            clearAllCurrLayer(false);
+            constructGuiFromMeshHandler();
+        }
+        else
+        {
+            //TODO: Give feedback to user that edges was not clicked(?)
+        }
+
     }
 
     void GMCanvas::addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx)

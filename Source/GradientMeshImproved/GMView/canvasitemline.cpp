@@ -21,14 +21,12 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 
     setZValue(1);
     setAcceptHoverEvents(true);
+    setFlag(QGraphicsItem::ItemIsSelectable, true);
     //setFlags(ItemIsSelectable);
 }
 
 void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    //Nasty solution for always updating the line position accordingly to the points.
-    setLine(QLineF(startPoint_->pos(), endPoint_->pos()));
-
     const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
     double width = 1 / detailLevel;
     painter->setPen(QPen(Qt::black,width));
@@ -83,6 +81,8 @@ CanvasItemPoint *CanvasItemLine::endPoint()
 
 void CanvasItemLine::updateSubdivisonCurve()
 {
+    setLine(QLineF(startPoint_->pos(), endPoint_->pos()));
+
     QGraphicsItem *startConstraint = startPoint_->constraintPoint(this);
     QGraphicsItem *endConstraint = endPoint_->constraintPoint(this);
     vector<QPointF> inputPoints;

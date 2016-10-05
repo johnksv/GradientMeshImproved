@@ -31,9 +31,9 @@ private slots:
 
     void on_actionExport_triggered();
 
-    void on_actionDraw_Line_tool_triggered();
+    void on_actionMesh_Line_tool_triggered();
 
-    void on_actionDraw_move_and_select_triggered();
+    void on_actionMesh_move_and_select_triggered();
 
     void on_actionImport_triggered();
 
@@ -63,9 +63,11 @@ private slots:
 
     void on_actionHelpAbout_Qt_triggered();
 
-    void on_actionDraw_Circle_tool_triggered();
+    void on_actionMesh_Circle_tool_triggered();
 
-    void on_actionDraw_Collapse_Edge_triggered();
+    void on_actionMesh_Insert_on_Edge_triggered();
+
+    void on_actionMesh_Collapse_Edge_triggered();
 
     void on_imageImport_clicked();
 

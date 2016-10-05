@@ -11,7 +11,7 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool, circleTool, collapseEdge
+    move, lineTool, circleTool, collapseEdge, insertVert
 };
 enum class renderModeCanvas{
     fullRender
@@ -122,6 +122,8 @@ private:
     QGraphicsItem* findCollideWithPoint(CanvasItemPoint* itemPoint);
 
     void mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent);
+
+    void mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event);
     
     void updateVertexConstraints();
     

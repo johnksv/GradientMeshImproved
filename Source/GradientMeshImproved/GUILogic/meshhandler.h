@@ -63,7 +63,8 @@ public:
     //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges();
     bool collapseEdge(int startVertIdx, int endVertIdx);
-	void insertVertexOnEdge(int edgeIdx, int vertexIdx);
+    //Returns the idx of the new vertex added
+    int insertVertexOnEdge(int edgeStartVertIdx, int edgeEndVertIdx, const QPointF& position, const QColor &color = QColor(0,0,0));
 
     //TODO move face functions to openmesh.
     bool addFaceClosed(vector<int> &vertexHandlersIdx);
