@@ -14,18 +14,10 @@
 
     using namespace GMView;
 
-    GMCanvas::GMCanvas(QObject * parent):
+GMCanvas::GMCanvas(QObject * parent):
         QGraphicsScene(parent)
     {
-        meshHandlers_.push_back(new GUILogic::MeshHandler);
-        GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
-        opengl_ = addWidget(openglWidget);
-        opengl_->setPos(0,0);
-        opengl_->setZValue(-1);
-
-        CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
-        layers_.push_back(layer);
-        addItem(layer);
+        initGMCanvas();
 
         //TODO: Change sceneRect(?)
         setSceneRect(itemsBoundingRect());
@@ -40,6 +32,46 @@
         {
             delete mesh;
         }
+    }
+    void GMCanvas::initGMCanvas()
+    {
+        meshHandlers_.push_back(new GUILogic::MeshHandler);
+        GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
+        opengl_ = addWidget(openglWidget);
+        opengl_->setPos(0,0);
+        opengl_->setZValue(-1);
+
+        CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
+        layers_.push_back(layer);
+        addItem(layer);
+    }
+
+    void GMCanvas::clear()
+    {
+        QGraphicsScene::clear();
+        for (int i = 0; i < meshHandlers_.size(); ++i)
+        {
+             delete meshHandlers_.at(i);
+        }
+        layers_.erase(layers_.begin(),layers_.end());
+        meshHandlers_.erase(meshHandlers_.begin(), meshHandlers_.end());
+
+
+        if(!multiRes_meshHandlers_.empty())
+        {
+            for (int i = 0; i < multiRes_meshHandlers_.size(); ++i) {
+                delete multiRes_meshHandlers_.at(i);
+                delete multiRes_layers_.at(i);
+            }
+            multiRes_meshHandlers_.erase(multiRes_meshHandlers_.begin(),multiRes_meshHandlers_.end());
+            multiRes_layers_.erase(multiRes_layers_.begin(), multiRes_layers_.end());
+        }
+
+        initGMCanvas();
+        currLayerIndex_ = 0;
+
+        static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
+        update();
     }
 
     void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
@@ -334,6 +366,7 @@
             QList<QGraphicsItem*> children = group->childItems();
             for(int i = 0; i < children.size(); i++)
             {
+                //QT handels deletion of each object.
                 removeItem(children.at(i));
             }
             layers_.erase(layers_.begin()+index);

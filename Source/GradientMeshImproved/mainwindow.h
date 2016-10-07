@@ -75,6 +75,8 @@ private slots:
 
     void on_imageOpacity_valueChanged(int value);
 
+    void on_action_New_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

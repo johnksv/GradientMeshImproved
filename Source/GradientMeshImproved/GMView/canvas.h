@@ -25,6 +25,7 @@ public:
     GMCanvas(QObject * parent = 0);
     ~GMCanvas();
 
+    void clear();
     void clearAllCurrLayer(bool clearMeshHandler = true);
     void resetToBeFaceVector();
     void resetLineStartEnd();
@@ -130,6 +131,8 @@ private:
     void addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx);
 
     CanvasItemLine *edgeBetweenPoints(int vertIdPoint1, int vertIdPoint2);
+
+    void initGMCanvas();
 
 signals:
     void GUIMeshChanged();

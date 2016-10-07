@@ -364,3 +364,14 @@ void MainWindow::on_imageOpacity_valueChanged(int value)
 {
     if(scene_->imageItem() != nullptr) scene_->imageItem()->setOpacity((double)value/100);
 }
+
+void MainWindow::on_action_New_triggered()
+{
+   scene_->clear();
+   layerModel_->clear();
+   vector<GMView::CanvasItemGroup *> canvasLayers = scene_->layers();
+   for(GMView::CanvasItemGroup *item : canvasLayers)
+   {
+       layerModel_->appendRow(item);
+   }
+}
