@@ -29,7 +29,10 @@ public:
     void resetPointsHighlighted();
     CanvasItemContainer &points();
     CanvasItemContainer &lines();
-    friend class GMCanvas;
+    vector<CanvasItemFace *> &faces();
+    void addToFacesVector(CanvasItemFace* face);
+    void removeFromFaces(CanvasItemFace* face);
+    void clear();
 
 private:
     CanvasItemContainer points_;

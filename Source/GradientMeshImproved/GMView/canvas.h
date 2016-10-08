@@ -128,7 +128,7 @@ private:
     
     void updateVertexConstraints();
 
-    void addEdgesToCanvasFace(const vector<int>& vertsToAddFaceIdx);
+    void addEdgesToCanvasFace(const vector<int>& vertsToAddFaceIdx, int faceIdx);
 
     CanvasItemLine *edgeBetweenPoints(const int &vertIdPoint1,const int &vertIdPoint2);
 

@@ -546,6 +546,11 @@ vector<vector<int>> MeshHandler::facesIdx()
 
 }
 
+void MeshHandler::deleteFace(const int &faceIdx, bool delete_isolated_vertices)
+{
+    guiMesh.delete_face(guiMesh.face_handle(faceIdx), delete_isolated_vertices);
+}
+
 void MeshHandler::clearAll()
 {
     delete subdMesh;

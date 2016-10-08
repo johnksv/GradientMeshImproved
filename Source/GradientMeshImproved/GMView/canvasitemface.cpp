@@ -2,12 +2,17 @@
 #include <QPainter>
 #include <QDebug>
 #include "GMView/utils.h"
+#include "canvas.h"
+#include <QGraphicsSceneContextMenuEvent>
 
 using namespace GMView;
 
 CanvasItemFace::CanvasItemFace(QGraphicsItem *parent) : QGraphicsItem(parent)
-{
+{   
+}
 
+CanvasItemFace::CanvasItemFace(QGraphicsItem *parent, int faceIdx): QGraphicsItem(parent), faceIdx_(faceIdx)
+{
 }
 
 QRectF CanvasItemFace::boundingRect() const
@@ -118,6 +123,29 @@ void CanvasItemFace::addCanvasEdge(vector<CanvasItemLine *> &edges)
     //TODO: For debugging: remove
 //    for (int i = 0; i < edgesInFace_.size(); ++i) {
 //        qDebug() << "startVert" << edgesInFace_.at(i)->startPoint()->vertexHandleIdx() << "endVert" << edgesInFace_.at(i)->endPoint()->vertexHandleIdx() <<"reverse" << reverseEdge_.at(i);
-//    }
+    //    }
 }
 
+int CanvasItemFace::faceIdx() const
+{
+    return faceIdx_;
+}
+
+void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+        qDebug() << faceIdx_;
+    GMCanvas* canvas = static_cast <GMCanvas*> (scene());
+
+    QMenu menu;
+    QAction *deletePointAction = menu.addAction("Delete");
+
+    QAction *selectedAction = menu.exec(event->screenPos());
+    if(selectedAction == deletePointAction)
+    {
+        canvas->currentMeshHandler()->deleteFace(faceIdx_, false);
+        canvas->currentMeshHandler()->garbageCollectOpenMesh();
+        CanvasItemGroup* parent = static_cast<CanvasItemGroup*> (parentItem());
+        parent->removeFromFaces(this);
+        delete this;
+    }
+}

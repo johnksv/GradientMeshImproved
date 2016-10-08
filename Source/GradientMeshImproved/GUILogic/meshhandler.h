@@ -72,6 +72,7 @@ public:
     size_t numberOfFaces();
     bool vertsOnSameFace(int vertIdx1, int vertIdx2);
     vector<vector<int> > facesIdx();
+    void deleteFace(const int &faceIdx, bool delete_isolated_vertices = true);
 
     void clearAll();
 
