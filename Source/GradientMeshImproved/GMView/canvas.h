@@ -127,10 +127,10 @@ private:
     void mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event);
     
     void updateVertexConstraints();
-    
-    void addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx);
 
-    CanvasItemLine *edgeBetweenPoints(int vertIdPoint1, int vertIdPoint2);
+    void addEdgesToCanvasFace(const vector<int>& vertsToAddFaceIdx);
+
+    CanvasItemLine *edgeBetweenPoints(const int &vertIdPoint1,const int &vertIdPoint2);
 
     void initGMCanvas();
 

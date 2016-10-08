@@ -317,7 +317,8 @@ GMCanvas::GMCanvas(QObject * parent):
 
     CanvasItemGroup *GMCanvas::currentLayer()
     {
-        return layers_.at(currLayerIndex_);
+        if(multiRes_meshHandlers_.empty()) return layers_.at(currLayerIndex_);
+        return multiRes_layers_.at(currLayerIndex_);
     }
 
     vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
@@ -413,7 +414,7 @@ GMCanvas::GMCanvas(QObject * parent):
 
 	void GMView::GMCanvas::multiResFirstStepMesh()
 	{
-        for(int i = 0; i < meshHandlers()->size(); i++)
+        for(int i = 0; i < meshHandlers_.size(); i++)
         {
             //Execute render.
             meshHandlers_.at(i)->prepareGuiMeshForSubd();
@@ -428,11 +429,11 @@ GMCanvas::GMCanvas(QObject * parent):
             multiRes_meshHandlers_.push_back(multiresMesh);
 
             //Hide "Orginal layer"
-            if(!currentLayer()->isVisible())
+            if(!layers_.at(currLayerIndex_)->isVisible())
             {
                  multiRes_layers_.back()->hide();
             }
-			currentLayer()->setVisible(false);
+			layers_.at(currLayerIndex_)->setVisible(false);
 							
 			constructGuiFromMeshHandler(true, i);
         }
@@ -524,9 +525,10 @@ GMCanvas::GMCanvas(QObject * parent):
         }
 
         vector<vector<int>> faces = meshhandler->facesIdx();
-        foreach (vector<int> face, faces) {
-            addEdgesToCanvasFace(face);
-        }
+		for (int i = 0; i < faces.size(); i++)
+		{
+			addEdgesToCanvasFace(faces.at(i));
+		}
     }
 
     void GMCanvas::updateVertexConstraints()
@@ -967,7 +969,7 @@ GMCanvas::GMCanvas(QObject * parent):
 
     }
 
-    void GMCanvas::addEdgesToCanvasFace(vector<int> vertsToAddFaceIdx)
+    void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx)
     {
         CanvasItemFace * face = new CanvasItemFace(currentLayer());
         currentLayer()->faces_.push_back(face);
@@ -983,7 +985,7 @@ GMCanvas::GMCanvas(QObject * parent):
         face->addCanvasEdge(canvasEdges);
     }
 
-    CanvasItemLine *GMCanvas::edgeBetweenPoints(int vertIdPoint1, int vertIdPoint2)
+    CanvasItemLine *GMCanvas::edgeBetweenPoints(const int &vertIdPoint1,const int &vertIdPoint2)
     {
         QList<QGraphicsItem*> edges = currentLayer()->lines().childItems();
         for (int i = 0; i < edges.size(); ++i)
