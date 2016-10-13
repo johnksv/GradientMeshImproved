@@ -90,3 +90,43 @@ CanvasItemContainer &CanvasItemGroup::lines()
 {
     return lines_;
 }
+
+vector<CanvasItemFace *> &CanvasItemGroup::faces()
+{
+    return faces_;
+}
+
+void CanvasItemGroup::addToFacesVector(CanvasItemFace *face)
+{
+    faces_.push_back(face);
+}
+
+void CanvasItemGroup::removeFromFaces(CanvasItemFace *face)
+{
+    for (int i = 0; i < faces_.size(); ++i) {
+        if(faces_.at(i) == face)
+        {
+            std::swap(faces_[i], faces_.back());
+            faces_.at(i)->setFaceIdx(i);
+            faces_.pop_back();
+            break;
+        }
+    }
+}
+
+void CanvasItemGroup::clear()
+{
+
+    for (int i = 0; i < faces_.size(); ++i) {
+        delete faces_.at(i);
+    }
+    faces_.clear();
+
+
+    foreach (QGraphicsItem* item, lines_.childItems()) {
+        delete item;
+    }
+    foreach (QGraphicsItem* item, points_.childItems()) {
+        delete item;
+    }
+}

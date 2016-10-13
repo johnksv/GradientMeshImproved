@@ -108,6 +108,11 @@ bool MeshHandler::isBoundaryVertex(int idx)
     return guiMesh.is_boundary(vh);
 }
 
+bool MeshHandler::isValidVertex(int idx)
+{
+    return guiMesh.is_valid_handle(guiMesh.vertex_handle(idx));
+}
+
 bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
 {
     vertexHandle startHandle = guiMesh.vertex_handle(startIdx);
@@ -546,6 +551,16 @@ vector<vector<int>> MeshHandler::facesIdx()
 
 }
 
+void MeshHandler::deleteFace(const int &faceIdx, bool delete_isolated_vertices)
+{
+    guiMesh.delete_face(guiMesh.face_handle(faceIdx), delete_isolated_vertices);
+}
+
+bool MeshHandler::isBoundaryFace(const int &idx) const
+{
+    return guiMesh.is_boundary(guiMesh.face_handle(idx));
+}
+
 void MeshHandler::clearAll()
 {
     delete subdMesh;
@@ -728,7 +743,7 @@ void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
     }
 
     subdivide();
-    std::remove("test.off");
+    //std::remove("test.off");
 }
 
 MeshHandler *MeshHandler::oneStepSubdMesh()
@@ -802,5 +817,10 @@ bool MeshHandler::importGuiMesh(QString location, bool draw)
 void MeshHandler::garbageCollectOpenMesh()
 {
     guiMesh.garbage_collection();
+    for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
+    {
+        qDebug() << face_ite->idx() << "valence" <<guiMesh.valence(face_ite);
+
+    }
 }
 

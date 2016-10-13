@@ -63,8 +63,8 @@ GMCanvas::GMCanvas(QObject * parent):
                 delete multiRes_meshHandlers_.at(i);
                 delete multiRes_layers_.at(i);
             }
-            multiRes_meshHandlers_.erase(multiRes_meshHandlers_.begin(),multiRes_meshHandlers_.end());
-            multiRes_layers_.erase(multiRes_layers_.begin(), multiRes_layers_.end());
+            multiRes_meshHandlers_.clear();
+            multiRes_layers_.clear();
         }
 
         initGMCanvas();
@@ -76,26 +76,15 @@ GMCanvas::GMCanvas(QObject * parent):
 
     void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
     {
-         CanvasItemGroup* layer = currentLayer();
+        CanvasItemGroup* layer = currentLayer();
+        layer->clear();
 
-         foreach (CanvasItemFace* face, layer->faces_) {
-             delete face;
-         }
-         layer->faces_.clear();
+        if(clearMeshHandler) currentMeshHandler()->clearAll();
 
-         foreach (QGraphicsItem* item, layer->lines().childItems()) {
-             delete item;
-         }
-         foreach (QGraphicsItem* item, layer->points().childItems()) {
-             delete item;
-         }
-
-         if(clearMeshHandler) currentMeshHandler()->clearAll();
-
-         vertsToAddFace_.clear();
-         resetLineStartEnd();
-         static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
-         update();
+        vertsToAddFace_.clear();
+        resetLineStartEnd();
+        static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
+        update();
     }
 
     void GMCanvas::resetToBeFaceVector()
@@ -527,7 +516,7 @@ GMCanvas::GMCanvas(QObject * parent):
         vector<vector<int>> faces = meshhandler->facesIdx();
 		for (int i = 0; i < faces.size(); i++)
 		{
-			addEdgesToCanvasFace(faces.at(i));
+            addEdgesToCanvasFace(faces.at(i), i);
 		}
     }
 
@@ -605,7 +594,7 @@ GMCanvas::GMCanvas(QObject * parent):
 
                     //If the face to be should be added inside an already existing face
                     bool faceInsideFace = false;
-                    vector<CanvasItemFace*> faces = currentLayer()->faces_;
+                    vector<CanvasItemFace*> faces = currentLayer()->faces();
 
                     //push IDX to the vector that is passed to MeshHandler.
                     for (int i = 0; i < vertsToAddFace_.size(); i++)
@@ -714,7 +703,10 @@ GMCanvas::GMCanvas(QObject * parent):
                lineStartPoint_ = nullptr;
 
                //Add edges to canvas face after the last edge/ItemLine is added
-               addEdgesToCanvasFace(vertsToAddFaceIdx);
+               //TODO: MakeFace return faceHandle
+               currentMeshHandler()->garbageCollectOpenMesh();
+               addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
+               qDebug() << "number faces" << currentMeshHandler()->numberOfFaces();
            }
 
            //Should not delete ItemPoint from heap.
@@ -818,6 +810,7 @@ GMCanvas::GMCanvas(QObject * parent):
                     if (vertsToAddFace_.size() < 3)
                     {
                         showMessage("Face must consist of 3 vertecies minimum 3 vertecies");
+						return;
                     }
 
                     qDebug() << "Made face?" << currentMeshHandler()->addFaceClosed(vertsToAddFaceIdx);
@@ -838,7 +831,7 @@ GMCanvas::GMCanvas(QObject * parent):
            //Startpoint should be reset if a face was made.
            if(madeFace){
                lineStartPoint_ = nullptr;
-               addEdgesToCanvasFace(vertsToAddFaceIdx);
+               addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
            }
 
            //Should not delete ItemPoint from heap.
@@ -969,10 +962,10 @@ GMCanvas::GMCanvas(QObject * parent):
 
     }
 
-    void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx)
+    void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx, int faceIdx)
     {
-        CanvasItemFace * face = new CanvasItemFace(currentLayer());
-        currentLayer()->faces_.push_back(face);
+        CanvasItemFace * face = new CanvasItemFace(currentLayer(), faceIdx);
+        currentLayer()->addToFacesVector(face);
 
         vector<CanvasItemLine *> canvasEdges;
 
