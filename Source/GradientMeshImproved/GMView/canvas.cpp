@@ -703,7 +703,10 @@ GMCanvas::GMCanvas(QObject * parent):
                lineStartPoint_ = nullptr;
 
                //Add edges to canvas face after the last edge/ItemLine is added
+               //TODO: MakeFace return faceHandle
+               currentMeshHandler()->garbageCollectOpenMesh();
                addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
+               qDebug() << "number faces" << currentMeshHandler()->numberOfFaces();
            }
 
            //Should not delete ItemPoint from heap.

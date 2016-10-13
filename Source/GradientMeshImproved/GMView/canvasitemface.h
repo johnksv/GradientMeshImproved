@@ -20,6 +20,8 @@ public:
 
     int faceIdx() const;
 
+    void setFaceIdx(int faceIdx);
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 

@@ -53,6 +53,7 @@ public:
     void setVertexColor(int idx, QColor vertexColor);
     uint vertexValence(int idx);
     bool isBoundaryVertex(int idx);
+    bool isValidVertex(int idx);
 
     bool isBoundaryEdge(int startIdx, int endIdx);
     void setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints);
@@ -73,6 +74,7 @@ public:
     bool vertsOnSameFace(int vertIdx1, int vertIdx2);
     vector<vector<int> > facesIdx();
     void deleteFace(const int &faceIdx, bool delete_isolated_vertices = true);
+    bool isBoundaryFace(const int &idx) const;
 
     void clearAll();
 

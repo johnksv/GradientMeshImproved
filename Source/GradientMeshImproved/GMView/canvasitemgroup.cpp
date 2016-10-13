@@ -106,8 +106,9 @@ void CanvasItemGroup::removeFromFaces(CanvasItemFace *face)
     for (int i = 0; i < faces_.size(); ++i) {
         if(faces_.at(i) == face)
         {
-            faces_.erase(faces_.begin()+i);
-            qDebug() << "erasre";
+            std::swap(faces_[i], faces_.back());
+            faces_.at(i)->setFaceIdx(i);
+            faces_.pop_back();
             break;
         }
     }
