@@ -218,19 +218,6 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         mouseLineTool(mouseEvent);
         mouseEvent->accept();
         break;
-    case drawModeCanvas::circleTool:
-        clearSelection();
-
-        if(mouseEvent->modifiers() & Qt::ControlModifier)
-        {
-            QGraphicsScene::mousePressEvent(mouseEvent);
-            break;
-        }
-
-        mouseCircleTool(mouseEvent);
-        mouseEvent->accept();
-        break;
-
     case drawModeCanvas::collapseEdge:
         mouseCollapseEdge(mouseEvent);
         break;
@@ -772,75 +759,6 @@ void GMCanvas::addItemLine(CanvasItemPoint* itemPoint, CanvasItemPoint* collideP
     }
 }
 
-void GMCanvas::mouseCircleTool(QGraphicsSceneMouseEvent *event)
-{
-    bool madeFace = false;
-
-    CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
-    itemPoint->setPos(event->scenePos());
-
-    CanvasItemPoint* collidePoint = dynamic_cast<CanvasItemPoint*>(findCollideWithPoint(itemPoint));
-    bool collide = collidePoint != nullptr ? true : false;
-
-    if(event->button() == Qt::LeftButton)
-    {
-        vector<int> vertsToAddFaceIdx;
-        //If collide check if face should be made, else add point
-        if(collide)
-        {
-            if(vertsToAddFace_.size() == 0)
-            {
-                //Add point to list
-                vertsToAddFace_.push_back(collidePoint);
-            }
-            else if (collidePoint != vertsToAddFace_.front())
-            {
-                //Add point to list
-                vertsToAddFace_.push_back(collidePoint);
-            }
-            else
-            {
-                //Make Face
-                for (int i = 0; i < vertsToAddFace_.size(); i++)
-                {
-                    CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
-                    vertsToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
-                }
-
-                if (vertsToAddFace_.size() < 3)
-                {
-                    showMessage("Face must consist of 3 vertecies minimum 3 vertecies");
-                    return;
-                }
-
-                qDebug() << "Made face?" << currentMeshHandler()->addFaceClosed(vertsToAddFaceIdx);
-                madeFace = true;
-                vertsToAddFace_.clear();
-
-            }
-        }
-        else
-        {
-            addControlPoint(itemPoint);
-
-            //The point is new, and should be added to a new face.
-            vertsToAddFace_.push_back(itemPoint);
-        }
-
-       addItemLine(itemPoint, collidePoint, collide);
-       //Startpoint should be reset if a face was made.
-       if(madeFace){
-           lineStartPoint_ = nullptr;
-           addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
-       }
-
-       //Should not delete ItemPoint from heap.
-       return;
-    }
-    //No use for item. Delete it from heap.
-    delete itemPoint;
-
-}
 
 void GMCanvas::addControlPoint(CanvasItemPoint *item)
 {

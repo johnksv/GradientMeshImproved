@@ -63,8 +63,6 @@ private slots:
 
     void on_actionHelpAbout_Qt_triggered();
 
-    void on_actionMesh_Circle_tool_triggered();
-
     void on_actionMesh_Insert_on_Edge_triggered();
 
     void on_actionMesh_Collapse_Edge_triggered();

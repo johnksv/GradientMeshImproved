@@ -81,7 +81,6 @@
     </property>
     <addaction name="actionMesh_move_and_select"/>
     <addaction name="actionMesh_Line_tool"/>
-    <addaction name="actionMesh_Circle_tool"/>
     <addaction name="actionMesh_Insert_on_Edge"/>
     <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
@@ -133,7 +132,6 @@
    <addaction name="separator"/>
    <addaction name="actionMesh_move_and_select"/>
    <addaction name="actionMesh_Line_tool"/>
-   <addaction name="actionMesh_Circle_tool"/>
    <addaction name="actionMesh_Insert_on_Edge"/>
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
@@ -619,14 +617,6 @@
   <action name="actionHelpAbout_Qt">
    <property name="text">
     <string>About Qt</string>
-   </property>
-  </action>
-  <action name="actionMesh_Circle_tool">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Circle tool</string>
    </property>
   </action>
   <action name="actionMesh_Collapse_Edge">
