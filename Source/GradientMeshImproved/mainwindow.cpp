@@ -51,8 +51,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::initWindowAction()
 {
+    ui->menuWindow->addAction(ui->renderWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
+    ui->menuWindow->addAction(ui->imageWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
 }
 

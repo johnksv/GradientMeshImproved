@@ -136,6 +136,77 @@
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
   </widget>
+  <widget class="QDockWidget" name="renderWidget">
+   <property name="windowTitle">
+    <string>Rendering</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="renderWidgetContents">
+    <widget class="QLabel" name="renderSpinBoxLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>79</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Steps to render:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="renderSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>10</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>7</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="renderRenderButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>70</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Render mesh</string>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+G</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="renderAutoRenderCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>101</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>Auto render      </string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
   <widget class="QDockWidget" name="toolsWidget">
    <property name="minimumSize">
     <size>
@@ -435,77 +506,6 @@
      </property>
      <property name="text">
       <string>Opacity</string>
-     </property>
-    </widget>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="renderWidget">
-   <property name="windowTitle">
-    <string>Rendering</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="renderWidgetContents">
-    <widget class="QLabel" name="renderSpinBoxLabel">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>0</y>
-       <width>79</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Steps to render:</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="renderSpinBox">
-     <property name="geometry">
-      <rect>
-       <x>100</x>
-       <y>0</y>
-       <width>61</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="maximum">
-      <number>7</number>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="renderRenderButton">
-     <property name="geometry">
-      <rect>
-       <x>50</x>
-       <y>60</y>
-       <width>75</width>
-       <height>23</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Render mesh</string>
-     </property>
-     <property name="shortcut">
-      <string>Ctrl+G</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="renderAutoRenderCheckBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>30</y>
-       <width>101</width>
-       <height>17</height>
-      </rect>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::RightToLeft</enum>
-     </property>
-     <property name="text">
-      <string>Auto render      </string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
      </property>
     </widget>
    </widget>
