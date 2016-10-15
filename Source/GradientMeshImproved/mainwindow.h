@@ -21,8 +21,6 @@ public:
 private slots:
     void on_actionRender_constraints_handlers_triggered();
 
-    void on_actionRender_Full_triggered();
-
     void on_actionRender_Vertices_and_Edges_triggered();
 
     void on_actionRender_multi_res_mesh_changed();
@@ -40,8 +38,6 @@ private slots:
     void handleRenderModeGroup(QAction * action);
 
     void on_actionClear_all_triggered();
-
-    void on_actionExecuteRender_triggered();
 
     void on_layerToogleView_clicked();
 
@@ -74,6 +70,12 @@ private slots:
     void on_imageOpacity_valueChanged(int value);
 
     void on_action_New_triggered();
+
+    void on_renderSpinBox_valueChanged(int value);
+
+    void on_renderRenderButton_clicked();
+
+    void on_renderAutoRenderCheckBox_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;

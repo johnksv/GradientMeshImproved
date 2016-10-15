@@ -264,21 +264,11 @@ drawModeCanvas GMCanvas::drawingMode() const
     return drawMode_;
 }
 
-renderModeCanvas GMCanvas::renderMode() const
-{
-    return renderingMode_;
-}
-
 bool GMCanvas::renderConstraintHandlers() const
 {
     return renderConstraintHandlers_;
 }
 
-
-void GMCanvas::setRenderingMode(renderModeCanvas mode)
-{
-    renderingMode_ = mode;
-}
 
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode)
 {

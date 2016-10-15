@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initWindowAction();
     ui->splitWidget->setVisible(false);
     ui->splitWidget->setParent(parent);
+    ui->splitWidget->setMinimumSize(400,400);
+
 
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setScene(scene_);
@@ -124,6 +126,7 @@ void MainWindow::on_actionRender_constraints_handlers_triggered()
 void MainWindow::on_actionRender_auto_toggled(bool checked)
 {
     scene_->setRenderAuto(checked);
+    ui->renderAutoRenderCheckBox->setChecked(checked);
 }
 
 
@@ -153,12 +156,6 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             ui->actionMesh_Collapse_Edge->setEnabled(true);
         }
     }
-    scene_->update();
-}
-
-void MainWindow::on_actionRender_Full_triggered()
-{
-    scene_-> setRenderingMode(GMView::renderModeCanvas::fullRender);
     scene_->update();
 }
 
@@ -201,11 +198,6 @@ void MainWindow::on_actionImport_triggered()
 void MainWindow::on_actionClear_all_triggered()
 {
     scene_->clearAllCurrLayer();
-}
-
-void MainWindow::on_actionExecuteRender_triggered()
-{
-    scene_->prepareRendering();
 }
 
 void MainWindow::on_layerToogleView_clicked()
@@ -366,4 +358,19 @@ void MainWindow::on_action_New_triggered()
    {
        layerModel_->appendRow(item);
    }
+}
+
+void MainWindow::on_renderSpinBox_valueChanged(int value)
+{
+    scene_->currentMeshHandler()->subdivisionSteps = value;
+}
+
+void MainWindow::on_renderRenderButton_clicked()
+{
+    scene_->prepareRendering();
+}
+
+void MainWindow::on_renderAutoRenderCheckBox_clicked(bool checked)
+{
+    ui->actionRender_auto->setChecked(checked);
 }

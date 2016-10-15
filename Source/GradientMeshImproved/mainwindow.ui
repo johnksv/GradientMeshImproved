@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>636</height>
+    <height>659</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -99,9 +99,9 @@
      <string>Rendering</string>
     </property>
     <addaction name="actionRender_constraints_handlers"/>
+    <addaction name="separator"/>
     <addaction name="actionRender_Vertices_and_Edges"/>
     <addaction name="actionRender_multi_res_mesh"/>
-    <addaction name="actionRender_Full"/>
     <addaction name="separator"/>
     <addaction name="actionRender_auto"/>
     <addaction name="actionRender_in_split_window"/>
@@ -134,8 +134,6 @@
    <addaction name="actionMesh_Line_tool"/>
    <addaction name="actionMesh_Insert_on_Edge"/>
    <addaction name="actionMesh_Collapse_Edge"/>
-   <addaction name="separator"/>
-   <addaction name="actionExecuteRender"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="toolsWidget">
@@ -441,6 +439,77 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QDockWidget" name="renderWidget">
+   <property name="windowTitle">
+    <string>Rendering</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="renderWidgetContents">
+    <widget class="QLabel" name="renderSpinBoxLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>0</y>
+       <width>79</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Steps to render:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="renderSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>0</y>
+       <width>61</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>7</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="renderRenderButton">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>60</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Render mesh</string>
+     </property>
+     <property name="shortcut">
+      <string>Ctrl+G</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="renderAutoRenderCheckBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>101</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string>Auto render      </string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </widget>
+  </widget>
   <action name="action_New">
    <property name="text">
     <string>New</string>
@@ -532,17 +601,6 @@
     <string>Constrains handlers</string>
    </property>
   </action>
-  <action name="actionRender_Full">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Full render (3 steps)</string>
-   </property>
-  </action>
   <action name="actionRender_multi_res_mesh">
    <property name="checkable">
     <bool>true</bool>
@@ -562,7 +620,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vertices and Edges</string>
+    <string>Regular</string>
    </property>
   </action>
   <action name="actionMesh_move_and_select">
@@ -582,14 +640,6 @@
    </property>
    <property name="shortcut">
     <string>Del</string>
-   </property>
-  </action>
-  <action name="actionExecuteRender">
-   <property name="text">
-    <string>executeRender</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionRender_in_split_window">
@@ -627,17 +677,6 @@
     <string>Collapse Edge</string>
    </property>
   </action>
-  <action name="actionRender_auto">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Auto render</string>
-   </property>
-  </action>
   <action name="actionMesh_Insert_on_Edge">
    <property name="checkable">
     <bool>true</bool>
@@ -647,6 +686,17 @@
    </property>
    <property name="toolTip">
     <string>Insert Vertex on Edge</string>
+   </property>
+  </action>
+  <action name="actionRender_auto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto render</string>
    </property>
   </action>
  </widget>
@@ -663,6 +713,23 @@
    <header>GMView/openglwidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>layer_listView</tabstop>
+  <tabstop>layerToogleView</tabstop>
+  <tabstop>layerNew</tabstop>
+  <tabstop>layerDelete</tabstop>
+  <tabstop>renderSpinBox</tabstop>
+  <tabstop>colorSec</tabstop>
+  <tabstop>colorRepresentation</tabstop>
+  <tabstop>colorTert</tabstop>
+  <tabstop>colorLockMode</tabstop>
+  <tabstop>imageImport</tabstop>
+  <tabstop>imageRemove</tabstop>
+  <tabstop>imageOpacity</tabstop>
+  <tabstop>graphicsView</tabstop>
+  <tabstop>renderRenderButton</tabstop>
+  <tabstop>renderAutoRenderCheckBox</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

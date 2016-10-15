@@ -13,9 +13,6 @@ namespace GMView {
 enum class drawModeCanvas{
     move, lineTool, collapseEdge, insertVert
 };
-enum class renderModeCanvas{
-    fullRender
-};
 
 class GMCanvas : public QGraphicsScene
 {
@@ -41,7 +38,6 @@ public:
     QGraphicsPixmapItem *imageItem();
 
     void setDrawingMode(drawModeCanvas);
-    void setRenderingMode(renderModeCanvas);
     void setActiveLayer(unsigned char index);
     void setDrawColorVertex(QColor pointColor);
     void setRenderConstraintHandlers(bool value);
@@ -49,7 +45,6 @@ public:
     void setRenderAuto(bool renderAutoUpdate);
 
     drawModeCanvas drawingMode() const;
-    renderModeCanvas renderMode() const;
     bool renderConstraintHandlers() const;
 
 
@@ -102,7 +97,6 @@ private:
     unsigned char currLayerIndex_ = 0;
 
     drawModeCanvas drawMode_ = drawModeCanvas::lineTool;
-    renderModeCanvas renderingMode_ =  renderModeCanvas::fullRender;
     bool renderConstraintHandlers_;
     bool renderAutoUpdate_ = true;
 

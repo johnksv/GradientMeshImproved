@@ -16,6 +16,8 @@ using namespace GUILogic;
 typedef subdivMesh::Mesh SbdvMesh;
 
 
+int MeshHandler::subdivisionSteps = 3;
+
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
 {
@@ -602,9 +604,9 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
 
 // Subdivide mesh for rendering
 // using method of Lieng et al.
-void MeshHandler::subdivide(signed int steps)
+void MeshHandler::subdivide()
 {
-    if(steps==0) return; // not in function domain
+    if(subdivisionSteps==0) return; // not in function domain
 
     SbdvMesh *currentMsh = new SbdvMesh();
     SbdvMesh *nextMesh;
@@ -614,7 +616,7 @@ void MeshHandler::subdivide(signed int steps)
     delete subdMesh; // delete old mesh from heap
 
     // subdivide steps-1 of CC-subdivision
-    for(int i = 0; i < steps-1; i++) {
+    for(int i = 0; i < subdivisionSteps-1; i++) {
         nextMesh = new SbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 

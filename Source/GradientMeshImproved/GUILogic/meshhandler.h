@@ -87,6 +87,7 @@ public:
 
     MeshHandler *oneStepSubdMesh();
 
+    static int subdivisionSteps;
 
 private:
     // mesh for rendering gradient mesh using subdivision:
@@ -100,7 +101,7 @@ private:
      */
     bool faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace);
 
-    void subdivide(signed int steps = 3);
+    void subdivide();
 };
 
 } // end of namespace GUILogic
