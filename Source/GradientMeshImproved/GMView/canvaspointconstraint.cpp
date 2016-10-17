@@ -32,7 +32,7 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
             painter->setPen(Qt::NoPen);
 
             const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
-            radius_ = 3 / detailLevel;
+            radius_ = 3.5 / detailLevel;
             if(radius_ < 0.3) radius_ = 0.3;
 
             QColor color = controlPoint()->color();
