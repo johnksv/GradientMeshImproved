@@ -71,9 +71,12 @@ QPainterPath CanvasItemFace::shape() const
 
 void CanvasItemFace::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-     painter->setBrush(QColor(225,225,225,100));
-     painter->setPen(Qt::NoPen);
-     painter->drawPath(shape());
+    if(GMView::drawCanvasItemFaces)
+    {
+        painter->setBrush(QColor(225,225,225,100));
+        painter->setPen(Qt::NoPen);
+        painter->drawPath(shape());
+    }
 }
 
 

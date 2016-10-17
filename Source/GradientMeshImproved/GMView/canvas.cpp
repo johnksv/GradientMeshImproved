@@ -13,6 +13,7 @@
 
 
 using namespace GMView;
+bool GMView::drawCanvasItemFaces = false;
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
@@ -257,6 +258,11 @@ void GMCanvas::setRenderVertsEdges(bool renderVertsEdges)
 void GMCanvas::setRenderAuto(bool renderAutoUpdate)
 {
     renderAutoUpdate_ = renderAutoUpdate;
+}
+
+void GMCanvas::setRenderFace(bool renderFace)
+{
+    GMView::drawCanvasItemFaces = renderFace;
 }
 
 drawModeCanvas GMCanvas::drawingMode() const

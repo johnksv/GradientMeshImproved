@@ -77,6 +77,8 @@ private slots:
 
     void on_renderAutoRenderCheckBox_clicked(bool checked);
 
+    void on_actionRender_GUI_faces_triggered(bool checked);
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

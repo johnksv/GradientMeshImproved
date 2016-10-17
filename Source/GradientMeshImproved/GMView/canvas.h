@@ -14,6 +14,8 @@ enum class drawModeCanvas{
     move, lineTool, collapseEdge, insertVert
 };
 
+extern bool drawCanvasItemFaces;
+
 class GMCanvas : public QGraphicsScene
 {
     Q_OBJECT
@@ -43,6 +45,7 @@ public:
     void setRenderConstraintHandlers(bool value);
     void setRenderVertsEdges(bool renderVertsEdges);
     void setRenderAuto(bool renderAutoUpdate);
+    void setRenderFace(bool renderFace);
 
     drawModeCanvas drawingMode() const;
     bool renderConstraintHandlers() const;

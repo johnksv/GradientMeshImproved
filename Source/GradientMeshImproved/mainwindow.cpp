@@ -376,3 +376,9 @@ void MainWindow::on_renderAutoRenderCheckBox_clicked(bool checked)
 {
     ui->actionRender_auto->setChecked(checked);
 }
+
+void MainWindow::on_actionRender_GUI_faces_triggered(bool checked)
+{
+    scene_->setRenderFace(checked);
+    scene_->update();
+}
