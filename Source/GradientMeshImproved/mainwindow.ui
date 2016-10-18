@@ -104,7 +104,6 @@
     <addaction name="actionRender_auto"/>
     <addaction name="actionRender_in_split_window"/>
     <addaction name="separator"/>
-    <addaction name="actionRender_Vertices_and_Edges"/>
     <addaction name="actionRender_multi_res_mesh"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
@@ -613,21 +612,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Multi res mesh</string>
+    <string>Multi-resolution</string>
    </property>
    <property name="toolTip">
     <string>Multi res mesh</string>
-   </property>
-  </action>
-  <action name="actionRender_Vertices_and_Edges">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Regular</string>
    </property>
   </action>
   <action name="actionMesh_move_and_select">

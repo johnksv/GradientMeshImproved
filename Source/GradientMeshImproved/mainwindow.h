@@ -21,8 +21,6 @@ public:
 private slots:
     void on_actionRender_constraints_handlers_triggered();
 
-    void on_actionRender_Vertices_and_Edges_triggered();
-
     void on_actionRender_multi_res_mesh_changed();
 
     void on_actionRender_auto_toggled(bool checked);

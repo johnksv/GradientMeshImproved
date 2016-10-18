@@ -60,14 +60,6 @@ void MainWindow::initWindowAction()
 
 void MainWindow::initActionGroups()
 {
-
-    renderModeGroup_ = new QActionGroup(this);
-    renderModeGroup_->addAction(ui->actionRender_Vertices_and_Edges);
-    renderModeGroup_->addAction(ui->actionRender_multi_res_mesh);
-    connect(renderModeGroup_, &QActionGroup::triggered, [=](QAction *selected) {selected->setChecked(true);});
-
-
-
     drawModeGroup_ = new QActionGroup(this);
     drawModeGroup_->addAction(ui->actionMesh_Line_tool);
     drawModeGroup_->addAction(ui->actionMesh_move_and_select);
@@ -131,13 +123,6 @@ void MainWindow::on_actionRender_auto_toggled(bool checked)
     ui->renderAutoRenderCheckBox->setChecked(checked);
 }
 
-
-void MainWindow::on_actionRender_Vertices_and_Edges_triggered()
-{
-    scene_->setRenderVertsEdges(ui->actionRender_Vertices_and_Edges->isChecked());
-    scene_->update();
-}
-
 void MainWindow::on_actionRender_multi_res_mesh_changed()
 {
     if(ui->actionRender_multi_res_mesh->isChecked())
@@ -156,6 +141,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             scene_->resetMultiResMesh();
             ui->actionMesh_Line_tool->setEnabled(true);
             ui->actionMesh_Collapse_Edge->setEnabled(true);
+            scene_->setRenderVertsEdges(true);
         }
     }
     scene_->update();

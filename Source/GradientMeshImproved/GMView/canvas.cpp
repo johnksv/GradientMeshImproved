@@ -386,6 +386,8 @@ void GMCanvas::prepareRendering()
 
 void GMView::GMCanvas::multiResFirstStepMesh()
 {
+    //Make sure the mesh is up to date (unnecessary if "auto render" is turned on)
+    prepareRendering();
     for(int i = 0; i < meshHandlers_.size(); i++)
     {
         //Execute render.

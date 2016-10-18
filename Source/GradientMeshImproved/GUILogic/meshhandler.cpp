@@ -615,19 +615,19 @@ void MeshHandler::subdivide()
     subdMesh->LinearTernarySubdiv(currentMsh);
     delete subdMesh; // delete old mesh from heap
 
+    oneStepSubdMesh_ = currentMsh;
+
     // subdivide steps-1 of CC-subdivision
     for(int i = 0; i < subdivisionSteps-1; i++) {
         nextMesh = new SbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 
-        // delete old mesh from heap and swap
-        if(i==0) oneStepSubdMesh_ = nextMesh;
-
-        
 		if(oneStepSubdMesh_ != currentMsh)
 		{
             delete currentMsh;
         }
+
+        // delete old mesh from heap and swap
         currentMsh = nextMesh;
     }
 
