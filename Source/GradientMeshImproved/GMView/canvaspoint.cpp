@@ -258,7 +258,7 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     else if(selectedAction == deletePointAction)
     {
 
-        canvas->currentMeshHandler()->removeVertex(vertexHandleIdx_);
+        canvas->currentMeshHandler()->deleteVertex(vertexHandleIdx_);
         canvas->currentMeshHandler()->garbageCollectOpenMesh();
         canvas->clearAllCurrLayer(false);
         canvas->constructGuiFromMeshHandler();

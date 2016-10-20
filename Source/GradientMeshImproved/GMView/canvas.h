@@ -130,6 +130,8 @@ private:
 
     void initGMCanvas();
 
+    void resetLineToolData();
+    
 signals:
     void GUIMeshChanged();
 };

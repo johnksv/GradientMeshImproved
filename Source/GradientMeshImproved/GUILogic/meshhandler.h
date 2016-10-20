@@ -46,7 +46,7 @@ public:
      */
     vector<vector<QVector4D> > vertices();
     int addVertex(const QPointF& position, const QColor vertexColor = QColor(0,0,0));
-    void removeVertex(int idx);
+    void deleteVertex(int idx);
     QVector3D vertexPoint(int idx);
     void setVertexPoint(int idx, const QPointF& position);
     QVector3D vertexColor(int idx);
@@ -69,7 +69,8 @@ public:
 
     //TODO move face functions to openmesh.
     bool addFaceClosed(vector<int> &vertexHandlersIdx);
-    bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
+    bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false, bool sameStartAndEnd = false);
+    bool addFaceWIthSameStartAndEnd(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
     size_t numberOfFaces();
     bool vertsOnSameFace(int vertIdx1, int vertIdx2);
     vector<vector<int> > facesIdx();

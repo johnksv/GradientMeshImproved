@@ -66,7 +66,7 @@ int MeshHandler::addVertex(const QPointF &position, const QColor color)
     return handler.idx();
 }
 
-void MeshHandler::removeVertex(int idx)
+void MeshHandler::deleteVertex(int idx)
 {
     vertexHandle handle = guiMesh.vertex_handle(idx);
     guiMesh.delete_vertex(handle);
@@ -281,8 +281,10 @@ bool MeshHandler::addFaceClosed(vector<int> &vertexHandlersIdx)
     return true;
 }
 
-bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
+bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, bool sameStartAndEnd)
 {
+    if(sameStartAndEnd) return addFaceWIthSameStartAndEnd(vertexHandlersIdx, faceInsideFace);
+
     vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
     for(int i = 0; i < vertexHandlersIdx.size(); i++)
     {
@@ -507,6 +509,52 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace)
         qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
         vertexHandlersIdx.push_back(fv_ite->idx());
     }
+    return true;
+}
+
+bool MeshHandler::addFaceWIthSameStartAndEnd(vector<int> &vertexHandlersIdx, bool faceInsideFace)
+{
+	vector<vertexHandle> vHandlersToBeFace, orginalvHandlersFace;
+	for (int i = 0; i < vertexHandlersIdx.size(); i++)
+	{
+		int index = vertexHandlersIdx.at(i);
+		vHandlersToBeFace.push_back(guiMesh.vertex_handle(index));
+	}
+	//Used if rotation of added vertices are wrong
+	orginalvHandlersFace = vHandlersToBeFace;
+
+	//Variable to hold the face that is added by the vertices.
+	OpnMesh::FaceHandle newFace;
+
+	if (guiMesh.n_faces() == 0)
+	{
+		newFace = guiMesh.add_face(vHandlersToBeFace);
+		if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
+		{
+			newFace = guiMesh.add_face(vHandlersToBeFace);
+		}
+	}
+	else
+	{
+        if (!faceInsideFace)
+        {
+            newFace = guiMesh.add_face(vHandlersToBeFace);
+            if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
+            {
+                newFace = guiMesh.add_face(vHandlersToBeFace);
+            }
+        }
+	}
+
+
+	vertexHandlersIdx.clear();
+	qDebug() << "Vertices in the new face:";
+	for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(newFace); fv_ite != guiMesh.fv_end(newFace); fv_ite++)
+	{
+		qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
+		vertexHandlersIdx.push_back(fv_ite->idx());
+	}
+
     return true;
 }
 
