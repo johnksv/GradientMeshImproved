@@ -453,10 +453,14 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
     }
 
     int startIdx,endIdx;
+
+	//Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
     vector<QVector4D> edges = meshhandler->edges();
-    for(QVector4D edge : edges)
-    {
-        //Returns  startVert.idx(),endVert.idx(), e_it->idx(), 0
+	for (int i = 0; i < edges.size(); i++)
+	{
+		QVector4D edge = edges.at(i);
+		vector<QVector2D> constraints = meshhandler->constraints(i);
+
         startIdx = edge.x();
         endIdx = edge.y();
         CanvasItemPoint* startPoint = nullptr;
@@ -490,10 +494,10 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
 
             //TODO: Get constraints from import file.
             CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
-            startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+            startConstraint->setPos(constraints.at(0).toPointF());
 
             CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
-            endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+            endConstraint->setPos(constraints.at(1).toPointF());
 
         }
     }

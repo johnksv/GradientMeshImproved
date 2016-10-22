@@ -131,6 +131,11 @@ bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
     return true;
 }
 
+void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, subdivMesh::Point_3D constraints)
+{
+    setConstraints(halfedgeFromVertIdx, halfedgeToVertIdx, QVector2D(constraints.getX(), constraints.getX()));
+}
+
 void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints)
 {
     vertexHandle outgoingVert = guiMesh.vertex_handle(halfedgeFromVertIdx);
@@ -156,6 +161,18 @@ QVector2D MeshHandler::constraints(int halfedgeFromVertIdx, int halfedgeToVertId
             return guiMesh.data(voh_ite).constraint();
         }
     }
+}
+
+vector<QVector2D> MeshHandler::constraints(int edgeIdx)
+{
+    vector<QVector2D> result;
+	OpnMesh::EdgeHandle eHandle = guiMesh.edge_handle(edgeIdx);
+	OpnMesh::HalfedgeHandle firstHandle = guiMesh.halfedge_handle(eHandle, 0);
+	OpnMesh::HalfedgeHandle secondHandle = guiMesh.halfedge_handle(eHandle, 1);
+    result.push_back(guiMesh.data(firstHandle).constraint());
+    result.push_back(guiMesh.data(secondHandle).constraint());
+	
+    return result;
 }
 
 void MeshHandler::deleteDiscontinuedFace(vector<int> &vertexHandlersIdx)
@@ -246,15 +263,23 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
     OpnMesh::VertexHandle splitVert = guiMesh.vertex_handle(newVertIdx);
     OpnMesh::VertexHandle startVert = guiMesh.vertex_handle(edgeStartVertIdx);
     OpnMesh::VertexHandle endVert = guiMesh.vertex_handle(edgeEndVertIdx);
+    OpnMesh::HalfedgeHandle outHEdge;
+
+
     for (OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(startVert); voh_ite != guiMesh.voh_end(startVert); voh_ite++)
     {
         if(guiMesh.to_vertex_handle(voh_ite) == endVert)
         {
-            guiMesh.split(guiMesh.edge_handle(voh_ite), splitVert);
+            guiMesh.split_edge(guiMesh.edge_handle(voh_ite), splitVert);
+			outHEdge = voh_ite;
             break;
         }
     }
 
+	QVector2D outConstraints = guiMesh.data(outHEdge).constraint();
+	guiMesh.data(outHEdge).setConstraint(QVector2D(0.1f ,0.1f));
+
+	guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 2)).setConstraint(outConstraints);
     return newVertIdx;
 }
 
@@ -854,6 +879,14 @@ bool MeshHandler::importGuiMesh(QString location, bool draw)
 		}
 		guiMesh.add_face(vertexIdx);
 	}
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        QList<int> weights_ids = vertices.at(i).weight_ids;
+        QList<subdivMesh::Point_3D> constraint = vertices.at(i).weights_vec;
+        for (int j = 0; j < weights_ids.size(); ++j) {
+            setConstraints(i,j,constraint.at(j));
+        }
+    }
 
     if(!draw)
     {
