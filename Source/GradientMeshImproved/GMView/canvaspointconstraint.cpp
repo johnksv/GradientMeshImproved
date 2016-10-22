@@ -17,6 +17,7 @@ CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, Canv
     setParentItem(controlPoint);
     setZValue(2);
     setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges);
+    setAcceptHoverEvents(true);
 }
 
 QRectF CanvasPointConstraint::boundingRect() const
@@ -35,16 +36,21 @@ void CanvasPointConstraint::paint(QPainter *painter, const QStyleOptionGraphicsI
             radius_ = 3.5 / detailLevel;
             if(radius_ < 0.3) radius_ = 0.3;
 
-            QColor color = controlPoint()->color();
+            QColor color;
+            QPen pen;
+
+            if(option->state & QStyle::State_MouseOver){
+                color = Qt::red;
+                pen.setColor(color);
+            }else
+            {
+                color = controlPoint()->color();
+            }
             painter->setBrush(color);
             painter->drawEllipse(boundingRect());
 
-            QPen pen;
-            QVector<qreal> dashes;
             QLineF line(mapFromScene(controlPoint_->pos()), QPoint(0,0));
-            dashes << 0 << controlPoint()->radius() << line.length()-radius_ << 0;
 
-            pen.setDashPattern(dashes);
             pen.setWidthF(1/detailLevel);
             painter->setPen(pen);
             painter->drawLine(line);
