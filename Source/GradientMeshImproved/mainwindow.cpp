@@ -132,6 +132,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
         scene_->multiResFirstStepMesh();
         ui->actionMesh_Line_tool->setEnabled(false);
         ui->actionMesh_Collapse_Edge->setEnabled(false);
+        ui->actionMesh_Insert_on_Edge->setEnabled(false);
         ui->actionMesh_move_and_select->trigger();
     }
     else
@@ -143,6 +144,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             scene_->resetMultiResMesh();
             ui->actionMesh_Line_tool->setEnabled(true);
             ui->actionMesh_Collapse_Edge->setEnabled(true);
+            ui->actionMesh_Insert_on_Edge->setEnabled(true);
             scene_->setRenderVertsEdges(true);
         }
     }
@@ -352,7 +354,7 @@ void MainWindow::on_action_New_triggered()
 
 void MainWindow::on_renderSpinBox_valueChanged(int value)
 {
-    scene_->currentMeshHandler()->subdivisionSteps = value;
+    GUILogic::MeshHandler::setSubdivisionSteps(value);
 }
 
 void MainWindow::on_renderRenderButton_clicked()

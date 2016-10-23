@@ -90,9 +90,10 @@ public:
 
     MeshHandler *oneStepSubdMesh();
 
-    static int subdivisionSteps;
+    static void setSubdivisionSteps(int value);
 
 private:
+    static int subdivisionSteps_;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
     subdivMesh::Mesh* oneStepSubdMesh_ = nullptr;

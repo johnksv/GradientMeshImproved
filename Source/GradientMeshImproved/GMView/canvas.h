@@ -132,6 +132,8 @@ private:
 
     void resetLineToolData();
     
+    void checkFaceInsideFace(bool &faceInsideFace, CanvasItemFace* collideFace);
+    
 signals:
     void GUIMeshChanged();
 };

@@ -16,7 +16,7 @@ using namespace GUILogic;
 typedef subdivMesh::Mesh SbdvMesh;
 
 
-int MeshHandler::subdivisionSteps = 3;
+int MeshHandler::subdivisionSteps_ = 3;
 
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
@@ -569,11 +569,15 @@ bool MeshHandler::addFaceWIthSameStartAndEnd(vector<int> &vertexHandlersIdx, boo
                 newFace = guiMesh.add_face(vHandlersToBeFace);
             }
         }
+        else
+        {
+           //TODO: Implement
+        }
 	}
 
 
 	vertexHandlersIdx.clear();
-	qDebug() << "Vertices in the new face:";
+    qDebug() << "Vertices in the new face (From addFaceWIthSameStartAndEnd):";
 	for (OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(newFace); fv_ite != guiMesh.fv_end(newFace); fv_ite++)
 	{
 		qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
@@ -679,7 +683,7 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
 // using method of Lieng et al.
 void MeshHandler::subdivide()
 {
-    if(subdivisionSteps==0) return; // not in function domain
+    if(subdivisionSteps_==0) return; // not in function domain
 
     SbdvMesh *currentMsh = new SbdvMesh();
     SbdvMesh *nextMesh;
@@ -691,7 +695,7 @@ void MeshHandler::subdivide()
     oneStepSubdMesh_ = currentMsh;
 
     // subdivide steps-1 of CC-subdivision
-    for(int i = 0; i < subdivisionSteps-1; i++) {
+    for(int i = 0; i < subdivisionSteps_-1; i++) {
         nextMesh = new SbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 
@@ -840,6 +844,11 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 
 	return subdivedMesh;
 
+}
+
+void MeshHandler::setSubdivisionSteps(int value)
+{
+    subdivisionSteps_ = value;
 }
 
 bool MeshHandler::importGuiMesh(QString location, bool draw)

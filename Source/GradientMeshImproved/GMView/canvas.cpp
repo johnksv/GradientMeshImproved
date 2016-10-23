@@ -576,7 +576,17 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                 }
                 else if (currentMeshHandler()->numberOfFaces() != 0)
                 {
+                    if(vertsToAddFace_.size() == 2)
+                    {
+                        showMessage(tr("Face must consist of 3 vertices or more. Line 582"));
+                        return;
+                    }
                     sameStartAndEndPoint = true;
+
+                }else if(vertsToAddFace_.size() == 2)
+                {
+                    showMessage(tr("Face must consist of 3 vertices or more. Line 589"));
+                    return;
                 }
 
                 //If only one point is in list, it should not be added.
@@ -584,10 +594,9 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                 {
                     //If the face to be should be added inside an already existing face
                     bool faceInsideFace = false;
-                    vector<CanvasItemFace*> faces = currentLayer()->faces();
-
                     CanvasItemFace* collideFace = nullptr;
 
+                    vector<CanvasItemFace*> faces = currentLayer()->faces();
                     for (int i = 0; i < faces.size(); i++)
                     {
                         if(faces.at(i)->contains(vertsToAddFace_.at(1)->pos()))
@@ -598,6 +607,13 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                         }
                     }
 
+                    if(faceInsideFace && sameStartAndEndPoint)
+                    {
+                        showMessage(tr("Adding face inside face with same start and end is not supported yet..."), false);
+                        return;
+                    }
+
+
                     //push IDX to the vector that is passed to MeshHandler.
                     for (int i = 0; i < vertsToAddFace_.size(); i++)
                     {
@@ -606,13 +622,12 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
                         if(i <= 1 || i == vertsToAddFace_.size() - 1 ) continue;
 
-                        //Check if face is inside face.
-                        //No need to check last or first item,.
+                        //Check if verts are inside same face.
                         if (collideFace != nullptr)
                         {
                             if(!collideFace->contains(itemPoint->pos()))
                             {
-                                showMessage(tr("Vertices need to be added inside same face (Line 611)"),true);
+                                showMessage(tr("Vertices need to be added inside same face. Line 630)"),true);
                                 return;
                             }
                         }
@@ -622,7 +637,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
                             for (int j = 0; j < collidingItems.size(); ++j) {
                                 if(dynamic_cast<CanvasItemFace*>(collidingItems.at(j)))
                                 {
-                                    showMessage(tr("Inconsistent vertices. Some are added outside, some within face (Line 621)"),true);
+                                    showMessage(tr("Illegal. Some vertices are added outside, some within face. Line 640"),true);
                                     return;
                                 }
                             }
@@ -651,7 +666,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
                     bool sucsess;
                     try{
-                        sucsess = currentMeshHandler()->makeFace(vertsToAddFaceIdx, faceInsideFace);
+                        sucsess = currentMeshHandler()->makeFace(vertsToAddFaceIdx, faceInsideFace,sameStartAndEndPoint);
                     }
                     catch(int e)
                     {
@@ -666,9 +681,9 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 
                     if(sucsess)
                     {
-                        autoRenderOnMeshChanged();
                         madeFace = true;
                         vertsToAddFace_.clear();
+                        autoRenderOnMeshChanged();
                     }
                     else
                     {
@@ -805,7 +820,8 @@ QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
 
 void GMCanvas::autoRenderOnMeshChanged()
 {
-    if(renderAutoUpdate_)
+    //vertsToAddFace_ <= 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
+    if(renderAutoUpdate_ && vertsToAddFace_.size() <= 1)
     {
         prepareRendering();
         emit GUIMeshChanged();
