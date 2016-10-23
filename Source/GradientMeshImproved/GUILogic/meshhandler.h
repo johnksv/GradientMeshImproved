@@ -92,6 +92,8 @@ public:
 
     static void setSubdivisionSteps(int value);
 
+    bool isQuadMesh();
+
 private:
     static int subdivisionSteps_;
     // mesh for rendering gradient mesh using subdivision:

@@ -133,7 +133,7 @@ bool MeshHandler::isBoundaryEdge(int startIdx, int endIdx)
 
 void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, subdivMesh::Point_3D constraints)
 {
-    setConstraints(halfedgeFromVertIdx, halfedgeToVertIdx, QVector2D(constraints.getX(), constraints.getX()));
+    setConstraints(halfedgeFromVertIdx, halfedgeToVertIdx, QVector2D(constraints.getX(), constraints.getY()));
 }
 
 void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx, QVector2D constraints)
@@ -823,6 +823,8 @@ void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
 
     subdivide();
     //std::remove("test.off");
+
+    isQuadMesh();
 }
 
 MeshHandler *MeshHandler::oneStepSubdMesh()
@@ -849,6 +851,18 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 void MeshHandler::setSubdivisionSteps(int value)
 {
     subdivisionSteps_ = value;
+}
+
+bool MeshHandler::isQuadMesh()
+{
+    for(OpnMesh::FaceIter face_ite = guiMesh.faces_begin(); face_ite != guiMesh.faces_end(); face_ite++)
+    {
+        if(guiMesh.valence(face_ite) != 4)
+        {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool MeshHandler::importGuiMesh(QString location, bool draw)
@@ -893,7 +907,7 @@ bool MeshHandler::importGuiMesh(QString location, bool draw)
         QList<int> weights_ids = vertices.at(i).weight_ids;
         QList<subdivMesh::Point_3D> constraint = vertices.at(i).weights_vec;
         for (int j = 0; j < weights_ids.size(); ++j) {
-            setConstraints(i,j,constraint.at(j));
+            setConstraints(i, weights_ids.at(j),constraint.at(j));
         }
     }
 
@@ -909,10 +923,5 @@ bool MeshHandler::importGuiMesh(QString location, bool draw)
 void MeshHandler::garbageCollectOpenMesh()
 {
     guiMesh.garbage_collection();
-    for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
-    {
-        qDebug() << face_ite->idx() << "valence" <<guiMesh.valence(face_ite);
-
-    }
 }
 

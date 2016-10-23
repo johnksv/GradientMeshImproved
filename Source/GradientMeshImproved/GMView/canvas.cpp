@@ -143,7 +143,6 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 {
     if(import)
     {
-        qDebug() << "scne import";
         if (currentMeshHandler()->numberOfFaces() > 0)
         {
             QString message("Import of file will clean current mesh. Proceed?");
@@ -492,7 +491,6 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
             CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
             layer->addToGroup(line);
 
-            //TODO: Get constraints from import file.
             CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
             startConstraint->setPos(constraints.at(0).toPointF());
 
@@ -723,7 +721,6 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            //TODO: MakeFace return faceHandle
            currentMeshHandler()->garbageCollectOpenMesh();
            addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
-           qDebug() << "number faces" << currentMeshHandler()->numberOfFaces();
        }
 
        //Should not delete ItemPoint from heap.
