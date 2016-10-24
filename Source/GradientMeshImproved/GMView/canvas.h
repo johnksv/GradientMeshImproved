@@ -132,8 +132,8 @@ private:
 
     void resetLineToolData();
     
-    void checkFaceInsideFace(bool &faceInsideFace, CanvasItemFace* collideFace);
-    
+    bool addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint *collidePoint);
+
 signals:
     void GUIMeshChanged();
 };

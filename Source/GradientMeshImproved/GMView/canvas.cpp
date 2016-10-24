@@ -535,7 +535,6 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
     CanvasItemPoint* collidePoint = dynamic_cast<CanvasItemPoint*>(findCollideWithPoint(itemPoint));
 
     bool collide = collidePoint != nullptr ? true : false;
-    bool sameStartAndEndPoint = false;
 
     if(event->button() == Qt::LeftButton)
     {
@@ -551,149 +550,8 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
             }
             else
             {
-                if(collidePoint != vertsToAddFace_.at(0))
-                {
-                    if(currentMeshHandler()->numberOfFaces() != 0)
-                    {
-                        vertsToAddFace_.push_back(collidePoint);
-                    }
-                    else
-                    {
-                        showMessage("First face must be closed. Choose the first vertex to close and make face.");
-                        return;
-                    }
-
-                    //Check if last point is connected to face, dosn't apply to first face
-                    if(currentMeshHandler()->vertexValence(vertsToAddFace_.back()->vertexHandleIdx()) == 0
-                            && currentMeshHandler()->numberOfFaces() > 0 )
-                    {
-                        //Delete the last point, that should not be a part of face.
-                        showMessage("Last vertex must be connected to a face", true);
-                        return;
-                    }
-                }
-                else if (currentMeshHandler()->numberOfFaces() != 0)
-                {
-                    if(vertsToAddFace_.size() == 2)
-                    {
-                        showMessage(tr("Face must consist of 3 vertices or more. Line 582"));
-                        return;
-                    }
-                    sameStartAndEndPoint = true;
-
-                }else if(vertsToAddFace_.size() == 2)
-                {
-                    showMessage(tr("Face must consist of 3 vertices or more. Line 589"));
-                    return;
-                }
-
-                //If only one point is in list, it should not be added.
-                if(vertsToAddFace_.size() >= 2)
-                {
-                    //If the face to be should be added inside an already existing face
-                    bool faceInsideFace = false;
-                    CanvasItemFace* collideFace = nullptr;
-
-                    vector<CanvasItemFace*> faces = currentLayer()->faces();
-                    for (int i = 0; i < faces.size(); i++)
-                    {
-                        if(faces.at(i)->contains(vertsToAddFace_.at(1)->pos()))
-                        {
-                            faceInsideFace = true;
-                            collideFace = faces.at(i);
-                            break;
-                        }
-                    }
-
-                    if(faceInsideFace && sameStartAndEndPoint)
-                    {
-                        showMessage(tr("Adding face inside face with same start and end is not supported yet..."), false);
-                        return;
-                    }
-
-
-                    //push IDX to the vector that is passed to MeshHandler.
-                    for (int i = 0; i < vertsToAddFace_.size(); i++)
-                    {
-                        CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
-                        vertsToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
-
-                        if(i <= 1 || i == vertsToAddFace_.size() - 1 ) continue;
-
-                        //Check if verts are inside same face.
-                        if (collideFace != nullptr)
-                        {
-                            if(!collideFace->contains(itemPoint->pos()))
-                            {
-                                showMessage(tr("Vertices need to be added inside same face. Line 630)"),true);
-                                return;
-                            }
-                        }
-                        else
-                        {
-                            QList<QGraphicsItem *> collidingItems = itemPoint->collidingItems();
-                            for (int j = 0; j < collidingItems.size(); ++j) {
-                                if(dynamic_cast<CanvasItemFace*>(collidingItems.at(j)))
-                                {
-                                    showMessage(tr("Illegal. Some vertices are added outside, some within face. Line 640"),true);
-                                    return;
-                                }
-                            }
-                        }
-                    }
-
-                    //Special case if size == 2
-                    if (vertsToAddFace_.size() == 2) faceInsideFace = true;
-
-                    //Check if mesh start and end within same face, to avoid one looping condition. Optimaly it should also check all the other points to..
-                    if(faceInsideFace)
-                    {
-                        int idxFront = vertsToAddFace_.front()->vertexHandleIdx();
-                        int idxBack = vertsToAddFace_.back()->vertexHandleIdx();
-
-                        //This will result in loop (that is catched later), if the the two verts are added over existing faces
-                        bool boundaryVerts= currentMeshHandler()->isBoundaryVertex(idxFront) && currentMeshHandler()->isBoundaryVertex(idxBack);
-
-                        bool sameFace = currentMeshHandler()->vertsOnSameFace(idxFront, idxBack);
-                        if(!sameFace && !boundaryVerts)
-                        {
-                            showMessage("Start and end vertex must be on same face", true);
-                            return;
-                        }
-                    }
-
-                    bool sucsess;
-                    try{
-                        sucsess = currentMeshHandler()->makeFace(vertsToAddFaceIdx, faceInsideFace,sameStartAndEndPoint);
-                    }
-                    catch(int e)
-                    {
-                        if (e==-1)
-                        {
-                            showMessage("Second last point must be inside same face as first. Adjust, and select end vertex again", true);
-                            return;
-                        }
-                    }
-
-                    qDebug() << "Made face?" << sucsess;
-
-                    if(sucsess)
-                    {
-                        madeFace = true;
-                        vertsToAddFace_.clear();
-                        autoRenderOnMeshChanged();
-                    }
-                    else
-                    {
-                        resetLineToolData();
-                        return;
-                    }
-                }
-                else
-                {
-                    resetLineToolData();
-                    return;
-                }
+                madeFace = addFaceToOpnMesh(vertsToAddFaceIdx, collidePoint);
+                if(!madeFace) return;
             }
         }
         else
@@ -873,6 +731,7 @@ void GMCanvas::mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent)
         {
             clearAllCurrLayer(false);
             constructGuiFromMeshHandler();
+            autoRenderOnMeshChanged();
         }
         else
         {
@@ -890,11 +749,23 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         if(edge !=nullptr) break;
     }
 
-    if(edge != nullptr)
+    //TODO, if the edge is newly added
+    if(edge != nullptr && currentMeshHandler()->numberOfFaces() > 0)
     {
         int startIdx = edge->startPoint()->vertexHandleIdx();
         int endIdx = edge->endPoint()->vertexHandleIdx();
-        currentMeshHandler()->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
+        int newIdx = currentMeshHandler()->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
+
+        if(vertsToAddFace_.size() != 0)
+        {
+            CanvasItemPoint* point = new CanvasItemPoint();
+            point->setPos(event->scenePos());
+            point->setVertexHandleIdx(newIdx);
+            vertsToAddFace_.push_back(point);
+            currentLayer()->addToGroup(point);
+            vector<int> vertexIdx;
+            addFaceToOpnMesh(vertexIdx, nullptr);
+        }
 
         //TODO: Reimplement. that is: in GUI: make new edges, update face
         //For now it's easiest to construct the mesh from the meshhandler
@@ -950,4 +821,152 @@ void GMCanvas::resetLineToolData()
 {
     vertsToAddFace_.clear();
     resetLineStartEnd();
+}
+
+bool GMCanvas::addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint *collidePoint)
+{
+    bool sameStartAndEndPoint = false;
+    bool faceInsideFace = false;
+
+    if(collidePoint != vertsToAddFace_.at(0))
+    {
+        if(currentMeshHandler()->numberOfFaces() != 0)
+        {
+            if(collidePoint != nullptr) vertsToAddFace_.push_back(collidePoint);
+        }
+        else
+        {
+            showMessage("First face must be closed. Choose the first vertex to close and make face.");
+            return false;
+        }
+
+        //Check if last point is connected to face, dosn't apply to first face
+        if(currentMeshHandler()->vertexValence(vertsToAddFace_.back()->vertexHandleIdx()) == 0
+                && currentMeshHandler()->numberOfFaces() > 0 )
+        {
+            //Delete the last point, that should not be a part of face.
+            showMessage("Last vertex must be connected to a face", true);
+            return false;
+        }
+    }
+    else if (currentMeshHandler()->numberOfFaces() != 0)
+    {
+        if(vertsToAddFace_.size() == 2)
+        {
+            showMessage(tr("Face must consist of 3 vertices or more. Line 582"));
+            return false;
+        }
+        sameStartAndEndPoint = true;
+
+    }else if(vertsToAddFace_.size() == 2)
+    {
+        showMessage(tr("Face must consist of 3 vertices or more. Line 589"));
+        return false;
+    }
+
+
+    //If only one point is in list, it should not be added.
+    if(vertsToAddFace_.size() >= 2)
+    {
+        //If the face to be should be added inside an already existing face
+        CanvasItemFace* collideFace = nullptr;
+
+        vector<CanvasItemFace*> faces = currentLayer()->faces();
+        for (int i = 0; i < faces.size(); i++)
+        {
+            if(faces.at(i)->contains(vertsToAddFace_.at(1)->pos()))
+            {
+                faceInsideFace = true;
+                collideFace = faces.at(i);
+                break;
+            }
+        }
+
+        if(faceInsideFace && sameStartAndEndPoint)
+        {
+            showMessage(tr("Adding face inside face with same start and end is not supported yet..."), false);
+            return false;
+        }
+
+
+        //push IDX to the vector that is passed to MeshHandler.
+        for (int i = 0; i < vertsToAddFace_.size(); i++)
+        {
+            CanvasItemPoint *itemPoint = vertsToAddFace_.at(i);
+            vertsToAddFaceIdx.push_back(itemPoint->vertexHandleIdx());
+
+            if(i <= 1 || i == vertsToAddFace_.size() - 1 ) continue;
+
+            //Check if verts are inside same face.
+            if (collideFace != nullptr)
+            {
+                if(!collideFace->contains(itemPoint->pos()))
+                {
+                    showMessage(tr("Vertices need to be added inside same face. Line 630)"),true);
+                    return false;
+                }
+            }
+            else
+            {
+                QList<QGraphicsItem *> collidingItems = itemPoint->collidingItems();
+                for (int j = 0; j < collidingItems.size(); ++j) {
+                    if(dynamic_cast<CanvasItemFace*>(collidingItems.at(j)))
+                    {
+                        showMessage(tr("Illegal. Some vertices are added outside, some within face. Line 640"),true);
+                        return false;
+                    }
+                }
+            }
+        }
+
+        //Special case if size == 2
+        if (vertsToAddFace_.size() == 2) faceInsideFace = true;
+
+        //Check if mesh start and end within same face, to avoid one looping condition. Optimaly it should also check all the other points to..
+        if(faceInsideFace)
+        {
+            int idxFront = vertsToAddFace_.front()->vertexHandleIdx();
+            int idxBack = vertsToAddFace_.back()->vertexHandleIdx();
+
+            //This will result in loop (that is catched later), if the the two verts are added over existing faces
+            bool boundaryVerts= currentMeshHandler()->isBoundaryVertex(idxFront) && currentMeshHandler()->isBoundaryVertex(idxBack);
+
+            bool sameFace = currentMeshHandler()->vertsOnSameFace(idxFront, idxBack);
+            if(!sameFace && !boundaryVerts)
+            {
+                showMessage("Start and end vertex must be on same face", true);
+                return false;
+            }
+        }
+
+        bool sucsess;
+        try{
+            sucsess = currentMeshHandler()->makeFace(vertsToAddFaceIdx, faceInsideFace,sameStartAndEndPoint);
+        }
+        catch(int e)
+        {
+            if (e==-1)
+            {
+                showMessage("Second last point must be inside same face as first. Adjust, and select end vertex again", true);
+                return false;
+            }
+        }
+
+        qDebug() << "Made face?" << sucsess;
+
+        if(!sucsess)
+        {
+            resetLineToolData();
+            return false;
+        }
+    }
+    else
+    {
+        resetLineToolData();
+        return false;
+    }
+
+    vertsToAddFace_.clear();
+    autoRenderOnMeshChanged();
+    return true;
 }

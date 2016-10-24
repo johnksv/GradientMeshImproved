@@ -59,10 +59,6 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
 
         if(option->state & QStyle::State_MouseOver){
             painter->setOpacity(0.5);
-            //For debugging purposes TODO: remove
-            painter->drawText(QPointF(10,10),QString(QString::number(vertexHandleIdx())));
-            QString stringPos = QString::number(pos().x()).append(", ").append(QString::number(pos().y()));
-            painter->drawText(QPointF(10,20),stringPos);
         }
 
         painter->drawEllipse(boundingRect());

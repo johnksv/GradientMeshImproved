@@ -357,7 +357,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, 
                     break;
                 }
                 i++;
-                if(i > 10000)
+                if(i > guiMesh.n_halfedges())
                 {
                     //TODO: Fix. Not good practice.
                     throw -1;
@@ -788,9 +788,7 @@ void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
 	file.open("test.off", fstream::out);
 	file << tempString.c_str();
 	file.close();
-    qDebug() << "Mesh saved: test.off";
-
-    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
+    qDebug() << "Mesh saved: test.off" << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
 
     if(saveFileOFF) //Save mesh to OFF before subdividing

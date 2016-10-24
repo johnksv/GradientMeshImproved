@@ -151,7 +151,8 @@ void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == deletePointAction)
     {
-//        bool boundary = meshhandler->isBoundaryFace(faceIdx_);
+//	TODO: Reimplement to only update affected items       
+//		bool boundary = meshhandler->isBoundaryFace(faceIdx_);
 
 //        meshhandler->deleteFace(faceIdx_, false);
 
