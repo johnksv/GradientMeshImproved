@@ -16,13 +16,13 @@ class GMOpenGLWidget : public QOpenGLWidget, public QOpenGLFunctions_1_0
 public:
     GMOpenGLWidget(QWidget *parent = nullptr);
     GMOpenGLWidget(GMCanvas *scene, QWidget *parent = nullptr);
-    void initializeGL() override;
-    void paintGL() override;
-    void resizeGL(int, int) override;
     void setScene(GMCanvas* scene);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    void initializeGL() override;
+    void paintGL() override;
+    void resizeGL(int, int) override;
 
 private:
     GMCanvas *scene_;

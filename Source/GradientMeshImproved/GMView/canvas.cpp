@@ -71,8 +71,8 @@ void GMCanvas::clear()
     initGMCanvas();
     currLayerIndex_ = 0;
 
-    static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
     update();
+    static_cast<GMOpenGLWidget*>(opengl_->widget())->update();
 }
 
 void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
@@ -84,8 +84,8 @@ void GMCanvas::clearAllCurrLayer(bool clearMeshHandler)
 
     vertsToAddFace_.clear();
     resetLineStartEnd();
-    static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
     update();
+    static_cast<GMOpenGLWidget*>(opengl_->widget())->update();
 }
 
 void GMCanvas::resetToBeFaceVector()
@@ -379,8 +379,8 @@ void GMCanvas::prepareRendering()
     for (int i = 0; i < tempMeshHandler.size(); ++i) {
         tempMeshHandler.at(i)->prepareGuiMeshForSubd();
     }
-    static_cast<GMOpenGLWidget*>(opengl_->widget())->paintGL();
     update();
+    static_cast<GMOpenGLWidget*>(opengl_->widget())->update();
 }
 
 void GMView::GMCanvas::multiResFirstStepMesh()

@@ -70,7 +70,6 @@ public:
     int insertVertexOnEdge(int edgeStartVertIdx, int edgeEndVertIdx, const QPointF& position, const QColor &color = QColor(0,0,0));
 
     //TODO move face functions to openmesh.
-    bool addFaceClosed(vector<int> &vertexHandlersIdx);
     bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false, bool sameStartAndEnd = false);
     bool addFaceWIthSameStartAndEnd(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
     size_t numberOfFaces();

@@ -106,6 +106,7 @@ const vector<QPointF> &CanvasItemLine::subdivededCurve() const
 
 void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
+    return;
     GMCanvas *canvas = static_cast<GMCanvas*> (scene());
     int startIdx = startPoint()->vertexHandleIdx();
     int endIdx = endPoint()->vertexHandleIdx();

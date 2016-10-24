@@ -283,29 +283,6 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
     return newVertIdx;
 }
 
-bool MeshHandler::addFaceClosed(vector<int> &vertexHandlersIdx)
-{
-    //assumes the user has pressed legal verts.
-    vector<vertexHandle> toBeFace;
-    bool shouldLoop = false;
-    do
-    {
-        vector<vertexHandle> resetFace;
-        for(int i = 0; i < vertexHandlersIdx.size(); i++)
-        {
-            int idx = vertexHandlersIdx.at(i);
-            toBeFace.push_back(guiMesh.vertex_handle(idx));
-            resetFace.push_back(guiMesh.vertex_handle(idx));
-            qDebug() << "added" << idx;
-        }
-        OpnMesh::FaceHandle newFace = guiMesh.add_face(toBeFace);
-        shouldLoop = faceOrientation(resetFace,newFace,toBeFace);
-
-    }while(shouldLoop);
-
-    return true;
-}
-
 bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, bool sameStartAndEnd)
 {
     if(sameStartAndEnd) return addFaceWIthSameStartAndEnd(vertexHandlersIdx, faceInsideFace);
@@ -801,7 +778,6 @@ void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
     }
 	
 
-    qDebug() << QString::fromUtf8(tempString.c_str());
 
     // delete current mesh object and insert a new one
     delete subdMesh; // delete from heap
@@ -812,7 +788,8 @@ void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
 	file.open("test.off", fstream::out);
 	file << tempString.c_str();
 	file.close();
-	
+    qDebug() << "Mesh saved: test.off";
+
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
 
