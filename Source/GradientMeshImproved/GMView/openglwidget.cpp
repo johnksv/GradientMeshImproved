@@ -44,7 +44,7 @@ void GMOpenGLWidget::paintGL()
     {
         meshHandlers = *scene_->multiResMeshHandlers();
     }
-    QRectF boundingRect = scene_->itemsBoundingRect();
+    QRectF boundingRect = scene_->sceneRect();
 
     QPainter qPainter;
     /******* Start painting with OpenGL ***********/
