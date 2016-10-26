@@ -14,7 +14,7 @@ protected:
     void wheelEvent(QWheelEvent *event) override;
 
 private:
-    qreal zoomValue_ = 0;
+    qreal zoomValue_ = 250;
 };
 
 } // end of namespace GMView

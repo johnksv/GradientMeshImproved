@@ -14,7 +14,6 @@ CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
     //Zoom in on mouse
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
 }
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
@@ -24,21 +23,26 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
         QGraphicsView::wheelEvent(event);
         return;
     }
-
     event->accept();
+
     if (event->angleDelta().y() > 0)
     {
-        if(zoomValue_ <= 300) zoomValue_ += 5;
+        if(zoomValue_ <= 500) zoomValue_ += 5;
     }
     else
     {
-        if(zoomValue_  >= 5.1)zoomValue_ -= 5;
+        if(zoomValue_  >= 100)zoomValue_ -= 5;
     }
 
-    qreal scale = qExp(zoomValue_ / 150);
 
-    QMatrix matrix;
-    //Flip y-axis
-    matrix.scale(scale, scale);
-    setMatrix(matrix);
+    qreal scale = qPow(2, (zoomValue_ - 250) / qreal(50));
+    if( width()/scale > sceneRect().width())
+    {
+        fitInView(sceneRect(), Qt::KeepAspectRatio);
+    }else
+    {
+        QMatrix matrix;
+        matrix.scale(scale, scale);
+        setMatrix(matrix);
+    }
 }

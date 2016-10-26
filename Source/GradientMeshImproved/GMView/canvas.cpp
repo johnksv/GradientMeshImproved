@@ -18,13 +18,8 @@ bool GMView::drawCanvasItemFaces = false;
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
 {
+    setSceneRect(-5000,-5000,10000,10000);
     initGMCanvas();
-
-    //TODO: Change sceneRect(?)
-    setSceneRect(itemsBoundingRect());
-
-    //Faster?? TODO: Test if faster then BspTreeIndex (standard)
-    setItemIndexMethod(QGraphicsScene::NoIndex);
 }
 
 GMCanvas::~GMCanvas()

@@ -1,6 +1,7 @@
 #include "openglwidget.h"
 #include <QMouseEvent>
 #include <QDebug>
+#include <QGraphicsView>
 
 using namespace GMView;
 
@@ -44,7 +45,20 @@ void GMOpenGLWidget::paintGL()
     {
         meshHandlers = *scene_->multiResMeshHandlers();
     }
-    QRectF boundingRect = scene_->sceneRect();
+    QRectF boundingRect;
+
+    if(scene_->views().size() != 0)
+    {
+        QGraphicsView * view = scene_->views().first();
+        QRectF rect         = view->rect();
+        QPointF topLeft     = view->mapToScene(rect.x(), rect.y());
+        QPointF bottomRight = view->mapToScene( rect.width(), rect.height());
+        boundingRect        = QRectF( topLeft, bottomRight );
+    }
+    else
+    {
+        boundingRect = scene_->itemsBoundingRect();
+    }
 
     QPainter qPainter;
     /******* Start painting with OpenGL ***********/

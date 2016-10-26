@@ -187,8 +187,29 @@ QGraphicsItem *CanvasItemPoint::constraintPoint(QGraphicsItem *_edge)
 
 QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
-    if(change == ItemScenePositionHasChanged)
+    if(change == ItemPositionChange)
     {
+        if(scene() == nullptr) return QGraphicsItem::itemChange(change, value);
+
+        QPointF position = value.toPointF();
+        QRectF scenerect = scene()->sceneRect();
+
+        if(position.x() > scenerect.x()+scenerect.width() || position.x() < scenerect.x())
+        {
+            if(position.y() > scenerect.y() + scenerect.height() || position.y() < scenerect.y())
+            {
+                return QGraphicsItem::itemChange(change, pos());
+            }else
+            {
+                return QGraphicsItem::itemChange(change, QPointF(x(),position.y()));
+            }
+        }else if(position.y() > scenerect.y() + scenerect.height() || position.y() < scenerect.y())
+        {
+            return QGraphicsItem::itemChange(change, QPointF(position.x(),y()));
+        }
+    }
+    if(change == ItemScenePositionHasChanged)
+    {        
         //Update position directly in meshhandler
         GMCanvas* canvas = static_cast <GMCanvas*> (scene());
         if(discontinuous_)
