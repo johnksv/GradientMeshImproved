@@ -139,6 +139,11 @@ void CanvasItemFace::setFaceIdx(int faceIdx)
     faceIdx_ = faceIdx;
 }
 
+vector<CanvasItemLine *> &CanvasItemFace::edgesInFace()
+{
+    return edgesInFace_;
+}
+
 void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
         qDebug() << faceIdx_;

@@ -22,6 +22,8 @@ public:
 
     void setFaceIdx(int faceIdx);
 
+    vector<CanvasItemLine *> &edgesInFace();
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 

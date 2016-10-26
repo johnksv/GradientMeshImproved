@@ -13,6 +13,7 @@
 #include <QPen>
 #include "canvaspointdiscontinued.h"
 #include <QStyleOptionGraphicsItem>
+#include <QString>
 
 using namespace GMView;
 
@@ -34,6 +35,10 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
 {
     if(!discontinuous_)
     {
+        QString string("x: ");
+        string.append(QString::number(x())).append("y: ")
+                .append(QString::number(y()));
+        painter->drawText(10,10, string);
         painter->setPen(Qt::NoPen);
 
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());

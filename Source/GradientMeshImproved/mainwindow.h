@@ -77,6 +77,8 @@ private slots:
 
     void on_actionRender_GUI_faces_triggered(bool checked);
 
+    void on_actionMesh_Knot_Insertion_triggered();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

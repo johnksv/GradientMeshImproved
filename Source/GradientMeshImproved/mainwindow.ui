@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
-    <height>400</height>
+    <width>900</width>
+    <height>650</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -84,6 +84,7 @@
     <addaction name="actionMesh_Insert_on_Edge"/>
     <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
+    <addaction name="actionMesh_Knot_Insertion"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -135,6 +136,7 @@
    <addaction name="actionMesh_Insert_on_Edge"/>
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
+   <addaction name="actionMesh_Knot_Insertion"/>
   </widget>
   <widget class="QDockWidget" name="renderWidget">
    <property name="sizePolicy">
@@ -773,6 +775,14 @@
    </property>
    <property name="text">
     <string>Face overlay</string>
+   </property>
+  </action>
+  <action name="actionMesh_Knot_Insertion">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&quot;Mesh tool&quot;</string>
    </property>
   </action>
  </widget>

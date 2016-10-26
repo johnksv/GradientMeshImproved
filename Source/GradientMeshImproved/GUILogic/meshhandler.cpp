@@ -569,7 +569,7 @@ size_t MeshHandler::numberOfFaces()
     return guiMesh.n_faces();
 }
 
-bool MeshHandler::vertsOnSameFace(int vertIdx1, int vertIdx2)
+bool MeshHandler::isVertsOnSameFace(int vertIdx1, int vertIdx2)
 {
     vertexHandle vert1 = guiMesh.vertex_handle((vertIdx1));
     vertexHandle vert2 = guiMesh.vertex_handle((vertIdx2));
@@ -689,7 +689,7 @@ void MeshHandler::subdivide()
     subdMesh = currentMsh;
 }
 
-void MeshHandler::prepareGuiMeshForSubd(bool saveFileOFF, QString location)
+void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
 {
     guiMesh.garbage_collection();
     string tempString;
@@ -840,13 +840,65 @@ bool MeshHandler::isQuadMesh()
     return true;
 }
 
+void MeshHandler::knotInsert(vector<int> &verts)
+{
+    OpnMesh::VertexHandle newPoint = guiMesh.vertex_handle(verts.front());
+
+    if(guiMesh.n_faces() == 1)
+    {
+        qDebug() << "valence" << vertexValence(verts.front());
+        vector<int> vertsIdx;
+        vertsIdx.push_back(verts.at(1));
+        for (int i = 2; i <= 4; ++i) {
+            vertsIdx.push_back(verts.front());
+            vertsIdx.push_back(verts.at(i));
+            makeFace(vertsIdx,true);
+            vertsIdx.clear();
+        }
+
+    }
+}
+
+void MeshHandler::knotInsert(int faceIdx, const QPointF &position, const QColor &color)
+{
+    OpnMesh::FaceHandle face = guiMesh.face_handle(faceIdx);
+    for(OpnMesh::FaceHalfedgeIter fh_ite = guiMesh.fh_begin(face); fh_ite != guiMesh.fh_end(face); ++fh_ite)
+    {
+        OpnMesh::VertexHandle startV = guiMesh.from_vertex_handle(fh_ite);
+        OpnMesh::VertexHandle endV = guiMesh.to_vertex_handle(fh_ite);
+        OpnMesh::Point startPoint = guiMesh.point(startV);
+        OpnMesh::Point endPoint = guiMesh.point(endV);
+
+
+        double sx =  std::abs(position.x()) - std::abs(startPoint[0]);
+        double sy=  std::abs(position.y()) - std::abs(startPoint[1]);
+        double dx =  std::abs(endPoint[0]) - std::abs(startPoint[0]);
+        double dy = std::abs(endPoint[1]) - std::abs(startPoint[1]);
+
+        double xparam = sx/dx;
+        double yparam = (sy/dy);
+
+
+            insertVertexOnEdge(startV.idx(), endV.idx(),QPointF(yparam*dx, xparam*dy),color);
+
+//        else if( y > 0)
+//        {
+//            insertVertexOnEdge(startV.idx(), endV.idx(),QPointF(x, position.y()),color);
+//        }
+
+    //TODO: Fix
+        qDebug() << "sx:" << sx << "sy:" <<sy << "dx" << dx << "dy" << dy;
+    }
+
+}
+
 bool MeshHandler::importGuiMesh(QString location, bool draw)
 {
     //TODO: Discontinuity and gradient constraints.
     //TODO: If there alleready are vertices,edges and faces in guiMesh
 	delete subdMesh; // delete from heap
 	subdMesh = new SbdvMesh();
-	qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(location.toStdString().c_str());
+    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(location.toStdString().c_str());
     subdMesh->build(); // build mesh topology from data
 
 	vector <subdivMesh::MeshVertex>	&vertices = subdMesh->my_vertices;

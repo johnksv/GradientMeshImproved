@@ -13,6 +13,7 @@
 
 
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -67,6 +68,7 @@ void MainWindow::initActionGroups()
     drawModeGroup_->addAction(ui->actionMesh_move_and_select);
     drawModeGroup_->addAction(ui->actionMesh_Collapse_Edge);
     drawModeGroup_->addAction(ui->actionMesh_Insert_on_Edge);
+    drawModeGroup_->addAction(ui->actionMesh_Knot_Insertion);
     connect(drawModeGroup_, &QActionGroup::triggered, [=](QAction *selected) { selected->setChecked(true);});
 
 }
@@ -133,6 +135,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
         ui->actionMesh_Line_tool->setEnabled(false);
         ui->actionMesh_Collapse_Edge->setEnabled(false);
         ui->actionMesh_Insert_on_Edge->setEnabled(false);
+        ui->actionMesh_Knot_Insertion->setEnabled(false);
         ui->actionMesh_move_and_select->trigger();
     }
     else
@@ -145,6 +148,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             ui->actionMesh_Line_tool->setEnabled(true);
             ui->actionMesh_Collapse_Edge->setEnabled(true);
             ui->actionMesh_Insert_on_Edge->setEnabled(true);
+            ui->actionMesh_Knot_Insertion->setEnabled(true);
             scene_->setRenderVertsEdges(true);
         }
     }
@@ -169,6 +173,11 @@ void MainWindow::on_actionMesh_Insert_on_Edge_triggered()
 void MainWindow::on_actionMesh_Collapse_Edge_triggered()
 {
     scene_->setDrawingMode(GMView::drawModeCanvas::collapseEdge);
+}
+
+void MainWindow::on_actionMesh_Knot_Insertion_triggered()
+{
+    scene_->setDrawingMode(GMView::drawModeCanvas::knotInsertion);
 }
 
 void MainWindow::on_actionExport_triggered()

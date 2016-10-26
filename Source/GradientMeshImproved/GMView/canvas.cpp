@@ -10,7 +10,7 @@
 #include "canvaspointconstraint.h"
 #include "canvaspointdiscontinued.h"
 #include <QToolTip>
-
+#include <QGraphicsview>
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = false;
@@ -29,11 +29,24 @@ GMCanvas::~GMCanvas()
         delete mesh;
     }
 }
+void GMCanvas::resizeOpenGLWidget()
+{
+    QGraphicsView* view = views().first();
+    QRectF rect = view->rect();
+    QPointF size = view->mapToScene(rect.width(),rect.height());
+    //opengl_->widget()->setFixedSize(size.x(), size.y());
+    opengl_->setPos(view->mapToScene(0,0));
+    qDebug() << size << "pos:" << view->mapToScene(rect.x(),rect.y());
+
+
+}
+
 void GMCanvas::initGMCanvas()
 {
     meshHandlers_.push_back(new GUILogic::MeshHandler);
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
+    //opengl_->widget()->setFixedSize(900,670);
     opengl_->setPos(0,0);
     opengl_->setZValue(-1);
 
@@ -154,7 +167,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     }
     else
     {
-        currentMeshHandler()->prepareGuiMeshForSubd(true, location);
+        currentMeshHandler()->prepareMeshForSubd(true, location);
     }
 }
 
@@ -189,7 +202,6 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     switch(drawMode_){
     case drawModeCanvas::move:
-
         //Allow for rubber band selection
         if(mouseEvent->modifiers() & Qt::ShiftModifier) break;
 
@@ -220,6 +232,9 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     case drawModeCanvas::insertVert:
         mouseInsertVertOnEdge(mouseEvent);
         mouseEvent->accept();
+        break;
+    case drawModeCanvas::knotInsertion:
+        mouseKnotInsertion(mouseEvent);
         break;
     }
 }
@@ -372,7 +387,7 @@ void GMCanvas::prepareRendering()
     else tempMeshHandler = multiRes_meshHandlers_;
 
     for (int i = 0; i < tempMeshHandler.size(); ++i) {
-        tempMeshHandler.at(i)->prepareGuiMeshForSubd();
+        tempMeshHandler.at(i)->prepareMeshForSubd();
     }
     update();
     static_cast<GMOpenGLWidget*>(opengl_->widget())->update();
@@ -385,7 +400,7 @@ void GMView::GMCanvas::multiResFirstStepMesh()
     for(int i = 0; i < meshHandlers_.size(); i++)
     {
         //Execute render.
-        meshHandlers_.at(i)->prepareGuiMeshForSubd();
+        meshHandlers_.at(i)->prepareMeshForSubd();
 
         //Load mesh (which is one step subdivided) into openMesh
         GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->oneStepSubdMesh();
@@ -774,6 +789,84 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
 
 }
 
+void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
+{
+
+    if(event->button() != Qt::LeftButton) return;
+
+    CanvasItemPoint *point = new CanvasItemPoint();
+    point->setPos(event->scenePos());
+    currentLayer()->addToGroup(point);
+
+    int faceIdx = -1;
+
+    QList<QGraphicsItem *> collidingItems = point->collidingItems();
+    CanvasItemFace* face = nullptr;
+    for (int i = 0; i < collidingItems.size(); ++i) {
+        face = dynamic_cast<CanvasItemFace*> (collidingItems.at(i));
+        if(face != nullptr)
+        {
+            faceIdx = face->faceIdx();
+            break;
+        }
+    }
+
+    //return if mouseEvent was outside any faces.
+    if(faceIdx == -1)
+    {
+        delete point;
+        return;
+    }
+    int pointIdx = currentMeshHandler()->addVertex(point->pos(), pointColor_);
+    point->setVertexHandleIdx(pointIdx);
+
+
+    vector<CanvasItemLine*> edges = face->edgesInFace();
+    vector<int> newVerticesIdxs;
+    newVerticesIdxs.push_back(pointIdx);
+
+    for (int i = 0; i < edges.size(); ++i) {
+        CanvasItemLine *edge = edges.at(i);
+
+        qreal edgeLength = edge->line().length();
+        qreal sx = point->x() - edge->startPoint()->x();
+        qreal sy = point->y() - edge->startPoint()->y();
+
+        qreal sxFromEnd = point->x() - edge->endPoint()->x();
+        qreal syFromEnd = point->y() - edge->endPoint()->y();
+
+        qreal ratio;
+        if((sx*sxFromEnd) < 0) //one of the should be negative, the other one positive.
+        {
+            ratio = std::abs(sx/edgeLength);
+        }
+        else if((sy*syFromEnd) < 0)
+        {
+            ratio = std::abs(sy/edgeLength);
+        }
+        else
+        {
+            //In illustrator this results in two verts being added to the same edge
+            qDebug() << "Illustrator case";
+            return;
+        }
+
+        qDebug() << "dx:" << edgeLength << "sx:" << sx << "ratio:" << ratio;
+
+        int pointPos = (int) edge->subdivededCurve().size()*ratio;
+        qDebug() << "pos:" << pointPos << ", size:" << edge->subdivededCurve().size();
+        QPointF position = edge->subdivededCurve().at(pointPos);
+
+        int newIdx = currentMeshHandler()->insertVertexOnEdge(
+                        edge->startPoint()->vertexHandleIdx(),edge->endPoint()->vertexHandleIdx(), position, pointColor_);
+        newVerticesIdxs.push_back(newIdx);
+    }
+
+    currentMeshHandler()->knotInsert(newVerticesIdxs);
+    clearAllCurrLayer(false);
+    constructGuiFromMeshHandler();
+}
+
 void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx, int faceIdx)
 {
     CanvasItemFace * face = new CanvasItemFace(currentLayer(), faceIdx);
@@ -926,7 +1019,7 @@ bool GMCanvas::addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint 
             //This will result in loop (that is catched later), if the the two verts are added over existing faces
             bool boundaryVerts= currentMeshHandler()->isBoundaryVertex(idxFront) && currentMeshHandler()->isBoundaryVertex(idxBack);
 
-            bool sameFace = currentMeshHandler()->vertsOnSameFace(idxFront, idxBack);
+            bool sameFace = currentMeshHandler()->isVertsOnSameFace(idxFront, idxBack);
             if(!sameFace && !boundaryVerts)
             {
                 showMessage("Start and end vertex must be on same face", true);

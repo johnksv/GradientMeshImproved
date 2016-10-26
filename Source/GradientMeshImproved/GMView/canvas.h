@@ -11,7 +11,7 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool, collapseEdge, insertVert
+    move, lineTool, collapseEdge, insertVert, knotInsertion
 };
 
 extern bool drawCanvasItemFaces;
@@ -77,6 +77,7 @@ public:
      */
     void autoRenderOnMeshChanged();
 
+    void resizeOpenGLWidget();
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
@@ -121,6 +122,8 @@ private:
     void mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent);
 
     void mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event);
+
+    void mouseKnotInsertion(QGraphicsSceneMouseEvent *event);
     
     void updateVertexConstraints();
 

@@ -73,26 +73,28 @@ public:
     bool makeFace(vector<int> &vertexHandlersIdx, bool faceInsideFace = false, bool sameStartAndEnd = false);
     bool addFaceWIthSameStartAndEnd(vector<int> &vertexHandlersIdx, bool faceInsideFace = false);
     size_t numberOfFaces();
-    bool vertsOnSameFace(int vertIdx1, int vertIdx2);
+    bool isVertsOnSameFace(int vertIdx1, int vertIdx2);
     vector<vector<int> > facesIdx();
     void deleteFace(const int &faceIdx, bool delete_isolated_vertices = true);
     bool isBoundaryFace(const int &idx) const;
 
     void clearAll();
 
-    bool importGuiMesh(QString, bool draw = true);
+    bool importGuiMesh(QString location, bool draw = true);
 
     void garbageCollectOpenMesh();
 
     //TODO: Rename function.
-    void prepareGuiMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
+    void prepareMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 
     MeshHandler *oneStepSubdMesh();
 
     static void setSubdivisionSteps(int value);
 
     bool isQuadMesh();
+    void knotInsert(vector<int> &verts);
 
+    void knotInsert(int faceIdx, const QPointF &position, const QColor &color);
 private:
     static int subdivisionSteps_;
     // mesh for rendering gradient mesh using subdivision:
