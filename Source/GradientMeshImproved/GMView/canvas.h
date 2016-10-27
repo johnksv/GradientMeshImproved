@@ -77,7 +77,7 @@ public:
      */
     void autoRenderOnMeshChanged();
 
-    void resizeOpenGLWidget();
+    void resizeOpenGLWidget(const QSize &size);
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;

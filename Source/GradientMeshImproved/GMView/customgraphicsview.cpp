@@ -3,6 +3,7 @@
 #include <QtMath>
 #include <QDateTime>
 #include <QtDebug>
+#include "GMView/canvas.h"
 
 using namespace GMView;
 
@@ -18,6 +19,7 @@ CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 {
+    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget(viewport()->size());
     //Move scrollbars with alt and ctrl
     if(event->modifiers() != Qt::ControlModifier ){
         QGraphicsView::wheelEvent(event);
@@ -45,4 +47,9 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
         matrix.scale(scale, scale);
         setMatrix(matrix);
     }
+}
+
+void CustomGraphicsView::resizeEvent(QResizeEvent *event)
+{
+    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget(event->size());
 }

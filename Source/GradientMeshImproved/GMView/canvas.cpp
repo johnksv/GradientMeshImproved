@@ -29,16 +29,13 @@ GMCanvas::~GMCanvas()
         delete mesh;
     }
 }
-void GMCanvas::resizeOpenGLWidget()
+void GMCanvas::resizeOpenGLWidget(const QSize &size)
 {
+
     QGraphicsView* view = views().first();
     QRectF rect = view->rect();
-    QPointF size = view->mapToScene(rect.width(),rect.height());
-    //opengl_->widget()->setFixedSize(size.x(), size.y());
+    opengl_->widget()->setFixedSize(size);
     opengl_->setPos(view->mapToScene(0,0));
-    qDebug() << size << "pos:" << view->mapToScene(rect.x(),rect.y());
-
-
 }
 
 void GMCanvas::initGMCanvas()
@@ -47,8 +44,9 @@ void GMCanvas::initGMCanvas()
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
     //opengl_->widget()->setFixedSize(900,670);
-    opengl_->setPos(0,0);
+//    opengl_->setPos(0,0);
     opengl_->setZValue(-1);
+    opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
     CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
     layers_.push_back(layer);

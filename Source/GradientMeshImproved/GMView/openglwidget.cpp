@@ -57,8 +57,10 @@ void GMOpenGLWidget::paintGL()
     }
     else
     {
-        boundingRect = scene_->itemsBoundingRect();
+        boundingRect = scene_->itemsBoundingRect();   
     }
+    //if fixedWidht = sceneRect this will display correct as backrgound, but it will be very slow
+  // boundingRect = scene_->sceneRect();
 
     QPainter qPainter;
     /******* Start painting with OpenGL ***********/
@@ -86,4 +88,5 @@ void GMOpenGLWidget::paintGL()
 
 void GMOpenGLWidget::mousePressEvent(QMouseEvent* event){
     //If i need some MouseEvents on the openGLWidget
+    update();
 }

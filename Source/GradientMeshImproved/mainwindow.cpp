@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitWidget->setVisible(false);
     ui->splitWidget->setParent(parent);
     ui->splitWidget->setMinimumSize(400,400);
+    ui->splitWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+
 
 
     ui->actionRender_constraints_handlers->setChecked(true);
@@ -292,7 +294,9 @@ void MainWindow::handleColorButtonClick(int color)
     QPalette palette = button->palette();
 
     if( !ui->colorLockMode->isChecked()){
-        QColor chosenColor = QColorDialog::getColor();
+        QColor prevColor = palette.color(QPalette::Button);
+        if(prevColor == Qt::black) prevColor = Qt::white;
+        QColor chosenColor = QColorDialog::getColor(prevColor);
         if(chosenColor.isValid())
         {
             palette.setColor(QPalette::Button, chosenColor);
