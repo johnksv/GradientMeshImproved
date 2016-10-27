@@ -789,8 +789,14 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
 
 void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
 {
-
     if(event->button() != Qt::LeftButton) return;
+
+	if (!currentMeshHandler()->isQuadMesh())
+	{
+		showMessage("Mesh must be in quads in order to use Mesh Tool.");
+        return;
+	}
+	GUILogic::MeshHandler *meshhandler = currentMeshHandler();
 
     CanvasItemPoint *point = new CanvasItemPoint();
     point->setPos(event->scenePos());
@@ -815,16 +821,28 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
         delete point;
         return;
     }
-    int pointIdx = currentMeshHandler()->addVertex(point->pos(), pointColor_);
+    int pointIdx = meshhandler->addVertex(point->pos(), pointColor_);
     point->setVertexHandleIdx(pointIdx);
 
 
     vector<CanvasItemLine*> edges = face->edgesInFace();
-    vector<int> newVerticesIdxs;
-    newVerticesIdxs.push_back(pointIdx);
+	//Content: 4 elements of vector<array<int,2>, one for each edge. Each array<int,2> is the Idxes of the start and end point for the next neighbour edge
+    vector<vector<std::array<int, 2>>> edgesToInsertVertsOn;
+	std::array<double, 4> ratios;
+	int faceidx = face->faceIdx();
+	
+	//Content: idxes of the new verts on the edge. The "middle" vert idx is added first
+    vector<int> newVerticesFirstFace;
+    newVerticesFirstFace.push_back(pointIdx);
 
-    for (int i = 0; i < edges.size(); ++i) {
-        CanvasItemLine *edge = edges.at(i);
+	for (int i = 0; i < edges.size(); ++i) {
+		CanvasItemLine *edge = edges.at(i);
+		int startIdx = edge->startPoint()->vertexHandleIdx();
+		int endIdx = edge->endPoint()->vertexHandleIdx();
+		vector<std::array<int, 2>> edgeToInsertOn;
+
+		meshhandler->findEdgesToKnotInsert(startIdx, endIdx, faceidx, edgeToInsertOn);
+		edgesToInsertVertsOn.push_back(edgeToInsertOn);
 
         qreal edgeLength = edge->line().length();
         qreal sx = point->x() - edge->startPoint()->x();
@@ -834,7 +852,7 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
         qreal syFromEnd = point->y() - edge->endPoint()->y();
 
         qreal ratio;
-        if((sx*sxFromEnd) < 0) //one of the should be negative, the other one positive.
+        if((sx*sxFromEnd) < 0) //one should be negative, the other one positive.
         {
             ratio = std::abs(sx/edgeLength);
         }
@@ -845,22 +863,50 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
         else
         {
             //In illustrator this results in two verts being added to the same edge
-            qDebug() << "Illustrator case";
+            showMessage("Illustrator case. Not implemented yet");
+			delete point;
             return;
         }
 
         qDebug() << "dx:" << edgeLength << "sx:" << sx << "ratio:" << ratio;
 
+        //Find position of the vert to be added
         int pointPos = (int) edge->subdivededCurve().size()*ratio;
         qDebug() << "pos:" << pointPos << ", size:" << edge->subdivededCurve().size();
         QPointF position = edge->subdivededCurve().at(pointPos);
 
-        int newIdx = currentMeshHandler()->insertVertexOnEdge(
-                        edge->startPoint()->vertexHandleIdx(),edge->endPoint()->vertexHandleIdx(), position, pointColor_);
-        newVerticesIdxs.push_back(newIdx);
+        int newIdx = meshhandler->insertVertexOnEdge(startIdx,endIdx , position, pointColor_);
+
+        newVerticesFirstFace.push_back(newIdx);
+		ratios.at(i) = ratio;
     }
 
-    currentMeshHandler()->knotInsert(newVerticesIdxs);
+	//Construct faces of the first face
+    meshhandler->knotInsertFaces(newVerticesFirstFace, true);
+
+
+	for (int edge_i = 0; edge_i < edgesToInsertVertsOn.size(); edge_i++)
+	{
+		vector<int> newVertices;
+		//Push back the vert that was inserted on the edge we now are iterating on.
+		newVertices.push_back(newVerticesFirstFace.at(edge_i+1));
+		for (int j = 0; j < edgesToInsertVertsOn.at(edge_i).size(); j++)
+		{
+			int startIdx = edgesToInsertVertsOn.at(edge_i).at(j).at(0);
+			int endIdx = edgesToInsertVertsOn.at(edge_i).at(j).at(1);
+			CanvasItemLine* edge = edgeBetweenPoints(startIdx, endIdx);
+			int pointPos = (int)edge->subdivededCurve().size()*ratios.at(edge_i);
+			qDebug() << "pos:" << pointPos << ", size:" << edge->subdivededCurve().size();
+			QPointF position = edge->subdivededCurve().at(pointPos);
+
+			int newIdx = meshhandler->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
+			newVertices.push_back(newIdx);
+		}
+		meshhandler->knotInsertFaces(newVertices);
+
+	}
+
+	meshhandler->garbageCollectOpenMesh();
     clearAllCurrLayer(false);
     constructGuiFromMeshHandler();
 }

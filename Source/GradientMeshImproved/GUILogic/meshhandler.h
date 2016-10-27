@@ -92,9 +92,10 @@ public:
     static void setSubdivisionSteps(int value);
 
     bool isQuadMesh();
-    void knotInsert(vector<int> &verts);
+    void findEdgesToKnotInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const;
 
-    void knotInsert(int faceIdx, const QPointF &position, const QColor &color);
+    void knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstFace = false);
+
 private:
     static int subdivisionSteps_;
     // mesh for rendering gradient mesh using subdivision:

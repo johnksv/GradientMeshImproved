@@ -830,6 +830,11 @@ void MeshHandler::setSubdivisionSteps(int value)
 
 bool MeshHandler::isQuadMesh()
 {
+	double nfaces = sqrt(guiMesh.n_faces());
+	double remainder = fmod(nfaces, 1);
+	qDebug() << remainder;
+	if (std::abs(remainder) > 0.000002) return false;
+
     for(OpnMesh::FaceIter face_ite = guiMesh.faces_begin(); face_ite != guiMesh.faces_end(); face_ite++)
     {
         if(guiMesh.valence(face_ite) != 4)
@@ -840,56 +845,67 @@ bool MeshHandler::isQuadMesh()
     return true;
 }
 
-void MeshHandler::knotInsert(vector<int> &verts)
+void MeshHandler::findEdgesToKnotInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const
 {
-    OpnMesh::VertexHandle newPoint = guiMesh.vertex_handle(verts.front());
+    OpnMesh::VertexHandle fromVert = guiMesh.vertex_handle(edgeFromVert);
+    OpnMesh::VertexHandle toVert = guiMesh.vertex_handle(edgeToVert);
 
-    if(guiMesh.n_faces() == 1)
+    for(OpnMesh::ConstVertexOHalfedgeIter voh_ite = guiMesh.cvoh_begin(fromVert); voh_ite != guiMesh.cvoh_end(fromVert); voh_ite++)
     {
-        qDebug() << "valence" << vertexValence(verts.front());
-        vector<int> vertsIdx;
-        vertsIdx.push_back(verts.at(1));
-        for (int i = 2; i <= 4; ++i) {
-            vertsIdx.push_back(verts.front());
-            vertsIdx.push_back(verts.at(i));
-            makeFace(vertsIdx,true);
-            vertsIdx.clear();
-        }
+        if(guiMesh.to_vertex_handle(voh_ite) == toVert)
+        {
+			OpnMesh::HalfedgeHandle oppositeEdge = guiMesh.face_handle(voh_ite).idx() == faceIdx ? guiMesh.opposite_halfedge_handle(voh_ite) : voh_ite;
+			qDebug() << "voh_ite" << guiMesh.face_handle(voh_ite).idx() << "opposite:" << guiMesh.face_handle(oppositeEdge).idx();
+			if (!guiMesh.is_boundary(oppositeEdge))
+            {
+				OpnMesh::HalfedgeHandle edgeToAdd = guiMesh.next_halfedge_handle(guiMesh.next_halfedge_handle(oppositeEdge));
+				while (true)
+				{
+					if (guiMesh.is_boundary(edgeToAdd)) break;
 
+					int startIdx = guiMesh.from_vertex_handle(edgeToAdd).idx();
+					int toIdx = guiMesh.to_vertex_handle(edgeToAdd).idx();
+					std::array<int, 2> idxes = {startIdx, toIdx};
+					verts.push_back(idxes);
+					edgeToAdd = guiMesh.opposite_halfedge_handle(edgeToAdd);
+					edgeToAdd = guiMesh.next_halfedge_handle(guiMesh.next_halfedge_handle(edgeToAdd));
+				}
+			}
+			else
+			{
+				qDebug() << "Is boundary";
+			}
+			break;
+        }
     }
 }
 
-void MeshHandler::knotInsert(int faceIdx, const QPointF &position, const QColor &color)
+void MeshHandler::knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstInsertion)
 {
-    OpnMesh::FaceHandle face = guiMesh.face_handle(faceIdx);
-    for(OpnMesh::FaceHalfedgeIter fh_ite = guiMesh.fh_begin(face); fh_ite != guiMesh.fh_end(face); ++fh_ite)
-    {
-        OpnMesh::VertexHandle startV = guiMesh.from_vertex_handle(fh_ite);
-        OpnMesh::VertexHandle endV = guiMesh.to_vertex_handle(fh_ite);
-        OpnMesh::Point startPoint = guiMesh.point(startV);
-        OpnMesh::Point endPoint = guiMesh.point(endV);
+        if(firstInsertion)
+        {
+            //Vert at front is the one added in the middel.
+            vector<int> vertsIdx;
+            vertsIdx.push_back(vertsToMakeFaceOf.at(1));
+            for (int i = 2; i <= 4; ++i) {
+                vertsIdx.push_back(vertsToMakeFaceOf.front());
+                vertsIdx.push_back(vertsToMakeFaceOf.at(i));
+                makeFace(vertsIdx,true);
+                vertsIdx.clear();
+            }
+        }
+		else
+		{
+			for (int i = 1; i < vertsToMakeFaceOf.size(); i++)
+			{
+				vector<int> vertIdx;
+				vertIdx.push_back(vertsToMakeFaceOf.at(i - 1));
+				vertIdx.push_back(vertsToMakeFaceOf.at(i));
+				makeFace(vertIdx, true);
+			}
 
-
-        double sx =  std::abs(position.x()) - std::abs(startPoint[0]);
-        double sy=  std::abs(position.y()) - std::abs(startPoint[1]);
-        double dx =  std::abs(endPoint[0]) - std::abs(startPoint[0]);
-        double dy = std::abs(endPoint[1]) - std::abs(startPoint[1]);
-
-        double xparam = sx/dx;
-        double yparam = (sy/dy);
-
-
-            insertVertexOnEdge(startV.idx(), endV.idx(),QPointF(yparam*dx, xparam*dy),color);
-
-//        else if( y > 0)
-//        {
-//            insertVertexOnEdge(startV.idx(), endV.idx(),QPointF(x, position.y()),color);
-//        }
-
-    //TODO: Fix
-        qDebug() << "sx:" << sx << "sy:" <<sy << "dx" << dx << "dy" << dy;
-    }
-
+			
+		}
 }
 
 bool MeshHandler::importGuiMesh(QString location, bool draw)
