@@ -30,7 +30,7 @@ MeshHandler::~MeshHandler()
 
 void MeshHandler::drawGLMesh(QOpenGLFunctions_1_0* context)
 {
-    if(subdMesh != nullptr)
+    if(subdMesh != nullptr && draw_)
     {
         subdMesh->draw(context);
     }
@@ -392,7 +392,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, 
                     if (faceOrientation(orginalvHandlersFace, newFace, vHandlersToBeFace))
                     {
                         qDebug() << "Wrong rotation.. Recursive call to makeFace";
-                        if (!makeFace(vertexHandlersIdx)) {
+                        if (!makeFace(vertexHandlersIdx, true)) {
                             qDebug() << "Did not make face. TODO: Check for error";
                         }
                     }
@@ -649,6 +649,8 @@ bool MeshHandler::faceOrientation(vector<vertexHandle> &orginalvHandlersFace, Op
     {
         vHandlersFace = orginalvHandlersFace;
         reverse(vHandlersFace.begin(), vHandlersFace.end());
+		//TODO: FIx bug where this crash, maybe I have to use skippingiterators.
+		qDebug() << "NewFaceIdx that is delted:" << newFace.idx();
         guiMesh.delete_face(newFace, false);
         return true;
     }
@@ -689,7 +691,7 @@ void MeshHandler::subdivide()
     subdMesh = currentMsh;
 }
 
-void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
+void MeshHandler::saveToTestOffFile()
 {
     guiMesh.garbage_collection();
     string tempString;
@@ -763,12 +765,12 @@ void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
 
     //Faces:
     tempString += "\n";
-	
+
     //Iterate thorugh faces.
-	for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
+    for(OpnMesh::FaceIter face_ite = guiMesh.faces_sbegin(); face_ite != guiMesh.faces_end(); face_ite++)
     {
         //Valence of face
-		tempString += to_string(guiMesh.valence(face_ite)) + " ";
+        tempString += to_string(guiMesh.valence(face_ite)) + " ";
 
         for(OpnMesh::FaceVertexIter fv_ite = guiMesh.fv_begin(face_ite); fv_ite != guiMesh.fv_end(face_ite); fv_ite++)
         {
@@ -776,7 +778,7 @@ void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
         }
         tempString += "\n";
     }
-	
+
 
 
     // delete current mesh object and insert a new one
@@ -784,10 +786,16 @@ void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
     subdMesh = new SbdvMesh();
 
     //Make a file, used for export to SubdMesh
-	fstream file;
-	file.open("test.off", fstream::out);
-	file << tempString.c_str();
-	file.close();
+    fstream file;
+    file.open("test.off", fstream::out);
+    file << tempString.c_str();
+    file.close();
+    qDebug() << "Saved file, test.off";
+}
+
+void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
+{
+    saveToTestOffFile();
     qDebug() << "Mesh saved: test.off" << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
 
@@ -798,8 +806,6 @@ void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
 
     subdivide();
     //std::remove("test.off");
-
-    isQuadMesh();
 }
 
 MeshHandler *MeshHandler::oneStepSubdMesh()
@@ -905,7 +911,12 @@ void MeshHandler::knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstInse
 			}
 
 			
-		}
+        }
+}
+
+void MeshHandler::setDraw(bool draw)
+{
+    draw_ = draw;
 }
 
 bool MeshHandler::importGuiMesh(QString location, bool draw)

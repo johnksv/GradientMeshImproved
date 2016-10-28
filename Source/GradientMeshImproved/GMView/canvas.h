@@ -78,6 +78,8 @@ public:
     void autoRenderOnMeshChanged();
 
     void resizeOpenGLWidget(const QSize &size);
+
+    void setItemPointColorFromImage();
 protected:
     //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;

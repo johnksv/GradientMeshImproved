@@ -38,7 +38,7 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
         QString string("x: ");
         string.append(QString::number(x())).append("y: ")
                 .append(QString::number(y()));
-        painter->drawText(10,10, string);
+        //painter->drawText(10,10, string);
         painter->setPen(Qt::NoPen);
 
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
@@ -83,12 +83,15 @@ QColor CanvasItemPoint::color() const
     return color_;
 }
 
-void CanvasItemPoint::setColor(QColor color)
+void CanvasItemPoint::setColor(QColor color, bool callAutoRender)
 {
     this->color_ = color;
     GMCanvas* canvas = static_cast <GMCanvas*> (scene());
     canvas->currentMeshHandler()->setVertexColor(vertexHandleIdx_, color_);
+    if(callAutoRender)
+    {
         canvas->autoRenderOnMeshChanged();
+    }
     update(boundingRect());
 }
 

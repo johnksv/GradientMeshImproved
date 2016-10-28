@@ -38,6 +38,18 @@ void GMCanvas::resizeOpenGLWidget(const QSize &size)
     opengl_->setPos(view->mapToScene(0,0));
 }
 
+void GMCanvas::setItemPointColorFromImage()
+{
+    QImage image = imageItem_->pixmap().toImage();
+    QList<QGraphicsItem *> childlist = currentLayer()->points().childItems();
+    for (int i = 0; i < childlist.size(); ++i) {
+        CanvasItemPoint *point = static_cast<CanvasItemPoint *> (childlist.at(i));
+        QPointF position = point->pos();
+        QColor newColor(image.pixel(position.toPoint()));
+        point->setColor(newColor, false);
+    }
+}
+
 void GMCanvas::initGMCanvas()
 {
     meshHandlers_.push_back(new GUILogic::MeshHandler);
@@ -364,10 +376,12 @@ void GMCanvas::toogleLayerVisibility(int index)
     if(selectedLayer->isVisible())
     {
         selectedLayer->hide();
+        //meshHandlers()->at(index)->setDraw(false);
     }
     else
     {
         selectedLayer->show();
+        //meshHandlers()->at(index)->setDraw(true);
     }
 }
 
@@ -683,6 +697,8 @@ QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
 
 void GMCanvas::autoRenderOnMeshChanged()
 {
+    //TODO: Speedtest, and reimplement, but need this function for autosaving during testing
+    currentMeshHandler()->saveToTestOffFile();
     //vertsToAddFace_ <= 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
     if(renderAutoUpdate_ && vertsToAddFace_.size() <= 1)
     {

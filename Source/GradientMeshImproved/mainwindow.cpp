@@ -385,3 +385,8 @@ void MainWindow::on_actionRender_GUI_faces_triggered(bool checked)
     scene_->setRenderFace(checked);
     scene_->update();
 }
+
+void MainWindow::on_imageColorFrom_clicked()
+{
+    scene_->setItemPointColorFromImage();
+}

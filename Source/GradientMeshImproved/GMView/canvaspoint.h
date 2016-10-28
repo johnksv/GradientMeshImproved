@@ -15,7 +15,7 @@ public:
     QPainterPath shape() const override;
 
     QColor color() const;
-    void setColor(QColor color);
+    void setColor(QColor color, bool callAutoRender = true);
 
     int vertexHandleIdx() const;
     void setVertexHandleIdx(int idx);

@@ -79,6 +79,8 @@ private slots:
 
     void on_actionMesh_Knot_Insertion_triggered();
 
+    void on_imageColorFrom_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

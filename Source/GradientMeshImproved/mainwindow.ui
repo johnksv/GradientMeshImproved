@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>659</height>
+    <height>726</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -589,6 +589,19 @@
       <string>Opacity</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="imageColorFrom">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>131</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Sample color from image</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <action name="action_New">
@@ -610,7 +623,7 @@
     <string>Import</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I</string>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionExport">
@@ -618,10 +631,13 @@
     <string>Export/save</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionUndo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
@@ -630,6 +646,9 @@
    </property>
   </action>
   <action name="actionRedo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
@@ -646,6 +665,9 @@
    </property>
    <property name="text">
     <string>Line tool</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -681,6 +703,9 @@
    <property name="toolTip">
     <string>Constrains handlers</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionRender_multi_res_mesh">
    <property name="checkable">
@@ -702,6 +727,9 @@
    </property>
    <property name="toolTip">
     <string>Move and select elements</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionClear_all">
@@ -757,6 +785,9 @@
    <property name="toolTip">
     <string>Insert Vertex on Edge</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionRender_auto">
    <property name="checkable">
@@ -768,6 +799,9 @@
    <property name="text">
     <string>Auto render</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="actionRender_GUI_faces">
    <property name="checkable">
@@ -776,6 +810,9 @@
    <property name="text">
     <string>Face overlay</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionMesh_Knot_Insertion">
    <property name="checkable">
@@ -783,6 +820,9 @@
    </property>
    <property name="text">
     <string>&quot;Mesh tool&quot;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
    </property>
   </action>
  </widget>

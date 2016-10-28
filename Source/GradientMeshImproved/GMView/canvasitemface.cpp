@@ -151,7 +151,7 @@ void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     GUILogic::MeshHandler *meshhandler =   canvas->currentMeshHandler();
 
     QMenu menu;
-    QAction *deletePointAction = menu.addAction("Delete");
+    QAction *deletePointAction = menu.addAction("Delete face");
 
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == deletePointAction)

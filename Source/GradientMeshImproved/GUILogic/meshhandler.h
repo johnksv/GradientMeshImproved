@@ -84,6 +84,7 @@ public:
 
     void garbageCollectOpenMesh();
 
+    void saveToTestOffFile();
     //TODO: Rename function.
     void prepareMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 
@@ -96,6 +97,8 @@ public:
 
     void knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstFace = false);
 
+    void setDraw(bool draw);
+
 private:
     static int subdivisionSteps_;
     // mesh for rendering gradient mesh using subdivision:
@@ -103,6 +106,7 @@ private:
     subdivMesh::Mesh* oneStepSubdMesh_ = nullptr;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
+    bool draw_ = true;
 
 
      /* Check if new face has same orientation as first face (CW or CCW), if NOT, true is returned (which means an extra loop in makeFace is required).
