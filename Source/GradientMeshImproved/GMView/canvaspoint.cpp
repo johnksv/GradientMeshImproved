@@ -42,14 +42,17 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
         painter->setPen(Qt::NoPen);
 
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
-        radius_ = 5.5 / detailLevel;
+        radius_ = 5.8 / detailLevel;
         if(radius_ < 0.5) radius_ = 0.5;
 
         if(option->state & QStyle::State_Selected){
-            //TODO: Fix selected color
+
             QColor temp = QColor(color_);
-            temp.setAlpha(150);
             painter->setBrush(temp);
+            QPen pen(Qt::red);
+            //TODO: Set better width
+            pen.setWidth(2);
+            painter->setPen(pen);
         }
         else
         {

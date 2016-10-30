@@ -213,7 +213,11 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     switch(drawMode_){
     case drawModeCanvas::move:
         //Allow for rubber band selection
-        if(mouseEvent->modifiers() & Qt::ShiftModifier) break;
+        if(dynamic_cast<CanvasItemPoint *> (itemAt(mouseEvent->scenePos(),QTransform())) == nullptr
+                && dynamic_cast<CanvasPointConstraint *> (itemAt(mouseEvent->scenePos(),QTransform())) == nullptr)
+        {
+            break;
+        }
 
         if(! (mouseEvent->modifiers() & Qt::ControlModifier))
         {
@@ -259,6 +263,15 @@ void GMCanvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 void GMCanvas::setDrawColorVertex(QColor pointColor)
 {
     pointColor_ = pointColor;
+    QList<QGraphicsItem *> items = selectedItems();
+    for(int i = 0; i < items.size(); ++i)
+    {
+        CanvasItemPoint* point = dynamic_cast<CanvasItemPoint*> (items.at(i));
+        if(point != nullptr)
+        {
+            point->setColor(pointColor_);
+        }
+    }
 }
 
 void GMCanvas::setRenderConstraintHandlers(bool value)
