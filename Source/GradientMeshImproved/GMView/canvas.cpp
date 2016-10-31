@@ -250,7 +250,7 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         mouseEvent->accept();
         break;
     case drawModeCanvas::knotInsertion:
-        mouseKnotInsertion(mouseEvent);
+        mouseMeshToolInsertion(mouseEvent);
         break;
     }
 }
@@ -818,7 +818,7 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
 
 }
 
-void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
+void GMCanvas::mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event)
 {
     if(event->button() != Qt::LeftButton) return;
 
@@ -867,12 +867,13 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
     newVerticesFirstFace.push_back(pointIdx);
 
 	for (int i = 0; i < edges.size(); ++i) {
+		QPointF mousePos = event->scenePos();
 		CanvasItemLine *edge = edges.at(i);
 		int startIdx = edge->startPoint()->vertexHandleIdx();
 		int endIdx = edge->endPoint()->vertexHandleIdx();
 		vector<std::array<int, 2>> edgeToInsertOn;
 
-		meshhandler->findEdgesToKnotInsert(startIdx, endIdx, faceidx, edgeToInsertOn);
+		meshhandler->findEdgesForMeshToolInsert(startIdx, endIdx, faceidx, edgeToInsertOn);
 		edgesToInsertVertsOn.push_back(edgeToInsertOn);
 
         qreal edgeLength = edge->line().length();
@@ -882,10 +883,12 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
         qreal sxFromEnd = point->x() - edge->endPoint()->x();
         qreal syFromEnd = point->y() - edge->endPoint()->y();
 
+		bool useXFromMouseClick = false;
         qreal ratio;
         if((sx*sxFromEnd) < 0) //one should be negative, the other one positive.
         {
             ratio = std::abs(sx/edgeLength);
+			useXFromMouseClick = true;
         }
         else if((sy*syFromEnd) < 0)
         {
@@ -899,12 +902,14 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
             return;
         }
 
-        qDebug() << "dx:" << edgeLength << "sx:" << sx << "ratio:" << ratio;
+        qDebug() << "dx:" << edgeLength << "ratio:" << ratio;
 
         //Find position of the vert to be added
         int pointPos = (int) edge->subdivededCurve().size()*ratio;
         qDebug() << "pos:" << pointPos << ", size:" << edge->subdivededCurve().size();
         QPointF position = edge->subdivededCurve().at(pointPos);
+		useXFromMouseClick ? position.setX(mousePos.x()) : position.setY(mousePos.y());
+		
 
         int newIdx = meshhandler->insertVertexOnEdge(startIdx,endIdx , position, pointColor_);
 
@@ -913,7 +918,7 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
     }
 
 	//Construct faces of the first face
-    meshhandler->knotInsertFaces(newVerticesFirstFace, true);
+    meshhandler->meshToolInsertFaces(newVerticesFirstFace, true);
 
 
 	for (int edge_i = 0; edge_i < edgesToInsertVertsOn.size(); edge_i++)
@@ -926,15 +931,28 @@ void GMCanvas::mouseKnotInsertion(QGraphicsSceneMouseEvent *event)
 			int startIdx = edgesToInsertVertsOn.at(edge_i).at(j).at(0);
 			int endIdx = edgesToInsertVertsOn.at(edge_i).at(j).at(1);
 			CanvasItemLine* edge = edgeBetweenPoints(startIdx, endIdx);
+			//This will be wrong, since the edge can have opposite direction then the original edge. TODO:reimplement
 			int pointPos = (int)edge->subdivededCurve().size()*ratios.at(edge_i);
 			qDebug() << "pos:" << pointPos << ", size:" << edge->subdivededCurve().size();
 			QPointF position = edge->subdivededCurve().at(pointPos);
+			
+			//Check if we should use the X or Y position from the mouseClick
+			//TODO: implement for edge with slope. See image "BugMeshTool"
+				//Will crash if the vert is added outside the face
+			qreal sx = point->x() - edge->startPoint()->x();
+			qreal sxFromEnd = point->x() - edge->endPoint()->x();
+			(sx*sxFromEnd) < 0 ? position.setX(event->scenePos().x()) : position.setY(event->scenePos().y());
 
 			int newIdx = meshhandler->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
 			newVertices.push_back(newIdx);
 		}
-		meshhandler->knotInsertFaces(newVertices);
-
+		try {
+			meshhandler->meshToolInsertFaces(newVertices);
+		}
+		catch (int e)
+		{
+			if (e == -2) showMessage("Known bug.. Mesh tool used to add to close to edge..");
+		}
 	}
 
 	meshhandler->garbageCollectOpenMesh();

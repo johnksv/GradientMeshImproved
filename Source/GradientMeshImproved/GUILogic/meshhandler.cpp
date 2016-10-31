@@ -485,6 +485,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, 
                 {
                     qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
                     vertexHandlersIdx.push_back(fv_ite->idx());
+					if (vertexHandlersIdx.size() > guiMesh.n_vertices()) throw - 2;
                 }
             }
             else
@@ -851,7 +852,7 @@ bool MeshHandler::isQuadMesh()
     return true;
 }
 
-void MeshHandler::findEdgesToKnotInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const
+void MeshHandler::findEdgesForMeshToolInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const
 {
     OpnMesh::VertexHandle fromVert = guiMesh.vertex_handle(edgeFromVert);
     OpnMesh::VertexHandle toVert = guiMesh.vertex_handle(edgeToVert);
@@ -886,7 +887,7 @@ void MeshHandler::findEdgesToKnotInsert(int edgeFromVert, int edgeToVert, int fa
     }
 }
 
-void MeshHandler::knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstInsertion)
+void MeshHandler::meshToolInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstInsertion)
 {
         if(firstInsertion)
         {

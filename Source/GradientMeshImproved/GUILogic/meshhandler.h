@@ -93,9 +93,9 @@ public:
     static void setSubdivisionSteps(int value);
 
     bool isQuadMesh();
-    void findEdgesToKnotInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const;
+    void findEdgesForMeshToolInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const;
 
-    void knotInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstFace = false);
+    void meshToolInsertFaces(vector<int> &vertsToMakeFaceOf, bool firstFace = false);
 
     void setDraw(bool draw);
 

@@ -125,7 +125,7 @@ private:
 
     void mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event);
 
-    void mouseKnotInsertion(QGraphicsSceneMouseEvent *event);
+    void mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event);
     
     void updateVertexConstraints();
 
