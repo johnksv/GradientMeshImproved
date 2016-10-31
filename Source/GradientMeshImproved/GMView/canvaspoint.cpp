@@ -279,7 +279,15 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         QColor chosenColor = QColorDialog::getColor();
         if(chosenColor.isValid())
         {
-            setColor(chosenColor);
+            QList<QGraphicsItem *> items = canvas->selectedItems();
+            for(int i = 0; i < items.size(); ++i)
+            {
+                CanvasItemPoint * item = dynamic_cast<CanvasItemPoint *> (items.at(i));
+                if(item != nullptr)
+                {
+                    item->setColor(chosenColor);
+                }
+            }
         }
 
     }

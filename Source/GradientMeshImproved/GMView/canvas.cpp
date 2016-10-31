@@ -212,18 +212,20 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
     switch(drawMode_){
     case drawModeCanvas::move:
-        //Allow for rubber band selection
+
+        //Move items
         if(dynamic_cast<CanvasItemPoint *> (itemAt(mouseEvent->scenePos(),QTransform())) == nullptr
                 && dynamic_cast<CanvasPointConstraint *> (itemAt(mouseEvent->scenePos(),QTransform())) == nullptr)
         {
             break;
         }
 
-        if(! (mouseEvent->modifiers() & Qt::ControlModifier))
+        if(! (mouseEvent->modifiers() & Qt::ControlModifier) && mouseEvent->button() != Qt::RightButton)
         {
             clearSelection();
         }
 
+        //Allow for rubber band selection
         QGraphicsScene::mousePressEvent(mouseEvent);
         break;
     case drawModeCanvas::lineTool:
@@ -712,8 +714,8 @@ void GMCanvas::autoRenderOnMeshChanged()
 {
     //TODO: Speedtest, and reimplement, but need this function for autosaving during testing
     currentMeshHandler()->saveToTestOffFile();
-    //vertsToAddFace_ <= 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
-    if(renderAutoUpdate_ && vertsToAddFace_.size() <= 1)
+    //vertsToAddFace_ < 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
+    if(renderAutoUpdate_ && vertsToAddFace_.size() < 1)
     {
         prepareRendering();
         emit GUIMeshChanged();
