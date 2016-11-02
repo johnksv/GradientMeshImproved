@@ -70,7 +70,8 @@ void MainWindow::initActionGroups()
     drawModeGroup_->addAction(ui->actionMesh_move_and_select);
     drawModeGroup_->addAction(ui->actionMesh_Collapse_Edge);
     drawModeGroup_->addAction(ui->actionMesh_Insert_on_Edge);
-    drawModeGroup_->addAction(ui->actionMesh_Knot_Insertion);
+    drawModeGroup_->addAction(ui->actionMesh_Mesh_Insertion);
+    drawModeGroup_->addAction(ui->actionMesh_Rectangle_Tool);
     connect(drawModeGroup_, &QActionGroup::triggered, [=](QAction *selected) { selected->setChecked(true);});
 
 }
@@ -137,7 +138,8 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
         ui->actionMesh_Line_tool->setEnabled(false);
         ui->actionMesh_Collapse_Edge->setEnabled(false);
         ui->actionMesh_Insert_on_Edge->setEnabled(false);
-        ui->actionMesh_Knot_Insertion->setEnabled(false);
+        ui->actionMesh_Mesh_Insertion->setEnabled(false);
+        ui->actionMesh_Rectangle_Tool->setEnabled(false);
         ui->actionMesh_move_and_select->trigger();
     }
     else
@@ -150,7 +152,8 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             ui->actionMesh_Line_tool->setEnabled(true);
             ui->actionMesh_Collapse_Edge->setEnabled(true);
             ui->actionMesh_Insert_on_Edge->setEnabled(true);
-            ui->actionMesh_Knot_Insertion->setEnabled(true);
+            ui->actionMesh_Mesh_Insertion->setEnabled(true);
+            ui->actionMesh_Rectangle_Tool->setEnabled(true);
             scene_->setRenderVertsEdges(true);
         }
     }
@@ -177,9 +180,14 @@ void MainWindow::on_actionMesh_Collapse_Edge_triggered()
     scene_->setDrawingMode(GMView::drawModeCanvas::collapseEdge);
 }
 
-void MainWindow::on_actionMesh_Knot_Insertion_triggered()
+void MainWindow::on_actionMesh_Mesh_Insertion_triggered()
 {
-    scene_->setDrawingMode(GMView::drawModeCanvas::knotInsertion);
+    scene_->setDrawingMode(GMView::drawModeCanvas::meshToolInsertion);
+}
+
+void MainWindow::on_actionMesh_Rectangle_Tool_triggered()
+{
+    scene_->setDrawingMode(GMView::drawModeCanvas::rectangleTool);
 }
 
 void MainWindow::on_actionExport_triggered()

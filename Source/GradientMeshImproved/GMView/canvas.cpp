@@ -11,6 +11,7 @@
 #include "canvaspointdiscontinued.h"
 #include <QToolTip>
 #include <QGraphicsview>
+#include <QRect>
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = false;
@@ -48,6 +49,25 @@ void GMCanvas::setItemPointColorFromImage()
         QColor newColor(image.pixel(position.toPoint()));
         point->setColor(newColor, false);
     }
+}
+
+void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    if(drawMode_ == drawModeCanvas::rectangleTool)
+    {
+        if(lineStartPoint_ != nullptr)
+        {
+            if(rectItem_ != nullptr)
+            {
+                rectItem_->setRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()));
+            }
+            else
+            {
+                rectItem_ = addRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()),QPen(QColor(0,0,255,150)), QBrush(QColor(0,0,255,150)));
+            }
+        }
+    }
+    QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
 void GMCanvas::initGMCanvas()
@@ -249,8 +269,11 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
         mouseInsertVertOnEdge(mouseEvent);
         mouseEvent->accept();
         break;
-    case drawModeCanvas::knotInsertion:
+    case drawModeCanvas::meshToolInsertion:
         mouseMeshToolInsertion(mouseEvent);
+        break;
+    case drawModeCanvas::rectangleTool:
+        mouseRectangleTool(mouseEvent);
         break;
     }
 }
@@ -669,12 +692,7 @@ void GMCanvas::addItemLine(CanvasItemPoint* itemPoint, CanvasItemPoint* collideP
         else
         {
             currentLayer()->addToGroup(line);
-
-            CanvasPointConstraint *startConstraint = new CanvasPointConstraint(lineStartPoint_, line);
-            startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
-
-            CanvasPointConstraint *endConstraint = new CanvasPointConstraint(lineEndPoint_, line);
-            endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
+            addConstrainsForLine(lineStartPoint_, lineEndPoint_, line);
         }
         lineStartPoint_ = lineEndPoint_;
         lineEndPoint_ = nullptr;
@@ -960,6 +978,63 @@ void GMCanvas::mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event)
     constructGuiFromMeshHandler();
 }
 
+void GMCanvas::mouseRectangleTool(QGraphicsSceneMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        if(currentMeshHandler()->numberOfFaces() > 0)
+        {
+            showMessage("Rectangle tool can only be used when there are no other faces.");
+            return;
+        }
+        if(lineStartPoint_ == nullptr)
+        {
+            CanvasItemPoint *point = new CanvasItemPoint(pointColor_);
+            point->setPos(event->scenePos());
+            addControlPoint(point);
+            lineStartPoint_ = point;
+        }
+        else
+        {
+            QRectF rect = rectItem_->rect();
+            qDebug() << rect;
+            qDebug() << rect.normalized();
+
+            std::array<CanvasItemPoint *, 4> points;
+            points.at(0) = lineStartPoint_;
+
+            vector<int> vertsIdx;
+            vertsToAddFace_.push_back(lineStartPoint_);
+            for(int i = 0; i < 3; ++i)
+            {
+                CanvasItemPoint *point = new CanvasItemPoint(pointColor_);
+                if(i == 0) point->setPos(rect.topRight());
+                else if(i == 1) point->setPos(rect.bottomRight());
+                else if(i == 2) point->setPos(rect.bottomLeft());
+
+                addControlPoint(point);
+                points.at(i+1) = point;
+                vertsToAddFace_.push_back(point);
+
+                CanvasItemLine *line = new CanvasItemLine(points.at(i), points.at(i+1));
+                currentLayer()->addToGroup(line);
+                addConstrainsForLine(points.at(i), points.at(i+1), line);
+                qDebug() << "elemtn" << (i+1) <<", pos:" << point->pos();
+            }
+            CanvasItemLine *line = new CanvasItemLine(points.back(), points.front());
+            currentLayer()->addToGroup(line);
+            addConstrainsForLine(points.back(), points.front(), line);
+
+            addFaceToOpnMesh(vertsIdx, points.front());
+            addEdgesToCanvasFace(vertsIdx, currentMeshHandler()->numberOfFaces()-1);
+            lineStartPoint_ = nullptr;
+            removeItem(rectItem_);
+            delete rectItem_;
+            rectItem_ = nullptr;
+        }
+    }
+}
+
 void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx, int faceIdx)
 {
     CanvasItemFace * face = new CanvasItemFace(currentLayer(), faceIdx);
@@ -1150,4 +1225,13 @@ bool GMCanvas::addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint 
     vertsToAddFace_.clear();
     autoRenderOnMeshChanged();
     return true;
+}
+
+void GMCanvas::addConstrainsForLine(CanvasItemPoint *fromPoint, CanvasItemPoint *toPoint, CanvasItemLine *line)
+{
+    CanvasPointConstraint *startConstraint = new CanvasPointConstraint(fromPoint, line);
+    startConstraint->setPos(QPointF(line->line().dx()*0.2, line->line().dy()*0.2));
+
+    CanvasPointConstraint *endConstraint = new CanvasPointConstraint(toPoint, line);
+    endConstraint->setPos(QPointF(line->line().dx()*-0.2, line->line().dy()*-0.2));
 }

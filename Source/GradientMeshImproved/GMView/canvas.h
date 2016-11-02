@@ -11,7 +11,7 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool, collapseEdge, insertVert, knotInsertion
+    move, lineTool, collapseEdge, insertVert, meshToolInsertion, rectangleTool
 };
 
 extern bool drawCanvasItemFaces;
@@ -81,7 +81,7 @@ public:
 
     void setItemPointColorFromImage();
 protected:
-    //void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 
@@ -107,6 +107,8 @@ private:
     bool renderAutoUpdate_ = true;
 
     QGraphicsPixmapItem *imageItem_ = nullptr;
+    QGraphicsRectItem *rectItem_ = nullptr;
+
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.
      * \param CanvasItemPoint position of the item point
@@ -126,6 +128,8 @@ private:
     void mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event);
 
     void mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event);
+
+    void mouseRectangleTool(QGraphicsSceneMouseEvent *event);
     
     void updateVertexConstraints();
 
@@ -138,6 +142,8 @@ private:
     void resetLineToolData();
     
     bool addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint *collidePoint);
+
+    void addConstrainsForLine(CanvasItemPoint* fromPoint, CanvasItemPoint *toPoint, CanvasItemLine *line);
 
 signals:
     void GUIMeshChanged();

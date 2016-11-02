@@ -84,7 +84,7 @@
     <addaction name="actionMesh_Insert_on_Edge"/>
     <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
-    <addaction name="actionMesh_Knot_Insertion"/>
+    <addaction name="actionMesh_Mesh_Insertion"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -136,7 +136,8 @@
    <addaction name="actionMesh_Insert_on_Edge"/>
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
-   <addaction name="actionMesh_Knot_Insertion"/>
+   <addaction name="actionMesh_Mesh_Insertion"/>
+   <addaction name="actionMesh_Rectangle_Tool"/>
   </widget>
   <widget class="QDockWidget" name="renderWidget">
    <property name="sizePolicy">
@@ -814,7 +815,7 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionMesh_Knot_Insertion">
+  <action name="actionMesh_Mesh_Insertion">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -823,6 +824,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="actionMesh_Rectangle_Tool">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rectangle Tool</string>
+   </property>
+   <property name="toolTip">
+    <string>Rectangle Tool</string>
    </property>
   </action>
  </widget>
