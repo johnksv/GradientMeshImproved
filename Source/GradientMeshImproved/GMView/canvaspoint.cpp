@@ -288,6 +288,8 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
                     item->setColor(chosenColor);
                 }
             }
+            //To guarantee that the color on this object is set.
+            setColor(chosenColor);
         }
 
     }
