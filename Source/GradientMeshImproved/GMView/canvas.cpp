@@ -197,6 +197,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     }
     else
     {
+        updateVertexConstraints();
         currentMeshHandler()->prepareMeshForSubd(true, location);
     }
 }
@@ -639,6 +640,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            //TODO: MakeFace return faceHandle
            currentMeshHandler()->garbageCollectOpenMesh();
            addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
+           updateVertexConstraints();
        }
 
        //Should not delete ItemPoint from heap.
@@ -813,6 +815,7 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         int endIdx = edge->endPoint()->vertexHandleIdx();
         int newIdx = currentMeshHandler()->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
 
+        //If the insertions is apart of closing a new face
         if(vertsToAddFace_.size() != 0)
         {
             CanvasItemPoint* point = new CanvasItemPoint();
@@ -827,6 +830,7 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         //TODO: Reimplement. that is: in GUI: make new edges, update face
         //For now it's easiest to construct the mesh from the meshhandler
         clearAllCurrLayer(false);
+        currentMeshHandler()->garbageCollectOpenMesh();
         constructGuiFromMeshHandler();
     }
     else
@@ -1019,7 +1023,6 @@ void GMCanvas::mouseRectangleTool(QGraphicsSceneMouseEvent *event)
                 CanvasItemLine *line = new CanvasItemLine(points.at(i), points.at(i+1));
                 currentLayer()->addToGroup(line);
                 addConstrainsForLine(points.at(i), points.at(i+1), line);
-                qDebug() << "elemtn" << (i+1) <<", pos:" << point->pos();
             }
             CanvasItemLine *line = new CanvasItemLine(points.back(), points.front());
             currentLayer()->addToGroup(line);

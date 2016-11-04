@@ -140,6 +140,9 @@ void MeshHandler::setConstraints(int halfedgeFromVertIdx, int halfedgeToVertIdx,
 {
     vertexHandle outgoingVert = guiMesh.vertex_handle(halfedgeFromVertIdx);
     vertexHandle endVert = guiMesh.vertex_handle(halfedgeToVertIdx);
+
+    if(guiMesh.valence(outgoingVert) == 0 || guiMesh.valence(endVert) == 0) return;
+
     for(OpnMesh::VertexOHalfedgeIter voh_ite = guiMesh.voh_begin(outgoingVert); voh_ite != guiMesh.voh_end(outgoingVert); voh_ite++)
     {
         if(guiMesh.to_vertex_handle(voh_ite) == endVert)
@@ -276,10 +279,24 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
         }
     }
 
-	QVector2D outConstraints = guiMesh.data(outHEdge).constraint();
-	guiMesh.data(outHEdge).setConstraint(QVector2D(0.1f ,0.1f));
 
-	guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 2)).setConstraint(outConstraints);
+    //Constraints for new point towards old point A.
+    QVector2D inConstraints = guiMesh.data(guiMesh.opposite_halfedge_handle(outHEdge)).constraint()/2;
+    //Keep old point B constraints
+    QVector2D outConstraints = guiMesh.data(outHEdge).constraint();
+
+
+    guiMesh.data(outHEdge).setConstraint(inConstraints);
+	qDebug() << "outHEdge,   From:" << guiMesh.from_vertex_handle(outHEdge).idx() << ", to:" << guiMesh.to_vertex_handle(outHEdge).idx();
+
+    //Halfedge from the new point to old point B
+    OpnMesh::HalfedgeHandle newHalfedge = guiMesh.prev_halfedge_handle(outHEdge);
+    qDebug() << "newHalfedge From:" << guiMesh.from_vertex_handle(newHalfedge).idx() << ", to:" << guiMesh.to_vertex_handle(newHalfedge).idx();
+
+    guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 2)).setConstraint(outConstraints);
+    //Constraints for new point towards old point B
+    QVector2D constraints = outConstraints/2;
+    guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 1)).setConstraint(constraints);
     return newVertIdx;
 }
 
@@ -485,7 +502,7 @@ bool MeshHandler::makeFace(vector<int>& vertexHandlersIdx, bool faceInsideFace, 
                 {
                     qDebug() << "\tvertexHandleIdx: " << fv_ite->idx();
                     vertexHandlersIdx.push_back(fv_ite->idx());
-					if (vertexHandlersIdx.size() > guiMesh.n_vertices()) throw - 2;
+                    if (vertexHandlersIdx.size() > guiMesh.n_vertices()*2) throw - 2;
                 }
             }
             else
