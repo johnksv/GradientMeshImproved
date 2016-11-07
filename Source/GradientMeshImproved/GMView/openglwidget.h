@@ -17,7 +17,7 @@ public:
     GMOpenGLWidget(QWidget *parent = nullptr);
     GMOpenGLWidget(GMCanvas *scene, QWidget *parent = nullptr);
     void setScene(GMCanvas* scene);
-
+    void setRenderMode(renderModeOpenGL mode);
 protected:
     void mousePressEvent(QMouseEvent *event) override;
     void initializeGL() override;
@@ -26,7 +26,7 @@ protected:
 
 private:
     GMCanvas *scene_;
-
+    renderModeOpenGL renderMode_ = renderModeOpenGL::viewportRender;
     // use resizeGL to update.
     GLdouble glWidth, glHeight;
 };

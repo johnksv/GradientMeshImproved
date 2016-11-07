@@ -33,8 +33,6 @@ private slots:
 
     void on_actionImport_triggered();
 
-    void handleRenderModeGroup(QAction * action);
-
     void on_actionClear_all_triggered();
 
     void on_layerToogleView_clicked();
@@ -82,6 +80,10 @@ private slots:
     void on_imageColorFrom_clicked();
 
     void on_actionMesh_Rectangle_Tool_triggered();
+
+    void on_glRenderButton_fullScene_clicked();
+
+    void on_glRenderButton_viewport_clicked();
 
 private:
     Ui::MainWindow *ui;

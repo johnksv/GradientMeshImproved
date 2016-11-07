@@ -8,11 +8,7 @@
 #include <QApplication>
 #include <QImageReader>
 #include <QByteArrayList>
-#include <QGraphicsPixmapItem>
 #include <QDebug>
-
-
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,9 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->splitWidget->setVisible(false);
     ui->splitWidget->setParent(parent);
     ui->splitWidget->setMinimumSize(400,400);
+    ui->splitWidget->resize(600,600);
     ui->splitWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
-
-
 
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setScene(scene_);
@@ -111,11 +106,6 @@ void MainWindow::initColorSelector()
     ui->colorTert->setShortcut(Qt::Key_3);
     ui->colorLockMode->setShortcut(Qt::Key_4);
 
-}
-
-void MainWindow::handleRenderModeGroup(QAction * action)
-{
-    action->setChecked(true);
 }
 
 void MainWindow::on_actionRender_constraints_handlers_triggered()
@@ -342,7 +332,7 @@ void MainWindow::on_imageImport_clicked()
     mimeTypeFilters.sort();
     mimeTypeFilters.append("application/octet-stream");
     dialog.setMimeTypeFilters(mimeTypeFilters);
-    dialog.selectMimeTypeFilter("image/jpeg");
+    //dialog.selectMimeTypeFilter("image/jpeg");
 
     if(dialog.exec() == QDialog::Accepted)
     {
@@ -397,4 +387,14 @@ void MainWindow::on_actionRender_GUI_faces_triggered(bool checked)
 void MainWindow::on_imageColorFrom_clicked()
 {
     scene_->setItemPointColorFromImage();
+}
+
+void MainWindow::on_glRenderButton_fullScene_clicked()
+{
+    ui->openGLWidget->setRenderMode(GMView::renderModeOpenGL::fullSceneRender);
+}
+
+void MainWindow::on_glRenderButton_viewport_clicked()
+{
+    ui->openGLWidget->setRenderMode(GMView::renderModeOpenGL::viewportRender);
 }

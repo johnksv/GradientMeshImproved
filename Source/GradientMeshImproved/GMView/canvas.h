@@ -11,7 +11,17 @@
 namespace GMView {
 
 enum class drawModeCanvas{
-    move, lineTool, collapseEdge, insertVert, meshToolInsertion, rectangleTool
+    move,
+    lineTool,
+    collapseEdge,
+    insertVert,
+    meshToolInsertion,
+    rectangleTool
+};
+
+enum class renderModeOpenGL{
+    viewportRender,
+    fullSceneRender
 };
 
 extern bool drawCanvasItemFaces;

@@ -35,10 +35,12 @@ void CanvasItemPoint::paint(QPainter *painter, const QStyleOptionGraphicsItem* o
 {
     if(!discontinuous_)
     {
-        QString string("x: ");
-        string.append(QString::number(x())).append("y: ")
-                .append(QString::number(y()));
-        //painter->drawText(10,10, string);
+//        QString string("x: ");
+//        string.append(QString::number(x())).append("y: ")
+//                .append(QString::number(y()));
+//        QString string1("x: ");
+//        string1.append(QString::number(vertexHandleIdx_));
+//        painter->drawText(10,10, string1);
         painter->setPen(Qt::NoPen);
 
         const qreal detailLevel = option->levelOfDetailFromTransform(painter->worldTransform());
