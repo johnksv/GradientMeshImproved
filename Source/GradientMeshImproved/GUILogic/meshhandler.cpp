@@ -266,6 +266,8 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
     OpnMesh::VertexHandle splitVert = guiMesh.vertex_handle(newVertIdx);
     OpnMesh::VertexHandle startVert = guiMesh.vertex_handle(edgeStartVertIdx);
     OpnMesh::VertexHandle endVert = guiMesh.vertex_handle(edgeEndVertIdx);
+    //OutHEdge (between splitVert and startVert) will have the old constraints because of the way OpenMesh split.
+    //The two new halfedges between the splitVert and endVert are new, and have constraints (0.1,0.1)
     OpnMesh::HalfedgeHandle outHEdge;
 
 
@@ -279,19 +281,13 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
         }
     }
 
-
-    //Constraints for new point towards old point A.
+    //Constraints for splitVert towards startVert.
     QVector2D inConstraints = guiMesh.data(guiMesh.opposite_halfedge_handle(outHEdge)).constraint()/2;
-    //Keep old point B constraints
+    //Keep endVert constraints (which is stored in splitVert halfedge)
     QVector2D outConstraints = guiMesh.data(outHEdge).constraint();
 
 
     guiMesh.data(outHEdge).setConstraint(inConstraints);
-	qDebug() << "outHEdge,   From:" << guiMesh.from_vertex_handle(outHEdge).idx() << ", to:" << guiMesh.to_vertex_handle(outHEdge).idx();
-
-    //Halfedge from the new point to old point B
-    OpnMesh::HalfedgeHandle newHalfedge = guiMesh.prev_halfedge_handle(outHEdge);
-    qDebug() << "newHalfedge From:" << guiMesh.from_vertex_handle(newHalfedge).idx() << ", to:" << guiMesh.to_vertex_handle(newHalfedge).idx();
 
     guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 2)).setConstraint(outConstraints);
     //Constraints for new point towards old point B

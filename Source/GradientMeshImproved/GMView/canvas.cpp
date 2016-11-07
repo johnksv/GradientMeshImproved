@@ -30,53 +30,14 @@ GMCanvas::~GMCanvas()
         delete mesh;
     }
 }
-void GMCanvas::resizeOpenGLWidget(const QSize &size)
-{
-
-    QGraphicsView* view = views().first();
-    QRectF rect = view->rect();
-    opengl_->widget()->setFixedSize(size);
-    opengl_->setPos(view->mapToScene(0,0));
-}
-
-void GMCanvas::setItemPointColorFromImage()
-{
-    QImage image = imageItem_->pixmap().toImage();
-    QList<QGraphicsItem *> childlist = currentLayer()->points().childItems();
-    for (int i = 0; i < childlist.size(); ++i) {
-        CanvasItemPoint *point = static_cast<CanvasItemPoint *> (childlist.at(i));
-        QPointF position = point->pos();
-        QColor newColor(image.pixel(position.toPoint()));
-        point->setColor(newColor, false);
-    }
-}
-
-void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
-{
-    if(drawMode_ == drawModeCanvas::rectangleTool)
-    {
-        if(lineStartPoint_ != nullptr)
-        {
-            if(rectItem_ != nullptr)
-            {
-                rectItem_->setRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()));
-            }
-            else
-            {
-                rectItem_ = addRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()),QPen(QColor(0,0,255,150)), QBrush(QColor(0,0,255,150)));
-            }
-        }
-    }
-    QGraphicsScene::mouseMoveEvent(mouseEvent);
-}
 
 void GMCanvas::initGMCanvas()
 {
     meshHandlers_.push_back(new GUILogic::MeshHandler);
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
-    //opengl_->widget()->setFixedSize(900,670);
-//    opengl_->setPos(0,0);
+    opengl_->setPos(-5000,-5000);
+    opengl_->widget()->setFixedSize(900,670);
     opengl_->setZValue(-1);
     opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations);
 
@@ -228,6 +189,24 @@ QGraphicsPixmapItem *GMCanvas::imageItem()
     return imageItem_;
 }
 
+void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    if(drawMode_ == drawModeCanvas::rectangleTool)
+    {
+        if(lineStartPoint_ != nullptr)
+        {
+            if(rectItem_ != nullptr)
+            {
+                rectItem_->setRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()));
+            }
+            else
+            {
+                rectItem_ = addRect(QRectF(lineStartPoint_->pos(),mouseEvent->scenePos()),QPen(QColor(0,0,255,150)), QBrush(QColor(0,0,255,150)));
+            }
+        }
+    }
+    QGraphicsScene::mouseMoveEvent(mouseEvent);
+}
 
 void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
@@ -279,12 +258,6 @@ void GMCanvas::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
     }
 }
 
-void GMCanvas::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-     if(drawMode_ !=drawModeCanvas::move){
-        event->accept();
-     }
-}
 
 void GMCanvas::setDrawColorVertex(QColor pointColor)
 {
@@ -741,6 +714,28 @@ void GMCanvas::autoRenderOnMeshChanged()
         emit GUIMeshChanged();
     }
 }
+
+void GMCanvas::resizeOpenGLWidget(const QSize &size)
+{
+
+    QGraphicsView* view = views().first();
+    QRectF rect = view->rect();
+    opengl_->widget()->setFixedSize(size);
+    opengl_->setPos(view->mapToScene(0,0));
+}
+
+void GMCanvas::setItemPointColorFromImage()
+{
+    QImage image = imageItem_->pixmap().toImage();
+    QList<QGraphicsItem *> childlist = currentLayer()->points().childItems();
+    for (int i = 0; i < childlist.size(); ++i) {
+        CanvasItemPoint *point = static_cast<CanvasItemPoint *> (childlist.at(i));
+        QPointF position = point->pos();
+        QColor newColor(image.pixel(position.toPoint()));
+        point->setColor(newColor, false);
+    }
+}
+
 void GMCanvas::mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent)
 {
     CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
