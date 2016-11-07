@@ -77,10 +77,11 @@
    </widget>
    <widget class="QMenu" name="menuMesh">
     <property name="title">
-     <string>Mesh</string>
+     <string>Drawing tools</string>
     </property>
     <addaction name="actionMesh_move_and_select"/>
     <addaction name="actionMesh_Line_tool"/>
+    <addaction name="actionMesh_Rectangle_Tool"/>
     <addaction name="actionMesh_Insert_on_Edge"/>
     <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
@@ -137,7 +138,6 @@
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
    <addaction name="actionMesh_Mesh_Insertion"/>
-   <addaction name="actionMesh_Rectangle_Tool"/>
   </widget>
   <widget class="QDockWidget" name="renderWidget">
    <property name="sizePolicy">
