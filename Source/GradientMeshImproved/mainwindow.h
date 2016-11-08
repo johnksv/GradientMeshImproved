@@ -85,6 +85,8 @@ private slots:
 
     void on_glRenderButton_viewport_clicked();
 
+    void on_glRenderButton_boundingRect_clicked();
+
 private:
     Ui::MainWindow *ui;
     void initActionGroups();

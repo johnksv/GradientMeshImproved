@@ -19,9 +19,6 @@ void GMOpenGLWidget::initializeGL()
 {
     // initialise an OpenGL context
     initializeOpenGLFunctions();
-    glWidth = 1280;
-    glHeight = 640;
-
 }
 
 void GMOpenGLWidget::resizeGL(int, int)
@@ -52,7 +49,11 @@ void GMOpenGLWidget::paintGL()
     }
     QRectF boundingRect;
 
-    if(renderMode_ == renderModeOpenGL::viewportRender)
+    if(renderMode_ == renderModeOpenGL::boundingRect)
+    {
+        boundingRect = scene_->itemsBoundingRect();
+    }
+    else if(renderMode_ == renderModeOpenGL::viewportRender)
     {
         if(scene_->views().size() != 0)
         {

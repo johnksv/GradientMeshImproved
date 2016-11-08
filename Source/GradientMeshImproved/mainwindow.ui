@@ -317,7 +317,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>208</width>
+     <width>296</width>
      <height>112</height>
     </size>
    </property>
@@ -356,6 +356,13 @@
         <enum>QFrame::Raised</enum>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QPushButton" name="glRenderButton_boundingRect">
+          <property name="text">
+           <string>Bounding rect</string>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QPushButton" name="glRenderButton_fullScene">
           <property name="maximumSize">

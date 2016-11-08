@@ -398,3 +398,8 @@ void MainWindow::on_glRenderButton_viewport_clicked()
 {
     ui->openGLWidget->setRenderMode(GMView::renderModeOpenGL::viewportRender);
 }
+
+void MainWindow::on_glRenderButton_boundingRect_clicked()
+{
+    ui->openGLWidget->setRenderMode(GMView::renderModeOpenGL::boundingRect);
+}

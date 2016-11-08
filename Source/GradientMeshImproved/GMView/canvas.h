@@ -16,12 +16,14 @@ enum class drawModeCanvas{
     collapseEdge,
     insertVert,
     meshToolInsertion,
-    rectangleTool
+    rectangleTool,
+    diffusionPoints
 };
 
 enum class renderModeOpenGL{
     viewportRender,
-    fullSceneRender
+    fullSceneRender,
+    boundingRect
 };
 
 extern bool drawCanvasItemFaces;

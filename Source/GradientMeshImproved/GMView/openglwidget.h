@@ -28,7 +28,6 @@ private:
     GMCanvas *scene_;
     renderModeOpenGL renderMode_ = renderModeOpenGL::viewportRender;
     // use resizeGL to update.
-    GLdouble glWidth, glHeight;
 };
 
 } // end of namespace GMView
