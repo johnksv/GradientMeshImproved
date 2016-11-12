@@ -287,12 +287,13 @@ int GUILogic::MeshHandler::insertVertexOnEdge(int edgeStartVertIdx, int edgeEndV
     QVector2D outConstraints = guiMesh.data(outHEdge).constraint();
 
 
-    guiMesh.data(outHEdge).setConstraint(inConstraints);
+
 
     guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 2)).setConstraint(outConstraints);
     //Constraints for new point towards old point B
     QVector2D constraints = outConstraints/2;
-    guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 1)).setConstraint(constraints);
+    guiMesh.data(outHEdge).setConstraint(constraints);
+    guiMesh.data(guiMesh.halfedge_handle(guiMesh.n_halfedges() - 1)).setConstraint(inConstraints);
     return newVertIdx;
 }
 

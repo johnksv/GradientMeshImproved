@@ -826,6 +826,7 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         clearAllCurrLayer(false);
         currentMeshHandler()->garbageCollectOpenMesh();
         constructGuiFromMeshHandler();
+        autoRenderOnMeshChanged();
     }
     else
     {
