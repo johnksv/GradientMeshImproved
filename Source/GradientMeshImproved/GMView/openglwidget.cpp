@@ -51,7 +51,7 @@ void GMOpenGLWidget::paintGL()
 
     if(renderMode_ == renderModeOpenGL::boundingRect)
     {
-        boundingRect = scene_->itemsBoundingRect();
+        boundingRect = scene_->currentLayer()->boundingRect();
     }
     else if(renderMode_ == renderModeOpenGL::viewportRender)
     {
@@ -70,7 +70,6 @@ void GMOpenGLWidget::paintGL()
     }
     else if(renderMode_ == renderModeOpenGL::fullSceneRender)
     {
-        //if fixedWidht = sceneRect this will display correct as backrgound, but it will be very slow
         boundingRect = scene_->sceneRect();
     }
 

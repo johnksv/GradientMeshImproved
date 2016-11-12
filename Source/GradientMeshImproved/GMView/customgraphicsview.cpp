@@ -19,7 +19,7 @@ CustomGraphicsView::CustomGraphicsView(QWidget *parent) : QGraphicsView(parent)
 
 void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 {
-    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget(viewport()->size());
+    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget();
     //Move scrollbars with alt and ctrl
     if(event->modifiers() != Qt::ControlModifier ){
         QGraphicsView::wheelEvent(event);
@@ -51,5 +51,5 @@ void CustomGraphicsView::wheelEvent(QWheelEvent *event)
 
 void CustomGraphicsView::resizeEvent(QResizeEvent *event)
 {
-    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget(event->size());
+    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget();
 }

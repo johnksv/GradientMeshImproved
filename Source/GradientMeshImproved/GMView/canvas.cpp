@@ -36,10 +36,10 @@ void GMCanvas::initGMCanvas()
     meshHandlers_.push_back(new GUILogic::MeshHandler);
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
-    opengl_->setPos(-5000,-5000);
-    opengl_->widget()->setFixedSize(900,670);
+    opengl_->setPos(0,0);
+    openglWidget->setRenderMode(renderModeOpenGL::boundingRect);
     opengl_->setZValue(-1);
-    opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations);
+
 
     CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
     layers_.push_back(layer);
@@ -205,6 +205,7 @@ void GMCanvas::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
             }
         }
     }
+    resizeOpenGLWidget();
     QGraphicsScene::mouseMoveEvent(mouseEvent);
 }
 
@@ -705,7 +706,7 @@ QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
 
 void GMCanvas::autoRenderOnMeshChanged()
 {
-    //TODO: Speedtest, and reimplement, but need this function for autosaving during testing
+    //TODO: reimplement as prepareRendering does the same, but need this function for autosaving during testing
     currentMeshHandler()->saveToTestOffFile();
     //vertsToAddFace_ < 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
     if(renderAutoUpdate_ && vertsToAddFace_.size() < 1)
@@ -715,13 +716,11 @@ void GMCanvas::autoRenderOnMeshChanged()
     }
 }
 
-void GMCanvas::resizeOpenGLWidget(const QSize &size)
+void GMCanvas::resizeOpenGLWidget()
 {
-
-    QGraphicsView* view = views().first();
-    QRectF rect = view->rect();
-    opengl_->widget()->setFixedSize(size);
-    opengl_->setPos(view->mapToScene(0,0));
+    QRectF rect = currentLayer()->boundingRect();
+    opengl_->widget()->setFixedSize(rect.size().toSize());
+    opengl_->setPos(rect.topLeft());
 }
 
 void GMCanvas::setItemPointColorFromImage()

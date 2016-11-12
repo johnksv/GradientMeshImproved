@@ -89,7 +89,7 @@ public:
      */
     void autoRenderOnMeshChanged();
 
-    void resizeOpenGLWidget(const QSize &size);
+    void resizeOpenGLWidget();
 
     void setItemPointColorFromImage();
 protected:
