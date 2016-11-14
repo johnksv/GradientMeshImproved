@@ -526,11 +526,21 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
             CanvasItemLine *line = new CanvasItemLine(startPoint, endPoint);
             layer->addToGroup(line);
 
-            CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
-            startConstraint->setPos(constraints.at(0).toPointF());
+            if((constraints.at(0).x() != 0.1f && constraints.at(0).y() != 0.1f) ||
+               (constraints.at(1).x() != 0.1f && constraints.at(1).y() != 0.1f))
+            {
+                CanvasPointConstraint *startConstraint = new CanvasPointConstraint(startPoint, line);
+                startConstraint->setPos(constraints.at(0).toPointF());
 
-            CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
-            endConstraint->setPos(constraints.at(1).toPointF());
+                CanvasPointConstraint *endConstraint = new CanvasPointConstraint(endPoint, line);
+                endConstraint->setPos(constraints.at(1).toPointF());
+            }
+            else
+            {
+                //TODO: Fix. Occures when adding a face inside the first face. This is becuase how makeFace works
+                addConstrainsForLine(startPoint, endPoint, line);
+            }
+
 
         }
     }

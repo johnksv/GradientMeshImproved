@@ -287,7 +287,7 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
                 CanvasItemPoint * item = dynamic_cast<CanvasItemPoint *> (items.at(i));
                 if(item != nullptr)
                 {
-                    item->setColor(chosenColor);
+                    item->setColor(chosenColor, false);
                 }
             }
             //To guarantee that the color on this object is set.
