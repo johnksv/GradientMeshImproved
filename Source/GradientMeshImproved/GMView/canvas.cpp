@@ -12,6 +12,7 @@
 #include <QToolTip>
 #include <QGraphicsview>
 #include <QRect>
+#include "undoCommands/guichange.h"
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = false;
@@ -573,6 +574,7 @@ void GMCanvas::updateVertexConstraints()
 void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
 {
     bool madeFace = false;
+    QString meshOld;
 
     CanvasItemPoint *itemPoint = new CanvasItemPoint(pointColor_);
     itemPoint->setPos(event->scenePos());
@@ -595,6 +597,7 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
             }
             else
             {
+                meshOld = QString(currentMeshHandler()->saveOpenMeshAsOff().data());
                 madeFace = addFaceToOpnMesh(vertsToAddFaceIdx, collidePoint);
                 if(!madeFace) return;
             }
@@ -625,6 +628,8 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
            currentMeshHandler()->garbageCollectOpenMesh();
            addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
            updateVertexConstraints();
+
+           currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
        }
 
        //Should not delete ItemPoint from heap.
@@ -717,7 +722,7 @@ QGraphicsItem* GMCanvas::findCollideWithPoint(CanvasItemPoint *itemPoint)
 void GMCanvas::autoRenderOnMeshChanged()
 {
     //TODO: reimplement as prepareRendering does the same, but need this function for autosaving during testing
-    currentMeshHandler()->saveToTestOffFile();
+    currentMeshHandler()->saveToTestFile();
     //vertsToAddFace_ < 1 is needed, else it will crash mesh.cpp(since the verts will have 0 valencey)
     if(renderAutoUpdate_ && vertsToAddFace_.size() < 1)
     {

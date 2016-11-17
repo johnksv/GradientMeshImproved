@@ -38,6 +38,8 @@ CanvasItemGroup::CanvasItemGroup(QString layername, QGraphicsItem *parent) :
     lines_.setHandlesChildEvents(false);
     lines_.setFlag(ItemIsSelectable, false);
     lines_.setFlag(ItemIsMovable, false);
+
+    undoStack_ = new QUndoStack();
 }
 
 QRectF CanvasItemGroup::boundingRect() const
@@ -129,4 +131,9 @@ void CanvasItemGroup::clear()
     foreach (QGraphicsItem* item, points_.childItems()) {
         delete item;
     }
+}
+
+QUndoStack *CanvasItemGroup::undoStack()
+{
+    return undoStack_;
 }

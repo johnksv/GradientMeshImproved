@@ -3,9 +3,10 @@
 
 #include <QGraphicsItemGroup>
 #include <QStandardItem>
-#include <QString>
 #include "canvasitemface.h"
 #include "canvaspointconstraint.h"
+#include <QUndoStack>
+
 
 namespace GMView{
 
@@ -34,10 +35,13 @@ public:
     void removeFromFaces(CanvasItemFace* face);
     void clear();
 
+    QUndoStack *undoStack();
+
 private:
     CanvasItemContainer points_;
     CanvasItemContainer lines_;
     vector<CanvasItemFace*> faces_;
+    QUndoStack *undoStack_;
 
 };
 

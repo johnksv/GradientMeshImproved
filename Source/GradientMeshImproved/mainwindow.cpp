@@ -19,11 +19,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setScene(scene_);
 
     initWindowAction();
-    ui->splitWidget->setVisible(false);
-    ui->splitWidget->setParent(parent);
-    ui->splitWidget->setMinimumSize(400,400);
-    ui->splitWidget->resize(600,600);
-    ui->splitWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+    initSplitWidget(parent);
 
     ui->actionRender_constraints_handlers->setChecked(true);
     ui->openGLWidget->setScene(scene_);
@@ -35,7 +31,9 @@ MainWindow::MainWindow(QWidget *parent) :
     });
 
     //TODO: implement undoStack
-    undoStack = new QUndoStack(this);
+    undoAction = scene_->currentLayer()->undoStack()->createUndoAction(this, tr("&Undo"));
+    undoAction->setShortcuts(QKeySequence::Undo);
+    ui->menuEdit->addAction(undoAction);
 
     initActionGroups();
     initLayoutContainer();
@@ -56,6 +54,15 @@ void MainWindow::initWindowAction()
     ui->menuWindow->addAction(ui->imageWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
 
+}
+
+void MainWindow::initSplitWidget(QWidget *parent)
+{
+    ui->splitWidget->setVisible(false);
+    ui->splitWidget->setParent(parent);
+    ui->splitWidget->setMinimumSize(400,400);
+    ui->splitWidget->resize(600,600);
+    ui->splitWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 void MainWindow::initActionGroups()

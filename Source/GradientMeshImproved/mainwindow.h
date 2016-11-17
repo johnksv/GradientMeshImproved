@@ -89,17 +89,20 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    void initActionGroups();
     QActionGroup *renderModeGroup_;
     QActionGroup *drawModeGroup_;
     GMView::GMCanvas *scene_;
     QStandardItemModel *layerModel_;
-    QUndoStack *undoStack;
+    QAction *undoAction;
+
+    void initWindowAction();
+    void initSplitWidget(QWidget *parent);
+    void initActionGroups();
     void initLayoutContainer();
     void initColorSelector();
+
     // 1 for pirmary, 2 for secondary, 3 for tertiary
     void handleColorButtonClick(int color);
-    void initWindowAction();
 };
 
 #endif // MAINWINDOW_H
