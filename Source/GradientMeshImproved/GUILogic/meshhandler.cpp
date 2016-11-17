@@ -706,18 +706,34 @@ void MeshHandler::subdivide()
     subdMesh = currentMsh;
 }
 
-void MeshHandler::saveToTestOffFile()
+void MeshHandler::saveToTestFile()
 {
     guiMesh.garbage_collection();
+
+    //Make a file, used for export to SubdMesh
+    fstream file;
+    file.open("test.off", fstream::out);
+    file << saveOpenMeshAsOff().data();
+    file.close();
+    qDebug() << "Saved file, test.off";
+}
+
+const string MeshHandler::saveOpenMeshAsOff()
+{
     string tempString;
     tempString +="OFF\n";
 
-    size_t vertices = guiMesh.n_vertices();
+    size_t vertices = 0;
     size_t faces = guiMesh.n_faces();
-    if(faces  <= 0) return;
+    if(faces  <= 0) return "";
 
     //0 for Lab, 1 for RGB.
     short colormode = 0;
+
+    for(OpnMesh::VertexIter ite = guiMesh.vertices_sbegin(); ite != guiMesh.vertices_end(); ite++ )
+    {
+        vertices = guiMesh.valence(ite) == 0 ? vertices : vertices + 1;
+    }
 
     //Metadata
     tempString.append(to_string(vertices) + " " + to_string(faces) + " " + to_string(colormode) + "\n");
@@ -727,24 +743,27 @@ void MeshHandler::saveToTestOffFile()
     {
         OpnMesh::Point point = guiMesh.point(ite);
         OpnMesh::Color color = guiMesh.color(ite);
+        //r g b
+        double r = (double)color[0]/255;
+        double g = (double)color[1]/255;
+        double bb = (double)color[2]/255;
+        double l, a, b;
+
+        unsigned int valence = guiMesh.valence(ite);
+        //If a a vert is newly added the valence will be 0, and it should not be included (will crash in mesh.cpp)
+        if(valence == 0 ) continue;
 
         //x y z
         tempString += to_string(point[0]) + " " + to_string(point[1]) + " " + to_string(1.0);
         tempString += " ";
 
-        //l a b
-        double l, a, b;
-        //r g b
-        double r = (double)color[0]/255;
-        double g = (double)color[1]/255;
-        double bb = (double)color[2]/255;
+
 
         subdivMesh::RGB2LAB(r, g, bb, l, a, b);
         tempString += to_string(l) + " " + to_string(a) + " " + to_string(b);
         tempString += " ";
 
         //valence
-        unsigned int valence = guiMesh.valence(ite);
         tempString += to_string(valence);
         tempString += " ";
 
@@ -794,23 +813,17 @@ void MeshHandler::saveToTestOffFile()
         tempString += "\n";
     }
 
+    return tempString;
+}
 
+void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
+{
+    saveToTestFile();
 
     // delete current mesh object and insert a new one
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
 
-    //Make a file, used for export to SubdMesh
-    fstream file;
-    file.open("test.off", fstream::out);
-    file << tempString.c_str();
-    file.close();
-    qDebug() << "Saved file, test.off";
-}
-
-void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
-{
-    saveToTestOffFile();
     qDebug() << "Mesh saved: test.off" << "Sucsess with loadV3?" << subdMesh->loadV3("test.off");
     subdMesh->build(); // build mesh topology from data
 
@@ -934,43 +947,81 @@ void MeshHandler::setDraw(bool draw)
     draw_ = draw;
 }
 
-bool MeshHandler::importGuiMesh(QString location, bool draw)
+
+bool MeshHandler::importGuiMesh(stringstream &string, bool draw)
 {
-    //TODO: Discontinuity and gradient constraints.
-    //TODO: If there alleready are vertices,edges and faces in guiMesh
+    delete subdMesh; // delete from heap
+    subdMesh = new SbdvMesh();
+    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(string);
+    subdMesh->build(); // build mesh topology from data
+
+    constructOpenMeshFromMesh();
+
+    if(!draw)
+    {
+        delete subdMesh;
+        subdMesh = nullptr;
+    }
+    else
+    {
+        subdivide();
+    }
+
+    return true;
+}
+
+bool MeshHandler::importGuiMesh(QString &location, bool draw)
+{
 	delete subdMesh; // delete from heap
 	subdMesh = new SbdvMesh();
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(location.toStdString().c_str());
     subdMesh->build(); // build mesh topology from data
 
-	vector <subdivMesh::MeshVertex>	&vertices = subdMesh->my_vertices;
-	vector <subdivMesh::MeshFacet>  &facets = subdMesh->my_facets;
+    constructOpenMeshFromMesh();
 
-	for (int i = 0; i < vertices.size(); i++)
-	{
-		subdivMesh::Point_3D point3d = vertices.at(i).my_point;
-		subdivMesh::Point_3D color3d = vertices.at(i).my_colour;
-		double r, g, b;
-		subdivMesh::LAB2RGB(color3d.getX(), color3d.getY(), color3d.getZ(), r, g, b);
-		r *= 255; b *= 255; g *= 255;
-		if (r > 255) r = 255;
-		if (g > 255) g = 255;
-		if (b > 255) b = 255;
+    if(!draw)
+    {
+        delete subdMesh;
+        subdMesh = nullptr;
+    }
+    else
+    {
+        subdivide();
+    }
 
-		QPointF point2d(point3d.getX(), point3d.getY());
-		QColor color(r, g, b);
-		guiMesh.vertex_handle(addVertex(point2d, color));
-	}
+    return true;
+}
 
-	for (int i = 0; i < facets.size(); ++i) {
-		vector<vertexHandle> vertexIdx;
+void MeshHandler::constructOpenMeshFromMesh()
+{
+    vector <subdivMesh::MeshVertex>	&vertices = subdMesh->my_vertices;
+    vector <subdivMesh::MeshFacet>  &facets = subdMesh->my_facets;
 
-		vector<unsigned int> &vertIndices = facets.at(i).my_vertIndices;
-		for (int j = 0; j < vertIndices.size(); ++j) {
-			vertexIdx.push_back(guiMesh.vertex_handle(vertIndices.at(j)));
-		}
-		guiMesh.add_face(vertexIdx);
-	}
+    for (int i = 0; i < vertices.size(); i++)
+    {
+        subdivMesh::Point_3D point3d = vertices.at(i).my_point;
+        subdivMesh::Point_3D color3d = vertices.at(i).my_colour;
+        double r, g, b;
+        subdivMesh::LAB2RGB(color3d.getX(), color3d.getY(), color3d.getZ(), r, g, b);
+        r *= 255; b *= 255; g *= 255;
+        if (r > 255) r = 255;
+        if (g > 255) g = 255;
+        if (b > 255) b = 255;
+
+        QPointF point2d(point3d.getX(), point3d.getY());
+        QColor color(r, g, b);
+        guiMesh.vertex_handle(addVertex(point2d, color));
+    }
+
+    for (int i = 0; i < facets.size(); ++i) {
+        vector<vertexHandle> vertexIdx;
+
+        vector<unsigned int> &vertIndices = facets.at(i).my_vertIndices;
+        for (int j = 0; j < vertIndices.size(); ++j) {
+            vertexIdx.push_back(guiMesh.vertex_handle(vertIndices.at(j)));
+        }
+        guiMesh.add_face(vertexIdx);
+    }
     for (int i = 0; i < vertices.size(); i++)
     {
         QList<int> weights_ids = vertices.at(i).weight_ids;
@@ -979,14 +1030,6 @@ bool MeshHandler::importGuiMesh(QString location, bool draw)
             setConstraints(i, weights_ids.at(j),constraint.at(j));
         }
     }
-
-    if(!draw)
-    {
-        delete subdMesh;
-        subdMesh = nullptr;
-    }
-
-    return true;
 }
 
 void MeshHandler::garbageCollectOpenMesh()

@@ -80,11 +80,13 @@ public:
 
     void clearAll();
 
-    bool importGuiMesh(QString location, bool draw = true);
+    bool importGuiMesh(stringstream &string, bool draw = true);
+    bool importGuiMesh(QString &location, bool draw = true);
 
     void garbageCollectOpenMesh();
 
-    void saveToTestOffFile();
+    void saveToTestFile();
+    const string saveOpenMeshAsOff();
     //TODO: Rename function.
     void prepareMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 
@@ -114,6 +116,7 @@ private:
     bool faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace);
 
     void subdivide();
+    void constructOpenMeshFromMesh();
 };
 
 } // end of namespace GUILogic
