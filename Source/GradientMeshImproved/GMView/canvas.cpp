@@ -15,7 +15,7 @@
 #include "undoCommands/guichange.h"
 
 using namespace GMView;
-bool GMView::drawCanvasItemFaces = false;
+bool GMView::drawCanvasItemFaces = true;
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)
