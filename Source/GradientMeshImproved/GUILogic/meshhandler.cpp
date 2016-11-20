@@ -849,7 +849,7 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
     oneStepSubdMesh_->build();
 	oneStepSubdMesh_->save(filename, subdivMesh::OFF);
 
-	subdivedMesh->importGuiMesh(QString::fromUtf8(filename));
+    subdivedMesh->importMesh(QString::fromUtf8(filename));
 	
     std::remove("tempSubdividedMesh.off");
 
@@ -948,33 +948,30 @@ void MeshHandler::setDraw(bool draw)
 }
 
 
-bool MeshHandler::importGuiMesh(stringstream &string, bool draw)
+bool MeshHandler::importMesh(stringstream &string, bool draw)
 {
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
-    qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(string);
-    subdMesh->build(); // build mesh topology from data
 
-    constructOpenMeshFromMesh();
-
-    if(!draw)
-    {
-        delete subdMesh;
-        subdMesh = nullptr;
-    }
-    else
-    {
-        subdivide();
-    }
+    qDebug() << "Sucsess with loadV3 stringStream?" << subdMesh->loadV3(string);
+    importMeshStep2(draw);
 
     return true;
 }
 
-bool MeshHandler::importGuiMesh(QString &location, bool draw)
+bool MeshHandler::importMesh(QString &location, bool draw)
 {
 	delete subdMesh; // delete from heap
 	subdMesh = new SbdvMesh();
+
     qDebug() << "Sucsess with loadV3?" << subdMesh->loadV3(location.toStdString().c_str());
+    importMeshStep2(draw);
+
+    return true;
+}
+
+void MeshHandler::importMeshStep2(bool draw)
+{
     subdMesh->build(); // build mesh topology from data
 
     constructOpenMeshFromMesh();
@@ -984,12 +981,6 @@ bool MeshHandler::importGuiMesh(QString &location, bool draw)
         delete subdMesh;
         subdMesh = nullptr;
     }
-    else
-    {
-        subdivide();
-    }
-
-    return true;
 }
 
 void MeshHandler::constructOpenMeshFromMesh()

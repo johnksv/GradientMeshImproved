@@ -80,8 +80,8 @@ public:
 
     void clearAll();
 
-    bool importGuiMesh(stringstream &string, bool draw = true);
-    bool importGuiMesh(QString &location, bool draw = true);
+    bool importMesh(stringstream &string, bool draw = true);
+    bool importMesh(QString &location, bool draw = true);
 
     void garbageCollectOpenMesh();
 
@@ -116,7 +116,9 @@ private:
     bool faceOrientation(vector<vertexHandle> &orginalvHandlersFace, OpnMesh::FaceHandle &newFace, vector<vertexHandle> &vHandlersFace);
 
     void subdivide();
+    void importMeshStep2(bool draw);
     void constructOpenMeshFromMesh();
+
 };
 
 } // end of namespace GUILogic

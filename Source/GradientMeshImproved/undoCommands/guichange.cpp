@@ -12,6 +12,6 @@ void GUIChange::undo()
     //Import file with stringstream
     stringstream stream(meshOld_.toStdString());
     scene_->clearAllCurrLayer();
-    scene_->currentMeshHandler()->importGuiMesh(stream);
+    scene_->currentMeshHandler()->importMesh(stream);
     scene_->constructGuiFromMeshHandler();
 }
