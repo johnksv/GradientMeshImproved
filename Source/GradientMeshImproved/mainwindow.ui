@@ -80,8 +80,9 @@
      <string>Drawing tools</string>
     </property>
     <addaction name="actionMesh_move_and_select"/>
-    <addaction name="actionMesh_Line_tool"/>
     <addaction name="actionMesh_Rectangle_Tool"/>
+    <addaction name="actionMesh_Line_tool"/>
+    <addaction name="separator"/>
     <addaction name="actionMesh_Insert_on_Edge"/>
     <addaction name="actionMesh_Collapse_Edge"/>
     <addaction name="separator"/>
@@ -100,8 +101,8 @@
     <property name="title">
      <string>Rendering</string>
     </property>
-    <addaction name="actionRender_constraints_handlers"/>
     <addaction name="actionRender_GUI_faces"/>
+    <addaction name="actionRender_constraints_handlers"/>
     <addaction name="separator"/>
     <addaction name="actionRender_auto"/>
     <addaction name="actionRender_in_split_window"/>
@@ -133,8 +134,9 @@
    </attribute>
    <addaction name="separator"/>
    <addaction name="actionMesh_move_and_select"/>
-   <addaction name="actionMesh_Line_tool"/>
    <addaction name="actionMesh_Rectangle_Tool"/>
+   <addaction name="actionMesh_Line_tool"/>
+   <addaction name="separator"/>
    <addaction name="actionMesh_Insert_on_Edge"/>
    <addaction name="actionMesh_Collapse_Edge"/>
    <addaction name="separator"/>
@@ -720,7 +722,7 @@
     <string>Line tool</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+W</string>
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionAbout">
@@ -803,6 +805,9 @@
    <property name="text">
     <string>Render only in split window</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
   </action>
   <action name="actionClearSelection">
    <property name="text">
@@ -827,6 +832,9 @@
    <property name="text">
     <string>Collapse Edge</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
   </action>
   <action name="actionMesh_Insert_on_Edge">
    <property name="checkable">
@@ -839,7 +847,7 @@
     <string>Insert Vertex on Edge</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+E</string>
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionRender_auto">
@@ -853,18 +861,21 @@
     <string>Auto render</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+F</string>
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionRender_GUI_faces">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Face overlay</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+D</string>
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionMesh_Mesh_Insertion">
@@ -887,6 +898,9 @@
    </property>
    <property name="toolTip">
     <string>Rectangle Tool</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>
