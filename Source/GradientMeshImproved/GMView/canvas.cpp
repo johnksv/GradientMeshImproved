@@ -167,7 +167,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
 void GMCanvas::importFile(QString location)
 {
     clearAllCurrLayer();
-    currentMeshHandler()->importGuiMesh(location, renderAutoUpdate_);
+    currentMeshHandler()->importMesh(location, renderAutoUpdate_);
     constructGuiFromMeshHandler();
 }
 
