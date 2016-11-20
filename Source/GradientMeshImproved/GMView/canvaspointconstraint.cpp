@@ -16,7 +16,7 @@ CanvasPointConstraint::CanvasPointConstraint(CanvasItemPoint *controlPoint, Canv
 {
     setParentItem(controlPoint);
     setZValue(2);
-    setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges);
+    setFlags(ItemIsMovable | ItemSendsScenePositionChanges | ItemSendsScenePositionChanges | ItemStacksBehindParent);
     setAcceptHoverEvents(true);
 }
 
