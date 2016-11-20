@@ -887,6 +887,7 @@ void GMCanvas::mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event)
         delete point;
         return;
     }
+    QString meshOld = QString(currentMeshHandler()->saveOpenMeshAsOff().data());
     int pointIdx = meshhandler->addVertex(point->pos(), pointColor_);
     point->setVertexHandleIdx(pointIdx);
 
@@ -990,9 +991,11 @@ void GMCanvas::mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event)
 		}
 	}
 
+    currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
 	meshhandler->garbageCollectOpenMesh();
     clearAllCurrLayer(false);
     constructGuiFromMeshHandler();
+    autoRenderOnMeshChanged();
 }
 
 void GMCanvas::mouseRectangleTool(QGraphicsSceneMouseEvent *event)
