@@ -70,8 +70,6 @@
     <property name="title">
      <string>Edit</string>
     </property>
-    <addaction name="actionUndo"/>
-    <addaction name="actionRedo"/>
     <addaction name="actionClear_all"/>
     <addaction name="actionClearSelection"/>
    </widget>

@@ -14,4 +14,7 @@ void GUIChange::undo()
     scene_->clearAllCurrLayer();
     scene_->currentMeshHandler()->importMesh(stream);
     scene_->constructGuiFromMeshHandler();
+
+    //So the mesh is subdiveded right away
+    scene_->autoRenderOnMeshChanged();
 }

@@ -820,6 +820,7 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
     //TODO, if the edge is newly added
     if(edge != nullptr && currentMeshHandler()->numberOfFaces() > 0)
     {
+        QString meshOld = QString(currentMeshHandler()->saveOpenMeshAsOff().data());
         int startIdx = edge->startPoint()->vertexHandleIdx();
         int endIdx = edge->endPoint()->vertexHandleIdx();
         int newIdx = currentMeshHandler()->insertVertexOnEdge(startIdx, endIdx, position, pointColor_);
@@ -842,6 +843,8 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         currentMeshHandler()->garbageCollectOpenMesh();
         constructGuiFromMeshHandler();
         autoRenderOnMeshChanged();
+
+        currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
     }
     else
     {
