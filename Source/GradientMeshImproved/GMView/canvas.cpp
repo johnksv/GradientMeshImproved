@@ -270,9 +270,10 @@ void GMCanvas::setDrawColorVertex(QColor pointColor)
         CanvasItemPoint* point = dynamic_cast<CanvasItemPoint*> (items.at(i));
         if(point != nullptr)
         {
-            point->setColor(pointColor_);
+            point->setColor(pointColor_, false);
         }
     }
+    if(items.size() > 0) autoRenderOnMeshChanged();
 }
 
 void GMCanvas::setRenderConstraintHandlers(bool value)
@@ -621,15 +622,15 @@ void GMCanvas::mouseLineTool(QGraphicsSceneMouseEvent *event)
        //Startpoint should be reset if a face was made.
        if(madeFace)
        {
-           lineStartPoint_ = nullptr;
+            lineStartPoint_ = nullptr;
 
-           //Add edges to canvas face after the last edge/ItemLine is added
-           //TODO: MakeFace return faceHandle
-           currentMeshHandler()->garbageCollectOpenMesh();
-           addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
-           updateVertexConstraints();
-
-           currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
+            //Add edges to canvas face after the last edge/ItemLine is added
+            //TODO: MakeFace return faceHandle
+            currentMeshHandler()->garbageCollectOpenMesh();
+            addEdgesToCanvasFace(vertsToAddFaceIdx, currentMeshHandler()->numberOfFaces()-1);
+            updateVertexConstraints();
+            QString meshNew(currentMeshHandler()->saveOpenMeshAsOff().data());
+            currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld, meshNew));
        }
 
        //Should not delete ItemPoint from heap.
@@ -844,7 +845,8 @@ void GMCanvas::mouseInsertVertOnEdge(QGraphicsSceneMouseEvent *event)
         constructGuiFromMeshHandler();
         autoRenderOnMeshChanged();
 
-        currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
+        QString meshNew(currentMeshHandler()->saveOpenMeshAsOff().data());
+        currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld, meshNew));
     }
     else
     {
@@ -991,8 +993,9 @@ void GMCanvas::mouseMeshToolInsertion(QGraphicsSceneMouseEvent *event)
 		}
 	}
 
-    currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld));
-	meshhandler->garbageCollectOpenMesh();
+    meshhandler->garbageCollectOpenMesh();
+    QString meshNew(currentMeshHandler()->saveOpenMeshAsOff().data());
+    currentLayer()->undoStack()->push(new undoCommands::GUIChange(this, meshOld, meshNew));
     clearAllCurrLayer(false);
     constructGuiFromMeshHandler();
     autoRenderOnMeshChanged();

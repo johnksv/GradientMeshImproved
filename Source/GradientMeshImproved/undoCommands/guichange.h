@@ -12,12 +12,15 @@ namespace GMView
         class GUIChange : public QUndoCommand
         {
         public:
-            GUIChange(GMCanvas *scene, QString meshOld, QUndoCommand *parent = nullptr);
+            GUIChange(GMCanvas *scene, QString meshOld, QString meshNew, QUndoCommand *parent = nullptr);
             virtual void undo() override;
+            virtual void redo() override;
 
         private:
             GMCanvas *scene_;
             QString meshOld_;
+            QString meshNew_;
+            bool firstRun_ = true;
         };
     } //End namespace undoCommands
 } //End namespace GMView

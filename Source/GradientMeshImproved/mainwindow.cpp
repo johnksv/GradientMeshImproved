@@ -34,6 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
     undoAction = scene_->currentLayer()->undoStack()->createUndoAction(this, tr("&Undo"));
     undoAction->setShortcuts(QKeySequence::Undo);
     ui->menuEdit->addAction(undoAction);
+    redoAction = scene_->currentLayer()->undoStack()->createRedoAction(this, tr("&Redo"));
+    redoAction->setShortcuts(QKeySequence::Redo);
+    ui->menuEdit->addAction(redoAction);
 
     initActionGroups();
     initLayoutContainer();

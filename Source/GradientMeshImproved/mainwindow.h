@@ -93,7 +93,7 @@ private:
     QActionGroup *drawModeGroup_;
     GMView::GMCanvas *scene_;
     QStandardItemModel *layerModel_;
-    QAction *undoAction;
+    QAction *undoAction, *redoAction;
 
     void initWindowAction();
     void initSplitWidget(QWidget *parent);
