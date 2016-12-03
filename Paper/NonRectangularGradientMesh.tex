@@ -1,0 +1,95 @@
+\documentclass{egpubl}
+\usepackage{eg2017}
+
+\ShortPresentation      % uncomment for (final) Short Conference Presentation
+
+\electronicVersion % can be used both for the printed and electronic version
+
+\ifpdf \usepackage[pdftex]{graphicx} \pdfcompresslevel=9
+\else \usepackage[dvips]{graphicx} \fi
+
+\PrintedOrElectronic
+
+% prepare for electronic version of your document
+\usepackage{t1enc,dfadobe}
+
+\usepackage{egweblnk}
+\usepackage{cite}
+
+%%% Added packages and commands %%%
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\added}[1]{{\color{Red}\textbf{#1}}} % do not need this probably
+\newcommand{\note}[3]{{\color{#2}\textbf{#1: #3}}}
+\newcommand{\henrik}[1]{\note{HENRIK}{WildStrawberry}{#1}}
+\newcommand{\john}[1]{\note{JIRI}{ForestGreen}{#1}}
+\newcommand{\IGNORE}[1]{}
+\graphicspath{{fig/}}
+
+% correct bad hyphenation here
+\hyphenation{to-po-lo-gi-cal-ly to-po-lo-gy      ini-tial  col-our pat-ches}
+
+\title[Non-rectangular gradient mesh tool]
+	{A gradient mesh tool for non-rectangular gradients}
+
+% for anonymous conference submission please enter your SUBMISSION ID
+% instead of the author's name (and leave the affiliation blank) !!
+\author[short1007]
+{\parbox{\textwidth}{\centering short1007}
+        \\
+% HiOA here (if accepted)
+	{\parbox{\textwidth}{\centering } }
+}
+
+% if the Editors-in-Chief have given you the data, you may uncomment
+% the following five lines and insert it here
+%
+% \volume{27}   % the volume in which the issue will be published;
+% \issue{1}     % the issue number of the publication
+% \pStartPage{1}      % set starting page
+
+\begin{document}
+
+% \teaser{
+%  \includegraphics[width=\linewidth]{eg_new}
+%  \centering
+%   \caption{New EG Logo}
+% \label{fig:teaser}
+% }
+
+\maketitle
+
+\begin{abstract}
+   The ABSTRACT is to be in fully-justified italicized text, 
+   between two horizontal lines,
+   in one-column format, 
+   below the author and affiliation information. 
+   Use the word ``Abstract'' as the title, in 9-point Times, boldface type, 
+   left-aligned to the text, initially capitalized. 
+   The abstract is to be in 9-point, single-spaced type.
+   The abstract may be up to 3 inches (7.62 cm) long. \\
+   Leave one blank line after the abstract, 
+   then add the subject categories according to the ACM Classification Index 
+   (see http://www.acm.org/about/class/1998).
+
+\begin{classification} % according to http:http://www.acm.org/about/class/1998
+\CCScat{Computer Graphics}{I.3.4}{Graphics Utilities}{Paint systems}
+\end{classification}
+
+\end{abstract}
+
+\section{Introduction}
+
+Please follow the steps outlined in this document very carefully when
+submitting your manuscript to Eurographics.
+
+You may as well use the \LaTeX\ source as a template to typeset your own
+paper. In this case we encourage you to also read the \LaTeX\ comments
+embedded in the document.
+
+%\bibliographystyle{eg-alpha-doi}
+
+%\bibliography{refs}
+
+\end{document}
