@@ -31,7 +31,7 @@
 \hyphenation{to-po-lo-gi-cal-ly to-po-lo-gy      ini-tial  col-our pat-ches}
 
 \title[Non-rectangular gradient mesh tool]
-	{A gradient mesh tool for non-rectangular gradients}
+	{A Gradient Mesh Tool for Non-Rectangular Gradients}
 
 % for anonymous conference submission please enter your SUBMISSION ID
 % instead of the author's name (and leave the affiliation blank) !!
@@ -83,7 +83,7 @@ In summary, our primary contribution is a new, publicly-available, tool for grad
 \section{Related work}
 \label{sec:RW}
 
-There have been proposed a myriad of techniques and tools for colouring, shading, and texturing of 2D graphics (e.g. CITATIONS). Such techniques often employ underlying primitives and technology, like vector graphics gradients or the graphics pipeline, to achieve high-level tools for various creation and editing operations. On the other hand, the gradient mesh tool is a general tool for the creation and manipulation of complex colour gradients. Although there are techniques that employ gradient meshes for high-level operations, like 2D material editing~\cite{Lopez-Moreno:2013}, these techniques also enforce additional assumptions to fit their specific application.
+There have been proposed a myriad of techniques and tools for colouring, shading, and texturing of 2D graphics (e.g. \cite{Vergne:2012, Shao:2012}). Such techniques often employ underlying primitives and technology, like vector graphics gradients or the graphics pipeline, to achieve high-level tools for various creation and editing operations. On the other hand, the gradient mesh tool is a general tool for the creation and manipulation of complex colour gradients. Although there are techniques that employ gradient meshes for high-level operations, like 2D material editing~\cite{Lopez-Moreno:2013}, these techniques also enforce additional assumptions to fit their specific application.
 
 There are three major vector primitives for defining colour gradients: linear gradients, gradient meshes, and diffusion curves~\cite{Orzan:2008}. In this paper, we do not argue against or for any of these well established primitives. We instead envision a range of vector graphics tools that build upon these primitives to offer the best possible software suite for both professional and novice designers.
 
@@ -132,16 +132,21 @@ When producing the colour gradient, the colour points are used to influence the 
 \section{Informal user study}
 \label{sec:evaluation}
 
+Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. Their task were to create something similar like the given shapes. Results and time comsuption is shown in Fig. REF . The tests were complemented with an user survey, which 4 of 5 test subjects answered. Additional data and videos from the user study can be found in the supplementary article. 
+
 \henrik{beskriv user study og resultater, med et diagram som viser tider? Referer til `supplementary material' (ekstra dokument med samme latex template). All informasjon går i supplementary material dokument.}
 
 \section{Future work}
 \label{sec:FW}
 
+
+
+
 \henrik{future work (nok med to ting): lage en illustrator plugin. Burde bruke et ekstern subdivision bibliotek, som Pixar's OpenSubdiv, og må integrere det med illustrator sitt bibliotek.}
 
 \section{Conclusion}
 
-bla bla bla
+We have introduced a new tool for working with gradient meshes. Our tool allows for quick and easy creation of gradient meshes with support of arbitrary topology and holes. 
 
 \bibliographystyle{eg-alpha}
 

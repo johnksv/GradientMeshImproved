@@ -1,0 +1,80 @@
+\documentclass{egpubl}
+\usepackage{eg2017}
+
+\ShortPresentation      % uncomment for (final) Short Conference Presentation
+
+\electronicVersion % can be used both for the printed and electronic version
+
+\ifpdf \usepackage[pdftex]{graphicx} \pdfcompresslevel=9
+\else \usepackage[dvips]{graphicx} \fi
+
+\PrintedOrElectronic
+
+% prepare for electronic version of your document
+\usepackage{t1enc,dfadobe}
+
+\usepackage{egweblnk}
+\usepackage{cite}
+
+%%% Added packages and commands %%%
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\added}[1]{{\color{Red}\textbf{#1}}} % do not need this probably
+\newcommand{\note}[3]{{\color{#2}\textbf{#1: #3}}}
+\newcommand{\henrik}[1]{\note{HENRIK}{WildStrawberry}{#1}}
+\newcommand{\john}[1]{\note{JIRI}{ForestGreen}{#1}}
+\newcommand{\IGNORE}[1]{}
+\graphicspath{{fig/}}
+
+% correct bad hyphenation here
+\hyphenation{to-po-lo-gi-cal-ly to-po-lo-gy      ini-tial  col-our pat-ches}
+
+\title[Supplement for a Non-rectangular gradient mesh tool]
+	{Supplement material - A Gradient Mesh Tool for Non-Rectangular Gradients}
+
+% for anonymous conference submission please enter your SUBMISSION ID
+% instead of the author's name (and leave the affiliation blank) !!
+\author[short1007]
+{\parbox{\textwidth}{\centering short1007}
+        \\
+	{\parbox{\textwidth}{\centering } }
+}
+
+% if the Editors-in-Chief have given you the data, you may uncomment
+% the following five lines and insert it here
+%
+% \volume{27}   % the volume in which the issue will be published;
+% \issue{1}     % the issue number of the publication
+% \pStartPage{1}      % set starting page
+
+\begin{document}
+
+% \teaser{
+%  \includegraphics[width=\linewidth]{eg_new}
+%  \centering
+%   \caption{New EG Logo}
+% \label{fig:teaser}
+% }
+
+\maketitle
+
+\begin{abstract}
+
+
+\begin{classification} % according to http:http://www.acm.org/about/class/1998
+\CCScat{Computer Graphics}{I.3.4}{Graphics Utilities}{Paint systems}
+\end{classification}
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+
+\henrik{Data ser ikke så bra ut som jeg hadde håpet.. 2 av 4 svarte "1"  på  "Det var lett å utføre oppgave 2 i tested verktøy..}
+Feedback gathered from the user study points out that our gradient mesh tool still need some work with the graphical user interface, but as far the technique of creating gradient meshes is considered the subjects favoured our tool over Illustrator. Most of them said they would use our gradient mesh solution in their daily design if it was available in Illustrator.
+
+
+
+\end{document}
