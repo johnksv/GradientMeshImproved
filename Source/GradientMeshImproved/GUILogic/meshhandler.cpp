@@ -818,6 +818,7 @@ const string MeshHandler::saveOpenMeshAsOff()
 
 void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
 {
+    saveToTestFile();
     // delete current mesh object and insert a new one
     delete subdMesh; // delete from heap
     subdMesh = new SbdvMesh();
