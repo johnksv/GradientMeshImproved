@@ -20,10 +20,12 @@
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{hyperref}
+
 \newcommand{\added}[1]{{\color{Red}\textbf{#1}}} % do not need this probably
 \newcommand{\note}[3]{{\color{#2}\textbf{#1: #3}}}
 \newcommand{\henrik}[1]{\note{HENRIK}{WildStrawberry}{#1}}
-\newcommand{\john}[1]{\note{JIRI}{ForestGreen}{#1}}
+\newcommand{\john}[1]{\note{JohnKa}{ForestGreen}{#1}}
 \newcommand{\IGNORE}[1]{}
 \graphicspath{{fig/}}
 
@@ -109,9 +111,9 @@ In conclusion, the user interaction already supported by the gradient mesh tool 
 \section{Tools for creating non-rectangular gradient meshes}
 \label{sec:method}
 
-Our approach is inspired by tools found in 3D polygonal modelling. Specifically, we take inspiration from the pen tool in SketchUp, which is a tool for drawing polygonal meshes in 3D. Building on such a basic tool for creating polygonal meshes in 2D, we provide tools for operations such as face deletion and edge split and collapse.
+Our approach is inspired by tools found in 3D polygonal modelling. Specifically, we take inspiration from the pen tool in SketchUp, which is a tool for drawing polygonal meshes in 3D. Building on such a basic tool for creating polygonal meshes in 2D, we provide tools for operations such as face deletion, and edge split and collapse.
 
-We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated by operations like edge split and merge. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex. After the edges of the face have been placed on the canvas, the user closes the face by clicking on an existing vertex other than the initial vertex. If the user creates a non-manifold mesh, then the mesh is split into two control meshes, as shown in Fig. REF. \henrik{juster over slik at det blir korrekt...}
+We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated by operations like edge split and merge. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex. After the edges of the face have been placed on the canvas, the user close the face by clicking on an existing vertex (which must already be connected to a face), including the initial vertex. This allows for a non-manifold mesh, as shown in Fig. REF. \henrik{Burde kanskje skrive noe om du legger til face inni et face(?):} If the face to add is internal -- that is, inside an existing face -- the closing vertex must be an other than the initial vertex. This is due to the implementation of creating internal faces (subject to change).
 
 The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges that control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of the new control point is calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig. REF).
 
@@ -127,26 +129,33 @@ When producing the colour gradient, the colour points are used to influence the 
 \section{Results}
 \label{sec:results}
 
+Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.qt.io/}) for the GUI and OpenMesh (\url{http://www.openmesh.org/}) for easy mesh manipulation with the half-edge data structure. The implementation consists of 3 -- three -- layers. Qt stands for the mesh representation, and listen for changes on the mesh. OpenMesh represents the middle layer, that parses changes from the GUI to the internal layer. The internal layer handle mesh subdivision, interpolation, and rendering, by employing the method presented by Lieng et al.~\cite{Lieng:2016}, as mentioned in Section~\ref{sec:intro}.
+
+
+
+
+
 \henrik{resultater: referer til video. Beskriv hvordan hull opprettes.}
 
 \section{Informal user study}
 \label{sec:evaluation}
 
-Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. Their task were to create something similar like the given shapes. Results and time comsuption is shown in Fig. REF . The tests were complemented with an user survey, which 4 of 5 test subjects answered. Additional data and videos from the user study can be found in the supplementary article. 
+Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. Their task were to create something similar like the given shapes. Results and time consumption is shown in Fig. REF . Some of the subjects got tired of doing test 2 in Illustrator that they conclude the test before they were finished or happy with the result. The tests were complemented with an user survey, which 4 of 5 test subjects answered. Additional data and videos from the user study can be found in the supplementary article. 
+
+\john{Write more}
 
 \henrik{beskriv user study og resultater, med et diagram som viser tider? Referer til `supplementary material' (ekstra dokument med samme latex template). All informasjon går i supplementary material dokument.}
 
 \section{Future work}
 \label{sec:FW}
 
-
-
-
 \henrik{future work (nok med to ting): lage en illustrator plugin. Burde bruke et ekstern subdivision bibliotek, som Pixar's OpenSubdiv, og må integrere det med illustrator sitt bibliotek.}
 
 \section{Conclusion}
 
-We have introduced a new tool for working with gradient meshes. Our tool allows for quick and easy creation of gradient meshes with support of arbitrary topology and holes. 
+We have introduced a new tool for working with non-rectangular gradient meshes. In contrast to gradient mesh tools in other applications -- like Adobe Illustrator -- our tool allows for quick and easy creation and alternation of gradient meshes which can be of arbitrary topology and contain holes. 
+
+\john{write more}
 
 \bibliographystyle{eg-alpha}
 

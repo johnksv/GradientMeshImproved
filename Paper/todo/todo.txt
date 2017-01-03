@@ -12,8 +12,10 @@ Figures:
 - Difference to illustrator (left: rectangular top. right: expanded with non-rectangular topology).
 - Illustrator's point and click interface (one OK example, one failure case in Illustrator, plus
 the pentagon example)
+- "challenging shapes that require ad-hoc solutions, as shown in Fig. REF"
 - Gradient mesh with holes (maybe the steps required to make it?)
 - Gradient mesh with colour points.
+- non-manifold mesh
 
 Citations:
 - First par: more citations (shading curve paper for example)
