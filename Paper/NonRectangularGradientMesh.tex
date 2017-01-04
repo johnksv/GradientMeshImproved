@@ -25,7 +25,7 @@
 \newcommand{\added}[1]{{\color{Red}\textbf{#1}}} % do not need this probably
 \newcommand{\note}[3]{{\color{#2}\textbf{#1: #3}}}
 \newcommand{\henrik}[1]{\note{HENRIK}{WildStrawberry}{#1}}
-\newcommand{\john}[1]{\note{JohnKa}{ForestGreen}{#1}}
+\newcommand{\john}[1]{\note{JohnKa}{RubineRed}{#1}}
 \newcommand{\IGNORE}[1]{}
 \graphicspath{{fig/}}
 
@@ -110,7 +110,7 @@ The first option is incompatible with non-rectangular gradient meshes. This is b
 
 The second option is attractive for couple of reasons. First, the creation operation is independent from the underlying data structure: a single click on the canvas can give rise to several interpretations and the effect of the click can be separated from the representation of the underlying data (for example, via data abstraction). Second, one can easily imagine such an interaction to be intuitive. From a user perspective, a click inside a vector shape with a gradient tool can indicate that a given colour should influence the region of the click.
 
-On the other hand, the point-and-click interface introduces several challenges. Already in the regular setting, there are challenging shapes that require ad-hoc solutions, as shown in Fig.~\ref{fig:adHocPentagon}. Additionally, the interaction produces a global mesh alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh prior to editing so that the number of rows and columns is kept to a minimum. In the non-rectangular setting, it is even more challenging. Fig.~\ref{fig:adHocPentagon} illustrates a user click inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and many results could be imagined. The two solutions outlined in the figure introduces either a T-junction or a high-valence control point. Both options produce a mesh that is of poorer quality compared to the original mesh.
+On the other hand, the point-and-click interface introduces several challenges. Already in the regular setting, there are challenging shapes that require ad-hoc solutions, as shown in Fig.~\ref{fig:adHocPentagon}. \john{Is it correct image?} Additionally, the interaction produces a global mesh alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh prior to editing so that the number of rows and columns is kept to a minimum. In the non-rectangular setting, it is even more challenging. Fig.~\ref{fig:adHocPentagon} illustrates a user click inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and many results could be imagined. The two solutions outlined in the figure introduces either a T-junction or a high-valence control point. Both options produce a mesh that is of poorer quality compared to the original mesh.
 
 In conclusion, the user interaction already supported by the gradient mesh tool is hard to extend to the more flexible setting of non-rectangular control meshes. The representation of the mesh, using a polygonal mesh representation, does not support the simple addition of rows and columns as one can do with grid-based meshes. In the next section, we outline a different approach to interaction that we hypothesise is more feasible in the non-rectangular setting compared with the two approaches described above.
 
@@ -123,7 +123,7 @@ In conclusion, the user interaction already supported by the gradient mesh tool 
 \begin{figure}[t]
 	\centering
 	\includegraphics[height=0.25\textheight]{pentagonMesh.png}
-	\caption{The red point indicates the location of were the user clicked. A new point is made at this location, as well as on all edges where the new column and row collide. The issue }
+	\caption{The red point indicates the location of were the user clicked. A new point is made at this location. As mentioned in Section~\ref{sec:overview}, a new column and row is added to the entire mesh. It is introduced new vertices at each edge intersection (the black points). The issue occurs when we add a new vertex in a polygon adjacent to a pentagon. If the pentagon are split following the red dashed line we will suddenly introduce several new vertices as the line will propagate to adjacent polygons. One could alternatively introduce new vertices on the edges were no polygon is adjacent, but the solution is indeed ad-hoc either way. }
 	\label{fig:adHocPentagon}
 \end{figure}
 
@@ -135,6 +135,13 @@ Our approach is inspired by tools found in 3D polygonal modelling. Specifically,
 We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated by operations like edge split and merge. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex. After the edges of the face have been placed on the canvas, the user close the face by clicking on an existing vertex (which must already be connected to a face), including the initial vertex. This allows for a non-manifold mesh, as shown in Fig. REF. \john{Burde kanskje skrive noe om du legger til face inni et face(?):} If the face to add is internal -- that is, inside an existing face -- the closing vertex must be an other than the initial vertex. This is due to the implementation of creating internal faces (subject to change).
 
 The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges that control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of the new control point is calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig. REF).
+
+\begin{figure*}[t]
+	\centering
+	\includegraphics[height=0.25\textheight]{HoleAndNonManifoldMesh.png}
+	\caption{ }
+	\label{fig:adHocPentagon}
+\end{figure*}
 
 \section{Multi-resolution editing with colour points}
 \label{sec:DP}
