@@ -40,7 +40,7 @@
 \author[short1007]
 {\parbox{\textwidth}{\centering short1007}
         \\
-% HiOA here (if accepted)
+% School/Institution here (if accepted)
 	{\parbox{\textwidth}{\centering } }
 }
 
@@ -89,24 +89,43 @@ There have been proposed a myriad of techniques and tools for colouring, shading
 
 There are three major vector primitives for defining colour gradients: linear gradients, gradient meshes, and diffusion curves~\cite{Orzan:2008}. In this paper, we do not argue against or for any of these well established primitives. We instead envision a range of vector graphics tools that build upon these primitives to offer the best possible software suite for both professional and novice designers.
 
-The gradient mesh tool is mostly relevant to our work. The tool is available in all of the three major vector graphics suites (Adobe Illustrator, Corel CorelDraw, and Inkscape). All of these tools employ similar interpolation techniques, variants of Ferguson or Bezier patches (although the specific implementation is not publicly available in other than Inkscape which employs Coons patches conforming to the current SVG 2 specification). Thus, all previous tools are restricted to gradients of rectangular topology, as shown in Fig. REF (using Illustrator's tool as an example). Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
+The gradient mesh tool is mostly relevant to our work. The tool is available in all of the three major vector graphics suites (Adobe Illustrator, Corel CorelDraw, and Inkscape). All of these tools employ similar interpolation techniques, variants of Ferguson or Bezier patches (although the specific implementation is not publicly available in other than Inkscape which employs Coons patches conforming to the current SVG 2 specification). Thus, all previous tools are restricted to gradients of rectangular topology, as shown in Fig.~\ref{fig:IllustratorVsOur} (using Illustrator's tool as an example). Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
 
 Looking at the three software packages, it is Adobe Illustrator that provides the most comprehensive gradient mesh tool, with an elegant point-and-click interface to add control points to the mesh. We have therefore only compared our tool to this state-of-the-art tool. This comparison is outlined in Section~\ref{sec:evaluation}.
+
+\begin{figure}
+\includegraphics[]{illustratorVsOur.jpg}
+\caption{\john{Should we use a new image, or is it OK to refer to the article and alter some of the original caption?}}
+\label{fig:IllustratorVsOur}
+\end{figure}
 
 \section{Problem description}
 \label{sec:overview}
 
 In this section, we outline the interaction techniques available in previous gradient mesh tools (with reference to Adobe's tool) and describe why these techniques cannot easily be extended to the setting of non-rectangular control meshes.
 
-The gradient mesh tool offers two approaches to mesh creation. The first option converts a vector graphics object compatible with rectangular gradients (i.e. a vector shape without any holes) to a grid of control points. This option requires the user to input the number of rows and columns of the to-be created gradient mesh. The second option is a point-and-click interface where the user clicks on a location inside the target shape and a new row and column is created at the clicked location (Fig. REF).
+The gradient mesh tool offers two approaches to mesh creation. The first option converts a vector graphics object compatible with rectangular gradients (i.e. a vector shape without any holes) to a grid of control points. This option requires the user to input the number of rows and columns of the to-be created gradient mesh. The second option is a point-and-click interface where the user clicks on a location inside the target shape and a new row and column is created at the clicked location (Fig.~\ref{fig:illustratorCreateMesh}).
 
 The first option is incompatible with non-rectangular gradient meshes. This is because the creation is dependent on a grid representation of the mesh, as the user has provided a given number of rows and columns. However, a non-rectangular mesh cannot be represented by a grid-like data structure. An arbitrary non-rectangular mesh corresponds to general polygonal meshes and can be represented by data structures such as the half-edge data structure.
 
 The second option is attractive for couple of reasons. First, the creation operation is independent from the underlying data structure: a single click on the canvas can give rise to several interpretations and the effect of the click can be separated from the representation of the underlying data (for example, via data abstraction). Second, one can easily imagine such an interaction to be intuitive. From a user perspective, a click inside a vector shape with a gradient tool can indicate that a given colour should influence the region of the click.
 
-On the other hand, the point-and-click interface introduces several challenges. Already in the regular setting, there are challenging shapes that require ad-hoc solutions, as shown in Fig. REF. Additionally, the interaction produces a global mesh alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh prior to editing so that the number of rows and columns is kept to a minimum. In the non-rectangular setting, it is even more challenging. Fig. REF illustrates a user click inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and many results could be imagined. The two solutions outlined in the figure introduces either a T-junction or a high-valence control point. Both options produce a mesh that is of poorer quality compared to the original mesh.
+On the other hand, the point-and-click interface introduces several challenges. Already in the regular setting, there are challenging shapes that require ad-hoc solutions, as shown in Fig.~\ref{fig:adHocPentagon}. Additionally, the interaction produces a global mesh alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh prior to editing so that the number of rows and columns is kept to a minimum. In the non-rectangular setting, it is even more challenging. Fig.~\ref{fig:adHocPentagon} illustrates a user click inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and many results could be imagined. The two solutions outlined in the figure introduces either a T-junction or a high-valence control point. Both options produce a mesh that is of poorer quality compared to the original mesh.
 
 In conclusion, the user interaction already supported by the gradient mesh tool is hard to extend to the more flexible setting of non-rectangular control meshes. The representation of the mesh, using a polygonal mesh representation, does not support the simple addition of rows and columns as one can do with grid-based meshes. In the next section, we outline a different approach to interaction that we hypothesise is more feasible in the non-rectangular setting compared with the two approaches described above.
+
+\begin{figure}[t]
+	\includegraphics[width=0.5\textwidth]{IllustratorCreateGradientMeshCombined.png}
+	\caption{In Adobe Illustrator you have two options when creating a gradient mesh. Either via an input box (left), or via  point-and click operations (right).}
+	\label{fig:illustratorCreateMesh}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[height=0.25\textheight]{pentagonMesh.png}
+	\caption{The red point indicates the location of were the user clicked. A new point is made at this location, as well as on all edges where the new column and row collide. The issue }
+	\label{fig:adHocPentagon}
+\end{figure}
 
 \section{Tools for creating non-rectangular gradient meshes}
 \label{sec:method}
