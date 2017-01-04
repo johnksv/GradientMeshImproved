@@ -113,7 +113,7 @@ In conclusion, the user interaction already supported by the gradient mesh tool 
 
 Our approach is inspired by tools found in 3D polygonal modelling. Specifically, we take inspiration from the pen tool in SketchUp, which is a tool for drawing polygonal meshes in 3D. Building on such a basic tool for creating polygonal meshes in 2D, we provide tools for operations such as face deletion, and edge split and collapse.
 
-We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated by operations like edge split and merge. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex. After the edges of the face have been placed on the canvas, the user close the face by clicking on an existing vertex (which must already be connected to a face), including the initial vertex. This allows for a non-manifold mesh, as shown in Fig. REF. \henrik{Burde kanskje skrive noe om du legger til face inni et face(?):} If the face to add is internal -- that is, inside an existing face -- the closing vertex must be an other than the initial vertex. This is due to the implementation of creating internal faces (subject to change).
+We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated by operations like edge split and merge. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex. After the edges of the face have been placed on the canvas, the user close the face by clicking on an existing vertex (which must already be connected to a face), including the initial vertex. This allows for a non-manifold mesh, as shown in Fig. REF. \john{Burde kanskje skrive noe om du legger til face inni et face(?):} If the face to add is internal -- that is, inside an existing face -- the closing vertex must be an other than the initial vertex. This is due to the implementation of creating internal faces (subject to change).
 
 The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges that control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of the new control point is calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig. REF).
 
@@ -131,11 +131,8 @@ When producing the colour gradient, the colour points are used to influence the 
 
 Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.qt.io/}) for the GUI and OpenMesh (\url{http://www.openmesh.org/}) for easy mesh manipulation with the half-edge data structure. The implementation consists of 3 -- three -- layers. Qt stands for the graphical representation and listen for changes on the mesh. OpenMesh represents the middle layer, that parses changes from the GUI to the internal layer. The internal layer handle mesh subdivision, interpolation, and rendering, by employing the method presented by Lieng et al.~\cite{Lieng:2016}, as mentioned in Section~\ref{sec:intro}.
 
-
-
-
-
 \henrik{resultater: referer til video. Beskriv hvordan hull opprettes.}
+\john{Det nevnes vel hvordan hull lages i Sec~\ref{sec:method} ?}
 
 \section{Informal user study}
 \label{sec:evaluation}
