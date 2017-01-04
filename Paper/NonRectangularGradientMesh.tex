@@ -129,7 +129,7 @@ When producing the colour gradient, the colour points are used to influence the 
 \section{Results}
 \label{sec:results}
 
-Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.qt.io/}) for the GUI and OpenMesh (\url{http://www.openmesh.org/}) for easy mesh manipulation with the half-edge data structure. The implementation consists of 3 -- three -- layers. Qt stands for the mesh representation, and listen for changes on the mesh. OpenMesh represents the middle layer, that parses changes from the GUI to the internal layer. The internal layer handle mesh subdivision, interpolation, and rendering, by employing the method presented by Lieng et al.~\cite{Lieng:2016}, as mentioned in Section~\ref{sec:intro}.
+Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.qt.io/}) for the GUI and OpenMesh (\url{http://www.openmesh.org/}) for easy mesh manipulation with the half-edge data structure. The implementation consists of 3 -- three -- layers. Qt stands for the graphical representation and listen for changes on the mesh. OpenMesh represents the middle layer, that parses changes from the GUI to the internal layer. The internal layer handle mesh subdivision, interpolation, and rendering, by employing the method presented by Lieng et al.~\cite{Lieng:2016}, as mentioned in Section~\ref{sec:intro}.
 
 
 
@@ -140,20 +140,22 @@ Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.q
 \section{Informal user study}
 \label{sec:evaluation}
 
-Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. Their task were to create something similar like the given shapes. Results and time consumption is shown in Fig. REF . Some of the subjects got tired of doing test 2 in Illustrator that they conclude the test before they were finished or happy with the result. The tests were complemented with an user survey, which 4 of 5 test subjects answered. Additional data and videos from the user study can be found in the supplementary article. 
+Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. They were given two task; the first task was to make a rectangular gradient mesh. The second task was to make a gradient mesh with two holes. The subjects were not allowed to use layering, that is, none of the meshes should overlap. The tests were complemented with an user survey, which 4 of 5 test subjects answered. Images they could take inspiration from, results, and time consumption is shown in Fig. REF . 
 
-\john{Write more}
+One test subject answered the following in the user survey: \textit{"[...] I enjoyed the experience from the tested tool more than Illustrator when it came to the tasks given. Both were difficult for a beginner, but at least the tested tool made more sense: especially with deleting frames to create holes."}. Some of the subjects got tired, and somewhat angry, of doing test 2 in Illustrator that they conclude the test before they were finished or happy with the result. Additional data and videos from the user study can be found in the supplementary article. 
 
 \henrik{beskriv user study og resultater, med et diagram som viser tider? Referer til `supplementary material' (ekstra dokument med samme latex template). All informasjon går i supplementary material dokument.}
 
 \section{Future work}
 \label{sec:FW}
 
+
+
 \henrik{future work (nok med to ting): lage en illustrator plugin. Burde bruke et ekstern subdivision bibliotek, som Pixar's OpenSubdiv, og må integrere det med illustrator sitt bibliotek.}
 
 \section{Conclusion}
 
-We have introduced a new tool for working with non-rectangular gradient meshes. In contrast to gradient mesh tools in other applications -- like Adobe Illustrator -- our tool allows for quick and easy creation and alternation of gradient meshes which can be of arbitrary topology and contain holes. 
+We have introduced a new tool for working with non-rectangular gradient meshes. In contrast to gradient mesh tools in other applications -- like Adobe Illustrator -- our tool allows for quick and easy creation and alternation of gradient meshes which can be of arbitrary topology and contain holes. Users are given more detailed control over the resulting mesh than with previous tools, as they can employ use of colour points and multi resolution editing of the mesh.
 
 \john{write more}
 
