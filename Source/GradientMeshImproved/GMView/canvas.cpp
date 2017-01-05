@@ -387,7 +387,8 @@ void GMCanvas::deleteLayer(int index)
 
 void GMCanvas::toogleLayerVisibility(int index)
 {
-    CanvasItemGroup *selectedLayer = layers_.at(index);
+    CanvasItemGroup *selectedLayer = multiRes_layers_.empty() ? layers_.at(index) : multiRes_layers_.at(index);
+
     if(selectedLayer->isVisible())
     {
         selectedLayer->hide();
