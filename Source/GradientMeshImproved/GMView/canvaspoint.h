@@ -26,11 +26,6 @@ public:
     bool isHighlighted() const;
     void setHighlighted(bool highlighted);
 
-    bool isDiscontinuous() const;
-    void setDiscontinuous(bool value, QGraphicsItem *edgeItem);
-
-    vector<QGraphicsItem*> discontinuedChildren();
-
     //TODO better way to avoid header include collision
     //Returns the constraint point associated with the edge
     //Can be casted to CanvasPointConstraint*
@@ -52,11 +47,6 @@ private:
     bool highlighted_ = false;
 	int vertexHandleIdx_;
     bool discontinuous_ = false;
-
-    /*Must be of type QGraphicsItem to avoid header collision.
-     * The first element should always have the same vertexIDX as this point.
-     */
-    vector<QGraphicsItem*> discontinuedChildren_;
 };
 
 } // end of namespace GMView

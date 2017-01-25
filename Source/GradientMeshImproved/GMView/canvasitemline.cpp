@@ -19,10 +19,8 @@ CanvasItemLine::CanvasItemLine(CanvasItemPoint *startPoint, CanvasItemPoint *end
 {
     setLine(QLineF(startPoint->pos(), endPoint->pos()));
 
-    setZValue(1);
     setAcceptHoverEvents(true);
     setFlag(QGraphicsItem::ItemIsSelectable, true);
-    //setFlags(ItemIsSelectable);
 }
 
 void CanvasItemLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -57,7 +55,7 @@ QPainterPath CanvasItemLine::shape() const
 }
 
 
-bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
+bool CanvasItemLine::operator ==(const CanvasItemLine &lineA) const
 {
     if((*this).startPoint_ == lineA.startPoint_)
     {
@@ -69,12 +67,12 @@ bool CanvasItemLine::operator ==(const CanvasItemLine &lineA)
     return false;
 }
 
-CanvasItemPoint *CanvasItemLine::startPoint()
+CanvasItemPoint *CanvasItemLine::startPoint() const
 {
     return startPoint_;
 }
 
-CanvasItemPoint *CanvasItemLine::endPoint()
+CanvasItemPoint *CanvasItemLine::endPoint() const
 {
     return endPoint_;
 }
@@ -106,7 +104,6 @@ const vector<QPointF> &CanvasItemLine::subdivededCurve() const
 
 void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-    return;
     GMCanvas *canvas = static_cast<GMCanvas*> (scene());
     int startIdx = startPoint()->vertexHandleIdx();
     int endIdx = endPoint()->vertexHandleIdx();
@@ -130,50 +127,9 @@ void CanvasItemLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
         if(discontinuous_)
         {
-            //Discontinued points are created
-            startPoint_->setDiscontinuous(value, this);
-            endPoint_->setDiscontinuous(value, this);
-
-            vector<int> disconVertIdx;
-
-            int disPointIdx1 = static_cast<CanvasPointDiscontinued*> (startPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
-            int disPointIdx2 = static_cast<CanvasPointDiscontinued*> (endPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
-
-
-            disconVertIdx.push_back(startPoint_->vertexHandleIdx());
-            disconVertIdx.push_back(disPointIdx1);
-            disconVertIdx.push_back(disPointIdx2);
-            disconVertIdx.push_back(endPoint_->vertexHandleIdx());
-
-            try{
-                qDebug() << canvas->currentMeshHandler()->makeFace(disconVertIdx, true);
-            }
-            catch(int e)
-            {
-                QMessageBox msgBox;
-                msgBox.setText("Bug. Sorry. In backlog to be fixed");
-                msgBox.exec();
-            }
         }
         else
         {
-            vector<int> disconVertIdx;
-
-            int disPointIdx1 = static_cast<CanvasPointDiscontinued*> (startPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
-            int disPointIdx2 = static_cast<CanvasPointDiscontinued*> (endPoint_->discontinuedChildren().at(1))->vertexHandleIdx();
-
-
-            disconVertIdx.push_back(startPoint_->vertexHandleIdx());
-            disconVertIdx.push_back(disPointIdx1);
-            disconVertIdx.push_back(disPointIdx2);
-            disconVertIdx.push_back(endPoint_->vertexHandleIdx());
-
-            canvas->currentMeshHandler()->deleteDiscontinuedFace(disconVertIdx);
-
-            //Discontinued are deleted in canvasPoint
-            startPoint_->setDiscontinuous(value, this);
-            endPoint_->setDiscontinuous(value, this);
-
         }
     }
 }

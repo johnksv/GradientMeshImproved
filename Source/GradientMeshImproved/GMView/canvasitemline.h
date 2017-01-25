@@ -15,10 +15,10 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QPainterPath shape() const override;
 
-    bool operator ==(const CanvasItemLine &lineA);
+    bool operator ==(const CanvasItemLine &lineA) const;
 
-	CanvasItemPoint *startPoint();
-	CanvasItemPoint *endPoint();
+    CanvasItemPoint *startPoint() const;
+    CanvasItemPoint *endPoint() const;
 
     void updateSubdivisonCurve();
     const vector<QPointF> &subdivededCurve() const;

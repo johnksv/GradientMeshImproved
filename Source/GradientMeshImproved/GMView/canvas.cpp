@@ -8,7 +8,6 @@
 #include <QUndoCommand>
 #include <QMessageBox>
 #include "canvaspointconstraint.h"
-#include "canvaspointdiscontinued.h"
 #include <QToolTip>
 #include <QGraphicsview>
 #include <QRect>

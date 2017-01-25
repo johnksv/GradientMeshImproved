@@ -25,7 +25,6 @@ SOURCES += main.cpp\
     GMView/canvaspoint.cpp \
     GMView/canvasitemgroup.cpp \
     GMView/canvaspointconstraint.cpp \
-    GMView/canvaspointdiscontinued.cpp \
     GMView/canvasitemface.cpp \
     undoCommands/guichange.cpp
 
@@ -46,7 +45,6 @@ HEADERS  += mainwindow.h \
     GMView/canvaspoint.h \
     GMView/canvasitemgroup.h \
     GMView/canvaspointconstraint.h \
-    GMView/canvaspointdiscontinued.h \
     GMView/utils.h \
     GMView/canvasitemface.h \
     undoCommands/guichange.h

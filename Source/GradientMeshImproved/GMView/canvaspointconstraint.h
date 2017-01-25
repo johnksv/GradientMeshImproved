@@ -2,7 +2,6 @@
 #define CANVASPOINTCONSTRAINT_H
 
 #include "canvasitemline.h"
-#include "canvaspointdiscontinued.h"
 
 namespace GMView{
 

@@ -11,7 +11,6 @@
 #include <QInputDialog>
 #include "canvas.h"
 #include <QPen>
-#include "canvaspointdiscontinued.h"
 #include <QStyleOptionGraphicsItem>
 #include <QString>
 
@@ -134,48 +133,6 @@ void CanvasItemPoint::setHighlighted(bool highlighted)
     highlighted_ = highlighted;
 }
 
-bool CanvasItemPoint::isDiscontinuous() const
-{
-    return discontinuous_;
-}
-
-void CanvasItemPoint::setDiscontinuous(bool value, QGraphicsItem *edgeItem)
-{
-    discontinuous_ = value;
-    CanvasItemLine *edge = dynamic_cast<CanvasItemLine*>(edgeItem);
-    if(discontinuous_)
-    {
-        if(edge != nullptr)
-        {
-            CanvasPointDiscontinued *pointA = new CanvasPointDiscontinued(true, this);
-            CanvasPointDiscontinued *pointB = new CanvasPointDiscontinued(false, this);
-            //TODO: set position of A and B on the normal of the incoming edge for visual look.
-            //TODO: Double constraints only for "spliting"-edge (edge on the middle)
-            //This does not effect position in underlaying mesh.
-            pointA->setPos(0,10);
-            pointB->setPos(0,-10);
-
-            discontinuedChildren_.push_back(pointA);
-            discontinuedChildren_.push_back(pointB);
-        }
-    }
-    else
-    {
-        for(QGraphicsItem* item : discontinuedChildren_)
-        {
-            delete item;
-        }
-        discontinuedChildren_.clear();
-    }
-
-    update();
-}
-
-vector<QGraphicsItem *> CanvasItemPoint::discontinuedChildren()
-{
-    return discontinuedChildren_;
-}
-
 QGraphicsItem *CanvasItemPoint::constraintPoint(QGraphicsItem *_edge)
 {
     CanvasItemLine *edge = dynamic_cast<CanvasItemLine*> (_edge);
@@ -227,13 +184,6 @@ QVariant CanvasItemPoint::itemChange(QGraphicsItem::GraphicsItemChange change, c
         GMCanvas* canvas = static_cast <GMCanvas*> (scene());
         if(discontinuous_)
         {
-            for(QGraphicsItem * item : discontinuedChildren_)
-            {
-                CanvasPointDiscontinued *disPoint = static_cast<CanvasPointDiscontinued*> (item);
-                int vertIdx = disPoint->vertexHandleIdx();
-                //Use same position as parent (+ minor offset, for opnmesh not to crash)
-                canvas->currentMeshHandler()->setVertexPoint(vertIdx, pos()-QPointF(0.01,0.01));
-            }
         }
         else
         {
