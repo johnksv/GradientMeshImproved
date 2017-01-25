@@ -90,9 +90,20 @@ public:
     //TODO: Rename function.
     void prepareMeshForSubd(bool saveFileOFF = false, QString location = QString(""));
 
-    MeshHandler *oneStepSubdMesh();
+    /**
+     * @brief meshXStepSubdivided This method should be called after "::"prepareMeshForSubd has been called.
+     *  The returned pointer points to a mesh that has been suubdivided X times (given by the function call "::"prepareMeshForSubd)
+     * @return A MeshHandler containing the subdivided mesh
+     */
+    MeshHandler *meshXStepSubdivided();
 
     static void setSubdivisionSteps(int value);
+
+    /**
+     * @brief setMultiResSubdivisionSteps
+     * @param value Must be between 1 and subdivisionSteps.
+     */
+    static void setMultiResSubdivisionSteps(int value);
 
     bool isQuadMesh();
     void findEdgesForMeshToolInsert(int edgeFromVert, int edgeToVert, int faceIdx, vector<std::array<int, 2>> &verts) const;
@@ -103,9 +114,10 @@ public:
 
 private:
     static int subdivisionSteps_;
+    static int subdMultiResMeshSteps_;
     // mesh for rendering gradient mesh using subdivision:
     subdivMesh::Mesh* subdMesh;
-    subdivMesh::Mesh* oneStepSubdMesh_ = nullptr;
+    subdivMesh::Mesh* meshXStepSubdivided_ = nullptr;
     // mesh for editing gui:
     OpenMesh::PolyMesh_ArrayKernelT<OpenMeshExt::CustomTraits> guiMesh;
     bool draw_ = true;

@@ -69,6 +69,8 @@ private slots:
 
     void on_renderSpinBox_valueChanged(int value);
 
+    void on_renderSpinBoxMultiRes_valueChanged(int value);
+
     void on_renderRenderButton_clicked();
 
     void on_renderAutoRenderCheckBox_clicked(bool checked);
@@ -86,6 +88,8 @@ private slots:
     void on_glRenderButton_viewport_clicked();
 
     void on_glRenderButton_boundingRect_clicked();
+
+
 
 private:
     Ui::MainWindow *ui;

@@ -17,6 +17,7 @@ typedef subdivMesh::Mesh SbdvMesh;
 
 
 int MeshHandler::subdivisionSteps_ = 3;
+int MeshHandler::subdMultiResMeshSteps_ = 0;
 
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
@@ -635,10 +636,10 @@ bool MeshHandler::isBoundaryFace(const int &idx) const
 void MeshHandler::clearAll()
 {
     delete subdMesh;
-    delete oneStepSubdMesh_;
+    delete meshXStepSubdivided_;
 
     subdMesh = nullptr;
-    oneStepSubdMesh_ = nullptr;
+    meshXStepSubdivided_ = nullptr;
 
     guiMesh.clear();
     guiMesh.garbage_collection();
@@ -686,14 +687,14 @@ void MeshHandler::subdivide()
     subdMesh->LinearTernarySubdiv(currentMsh);
     delete subdMesh; // delete old mesh from heap
 
-    oneStepSubdMesh_ = currentMsh;
-
     // subdivide steps-1 of CC-subdivision
     for(int i = 0; i < subdivisionSteps_-1; i++) {
+
         nextMesh = new SbdvMesh();
         currentMsh->CatmullClarkColour(nextMesh);
 
-		if(oneStepSubdMesh_ != currentMsh)
+        if(i == subdMultiResMeshSteps_-1) meshXStepSubdivided_ = currentMsh;
+        if(i != subdMultiResMeshSteps_-1)
 		{
             delete currentMsh;
         }
@@ -701,7 +702,7 @@ void MeshHandler::subdivide()
         // delete old mesh from heap and swap
         currentMsh = nextMesh;
     }
-
+    if(subdivisionSteps_ == subdMultiResMeshSteps_) meshXStepSubdivided_ = currentMsh;
     // set the final mesh
     subdMesh = currentMsh;
 }
@@ -835,9 +836,9 @@ void MeshHandler::prepareMeshForSubd(bool saveFileOFF, QString location)
     //std::remove("test.off");
 }
 
-MeshHandler *MeshHandler::oneStepSubdMesh()
+MeshHandler *MeshHandler::meshXStepSubdivided()
 {
-    if(oneStepSubdMesh_ == nullptr) return nullptr;
+    if(meshXStepSubdivided_ == nullptr) return nullptr;
 
     MeshHandler *subdivedMesh = new MeshHandler();
 	
@@ -845,8 +846,8 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 	fstream file;
 	file.open(filename, fstream::out);
 
-    oneStepSubdMesh_->build();
-	oneStepSubdMesh_->save(filename, subdivMesh::OFF);
+    meshXStepSubdivided_->build();
+    meshXStepSubdivided_->save(filename, subdivMesh::OFF);
 
     subdivedMesh->importMesh(QString::fromUtf8(filename));
 	
@@ -859,6 +860,11 @@ MeshHandler *MeshHandler::oneStepSubdMesh()
 void MeshHandler::setSubdivisionSteps(int value)
 {
     subdivisionSteps_ = value;
+}
+
+void MeshHandler::setMultiResSubdivisionSteps(int value)
+{
+    subdMultiResMeshSteps_ = value;
 }
 
 bool MeshHandler::isQuadMesh()

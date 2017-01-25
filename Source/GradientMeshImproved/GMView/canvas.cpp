@@ -429,8 +429,8 @@ void GMView::GMCanvas::multiResFirstStepMesh()
         //Execute render.
         meshHandlers_.at(i)->prepareMeshForSubd();
 
-        //Load mesh (which is one step subdivided) into openMesh
-        GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->oneStepSubdMesh();
+        //Load mesh (which is x step subdivided) into openMesh
+        GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->meshXStepSubdivided();
 
         //Add first step subdivided mesh to containers.
         CanvasItemGroup *guiRepresentation = new CanvasItemGroup("subdivieded mesh");

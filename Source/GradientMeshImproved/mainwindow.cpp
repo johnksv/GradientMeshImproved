@@ -141,6 +141,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
         ui->actionMesh_Mesh_Insertion->setEnabled(false);
         ui->actionMesh_Rectangle_Tool->setEnabled(false);
         ui->actionMesh_move_and_select->trigger();
+        ui->renderSpinBoxMultiRes->setEnabled(false);
     }
     else
     {
@@ -155,6 +156,7 @@ void MainWindow::on_actionRender_multi_res_mesh_changed()
             ui->actionMesh_Mesh_Insertion->setEnabled(true);
             ui->actionMesh_Rectangle_Tool->setEnabled(true);
             scene_->setRenderVertsEdges(true);
+            ui->renderSpinBoxMultiRes->setEnabled(true);
         }
     }
     scene_->update();
@@ -377,6 +379,13 @@ void MainWindow::on_renderSpinBox_valueChanged(int value)
 {
     GUILogic::MeshHandler::setSubdivisionSteps(value);
 }
+
+void MainWindow::on_renderSpinBoxMultiRes_valueChanged(int value)
+{
+    if(value > ui->renderSpinBox->value()) ui->renderSpinBoxMultiRes->setValue(value-1);
+    GUILogic::MeshHandler::setMultiResSubdivisionSteps(value);
+}
+
 
 void MainWindow::on_renderRenderButton_clicked()
 {
