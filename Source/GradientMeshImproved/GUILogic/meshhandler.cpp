@@ -17,7 +17,7 @@ typedef subdivMesh::Mesh SbdvMesh;
 
 
 int MeshHandler::subdivisionSteps_ = 3;
-int MeshHandler::subdMultiResMeshSteps_ = 0;
+int MeshHandler::subdMultiResMeshSteps_ = 1;
 
 MeshHandler::MeshHandler() :
     subdMesh{nullptr}
