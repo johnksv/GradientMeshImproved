@@ -64,7 +64,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		The gradient mesh tool, implemented in vector graphics software like Adobe Illustrator, is a much-used tool for creating and manipulating complex colour gradients. The mesh-based tool is restricted to rectangular control meshes, making it hard for the user to work with more complicated shapes such as shapes with holes. We propose a new gradient mesh tool that supports non-rectangular control meshes, with native support for a wide range of different shapes. Additionally, our tool supports flexible mesh and colour editing functionality that makes local edits easier than with previous tools. A user study indicates that our tool is easier to use in the setting of drawing colour gradients inside complicated shapes with holes.
+		The gradient mesh tool, implemented in vector graphics software like Adobe Illustrator, is a much-used tool for creating and manipulating complex colour gradients. The mesh-based tool is restricted to rectangular control meshes, making it hard for the user to work with more complicated shapes such as shapes with holes. We propose a new gradient mesh tool that supports non-rectangular control meshes, with native support for a wide range of different shapes. Additionally, our tool supports flexible mesh and \colorbox{yellow}{colour editing} functionality that makes local edits easier than with previous tools. A user study indicates that our tool is easier to use in the setting of drawing colour gradients inside complicated shapes with holes.
 		
 		\begin{classification} % according to http:http://www.acm.org/about/class/1998
 			\CCScat{Computer Graphics}{I.3.4}{Graphics Utilities}{Paint systems}
@@ -75,16 +75,16 @@
 	\section{Introduction}
 	\label{sec:intro}
 	
-	In vector graphics design, working with complex colour functions is challenging. The restrictions of the linear gradient tool is one reason designers turn to pixel-based tools, like Adobe Photoshop, when the design turns complicated. In the past decade, this issue has been acknowledged in the research community and a wide range of different approaches have been proposed to make the design of colour gradients more effortless \cite{Orzan:2008,Lopez-Moreno:2013}.
+	In vector graphics design, working with complex colour functions is challenging. The restrictions of the linear gradient tool is one reason designers turn to pixel-based tools, like Adobe Photoshop, when the design turns complicated. This issue has been acknowledged in the research community and a wide range of different approaches have been proposed to make the design of colour gradients more effortless \cite{Orzan:2008,Lopez-Moreno:2013}.
 	
-	In this paper, we propose a new tool for gradient mesh editing. The gradient mesh tool, found in vector graphics packages like Adobe Illustrator and Corel CorelDraw, is a much-used tool for complex colour gradient design.	It is especially useful in scenarios where the easier-to-use linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh that the user directly creates and edit must be of rectangular topology. We propose a tool where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.[REF-teaser].
+	The gradient mesh tool found in current vector graphics packages is a much-used tool for complex colour gradient design.	It is useful in scenarios where the linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh which the user interacts with must be of rectangular topology. In this paper, we propose a new tool for gradient mesh editing where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.[REF-teaser].
 	
 	\section{Related work}
 	\label{sec:RW}
 	
 	There have been proposed a myriad of techniques and tools for colouring, shading, and texturing of 2D graphics (e.g. \cite{Vergne:2012, Shao:2012, Orzan:2008}). Such techniques often employ underlying primitives and technology, like vector graphics gradients or the graphics pipeline, to achieve high-level tools for various creation and editing operations. On the other hand, the gradient mesh tool is a general tool for the creation and manipulation of complex colour gradients. Although there are techniques that employ gradient meshes for high-level operations, like 2D material editing~\cite{Lopez-Moreno:2013}, these techniques also enforce additional assumptions to fit their specific application.
 	
-	The gradient mesh tool is mostly relevant to our work. The tool is available in all of the three major vector graphics suites (Adobe Illustrator, Corel CorelDraw, and Inkscape). All of these tools employ similar interpolation techniques, variants of Ferguson or Bezier patches (although the specific implementation is not publicly available in other than Inkscape). Thus, all previous tools are restricted to gradients of rectangular topology, as shown in Fig.~\ref{fig:IllustratorVsOur} (using Illustrator's tool as an example). Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
+	The gradient mesh tool is mostly relevant to our work. The tool is available in all of the three major vector graphics suites (Adobe Illustrator, Corel CorelDraw, and Inkscape). All of these tools employ similar interpolation techniques, variants of Ferguson or Bezier patches (although the specific implementation is only publicly available in Inkscape). Thus, all previous tools are restricted to gradients of rectangular topology, as shown in Fig.~\ref{fig:IllustratorVsOur} (using Illustrator's tool as an example). Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
 	
 	\begin{figure}
 		\includegraphics[]{illustratorVsOur.jpg}
@@ -145,7 +145,7 @@
 	\section{Future work}
 	\label{sec:FW}
 	
-	Though our gradient mesh tool offers opportunities to work with non-rectangular gradient meshes, it is not an full experience graphical design software application. Future work will be to rewrite our tool as a plug-in for the Adobe Illustrator. This presents several issues, as the underlying mesh representation in Illustrator differs from ours. One approach can be to take use of Pixar's OpenSubdiv library (\url{http://graphics.pixar.com/opensubdiv/}) to integrating our solution with Illustrators SDK.
+	Though our gradient mesh tool offers opportunities to work with non-rectangular gradient meshes, it is not an full experience graphical design software application. Future work will be to rewrite our tool as a plug-in for the Adobe Illustrator. This presents several issues, as the underlying mesh representation in Illustrator differs from ours. One approach can be to take use of Pixar's OpenSubdiv library (http://graphics.pixar.com/opensubdiv/ (make hyperlink, disabled due to crash)) to integrating our solution with Illustrators SDK.
 	
 	\section{Conclusion}
 	
