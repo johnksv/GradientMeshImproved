@@ -75,20 +75,13 @@
 	\section{Introduction}
 	\label{sec:intro}
 	
-	In vector graphics design, working with complex colour functions is challenging. The restrictions of the linear gradient tool is one reason designers turn to pixel-based tools, like Adobe Photoshop, when the design turns complicated. This issue has been acknowledged in the research community and a wide range of different approaches have been proposed to make the design of colour gradients more effortless \cite{Orzan:2008,Lopez-Moreno:2013}.
+	In vector graphics design, working with complex colour functions is challenging. The restrictions of the linear gradient tool is one reason designers turn to pixel-based tools, like Adobe Photoshop, when the design turns complicated. This issue has been acknowledged in the research community and a wide range of different approaches have been proposed to make the design of colour gradients more effortless \cite{Orzan:2008,Lopez-Moreno:2013, Vergne:2012, Shao:2012}.
 	
-	The gradient mesh tool found in current vector graphics packages is a much-used tool for complex colour gradient design.	It is useful in scenarios where the linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh which the user interacts with must be of rectangular topology. In this paper, we propose a new tool for gradient mesh editing where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.[REF-teaser].
-	
-	\section{Related work}
-	\label{sec:RW}
-	
-	There have been proposed a myriad of techniques and tools for colouring, shading, and texturing of 2D graphics (e.g. \cite{Vergne:2012, Shao:2012, Orzan:2008}). Such techniques often employ underlying primitives and technology, like vector graphics gradients or the graphics pipeline, to achieve high-level tools for various creation and editing operations. On the other hand, the gradient mesh tool is a general tool for the creation and manipulation of complex colour gradients. Although there are techniques that employ gradient meshes for high-level operations, like 2D material editing~\cite{Lopez-Moreno:2013}, these techniques also enforce additional assumptions to fit their specific application.
-	
-	The gradient mesh tool is mostly relevant to our work. The tool is available in all of the three major vector graphics suites (Adobe Illustrator, Corel CorelDraw, and Inkscape). All of these tools employ similar interpolation techniques, variants of Ferguson or Bezier patches (although the specific implementation is only publicly available in Inkscape). Thus, all previous tools are restricted to gradients of rectangular topology, as shown in Fig.~\ref{fig:IllustratorVsOur} (using Illustrator's tool as an example). Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
+	The gradient mesh tool found in current vector graphics packages is a much-used tool for complex colour gradient design.	It is useful in scenarios where the linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh which the user interacts with must be of rectangular topology. In this paper, we propose a new tool for gradient mesh editing where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.[REF-teaser]. Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
 	
 	\begin{figure}
 		\includegraphics[]{illustratorVsOur.jpg}
-		\caption{Illustrator is limited to rectangular meshes. The images are rendered using Lieng et. al. \cite{Lieng:2016} interpolation technique. Image courtesy of Lieng et al.}
+		\caption{Caption... Image courtesy of Lieng et al. \cite{Lieng:2016}}
 		\john{Should we use a new image, or is it OK to refer to the article and alter some of the original caption?}
 		\label{fig:IllustratorVsOur}
 	\end{figure}
@@ -96,11 +89,9 @@
 	\section{Problem description}
 	\label{sec:overview}
 	
-	In previous gradient mesh tools (with reference to Adobes tool)  there are two approaches to mesh creation. The first option converts a vector graphics object compatible with rectangular gradients (i.e. a vector shape without any holes) to a grid of control points. The second option is a point-and-click interface where the user clicks on a location inside the target shape and a new row and column is created at the clicked location.
+	In previous gradient mesh tools, with reference to Adobe Illustrators too, there are two approaches to mesh creation. The first option converts a vector graphics object compatible with rectangular gradient (i.e. a vector shape without holes) to a grid of control points. The user is required to input the number of rows and columns of the to-be gradient mesh. The creation is dependent on a grid representation, and is therefore incompatible with non-rectangular gradient meshes.
 	
-	The first option requires the user to input the number of rows and columns of the to-be created gradient mesh. The creation is dependent on a grid representation of the mesh, and is therefore incompatible with non-rectangular gradient meshes.
-	
-	The second option introduces several challenges, as the point-and-click interaction produces a  global mesh alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh so that the number of rows and columns is kept to a minimum. For an non-rectangular setting, this would be even more challenging. Fig.~\ref{fig:adHocPentagon} illustrates a point-and-click interaction inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and many results could be imagined.
+	The second option is a point-and-click interface where the user clicks on a location inside the target shape and a new control point is created at the clicked location. This is attractive as the creation operation is independent from the underlying data structure and can give rise to several interpretations. However, the interaction produces a global alteration: when a control point is added, a new row and column is added to the entire mesh. It is therefore challenging to achieve local gradient edits and the user must consequently plan the structure of the mesh so that the number of rows and columns is kept to a minimum. For an non-rectangular setting, this would be even more challenging. Fig.~\ref{fig:adHocPentagon} illustrates a point-and-click interaction inside a polygon adjacent to a pentagon. The effect of such an interaction is ambiguous and the solution will be ad-hoc.
 	
 	In conclusion, the user interaction already supported by the gradient mesh tool is hard to extend to the more flexible setting of non-rectangular control meshes.
 	
@@ -109,6 +100,7 @@
 		\includegraphics[height=0.25\textheight]{pentagonMesh.png}
 		\caption{The red point indicates the location of were the user clicked. A new control point is made at this location. As mentioned in Section~\ref{sec:overview}, a new column and row is added to the entire mesh. New vertices are introduced at each edge intersection (represented as black points). The challenge occurs when we add a new vertex in a polygon adjacent to a pentagon. If the pentagon are split following the red dashed line we will suddenly introduce several new vertices as the line will propagate to adjacent polygons or introduce a T-junction if the line does not propagate. The solution will indeed be ad-hoc either way, and produce a mesh that is of poorer quality compared to the original mesh.
 		}
+		\john{TODO: Kutte ned paa tekst}
 		\label{fig:adHocPentagon}
 	\end{figure}
 	
@@ -117,35 +109,30 @@
 	
 	Our approach takes inspiration from the pen tool found in SketchUp (\url{http://www.sketchup.com/}). Building on such a basic tool for creating polygonal meshes in 2D, we provide tools for operations such as face deletion, and edge split and collapse.
 	
-	We envision the user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex and place new control points on the canvas. The face is closed by clicking on an existing vertex that is connected to a face. If the initial vertex closes the face a non-manifold mesh can be achieved as shown in Fig.~\ref{fig:nonManifoldHoleMesh}.
+	The user to create initial meshes \textit{face-by-face}, which can later be refined and manipulated. Our \textbf{line tool} enables the user to create a single polygonal face. The user starts by creating a single face. The mesh is then expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex and place new control points on the canvas. The face is closed by clicking on an existing vertex that is connected to a face. If the initial vertex closes the face a non-manifold mesh can be achieved as shown in Fig.~\ref{fig:nonManifoldHoleMesh}.
 	
-	The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges that control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of the new control point is calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig. REF).
+	The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges that control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of the new control point is calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification, and faces can be removed to introduce holes (Fig. REF).
 	
-	\begin{figure*}[t]
+	\begin{figure}[t]
 		\centering
-		\includegraphics[width=\textwidth]{HoleAndNonManifoldMesh.png}
-		\caption{(Left) A non-manifold mesh with internal holes. (Right) The control mesh.}
+		\includegraphics[height=0.25\textheight]{HoleAndNonManifoldMesh.png}
+		\caption{Top: A non-manifold mesh with internal holes. Bottom: The control mesh.}
 		\label{fig:nonManifoldHoleMesh}
-	\end{figure*}
+	\end{figure}
 	
 	\section{Results and informal user study}
 	\label{sec:results}
 	
 	TODO: results, Half-edge datastructure. Rewrite informal user study
 	
-	
-	\john{referere til video eller supplement?}
-	
 	Our gradient mesh tool were tested by 5 subjects -- 2 professionals designers and 3 art students --- who all had experience with Adobe Illustrator. The subjects were given an introduction to our program and to the relevant tools in Illustrator. They were given two task; the first task was to make a rectangular gradient mesh. The second task was to make a gradient mesh with two holes. The subjects were not allowed to use layering, that is, none of the meshes should overlap. The tests were complemented with an user survey, which 4 of 5 test subjects answered.
 	
 	One test subject answered the following in the user survey: \textit{"[...] I enjoyed the experience from the tested tool more than Illustrator when it came to the tasks given. Both were difficult for a beginner, but at least the tested tool made more sense: especially with deleting frames to create holes."}.
 	
-	\henrik{beskriv user study og resultater, med et diagram som viser tider? Referer til `supplementary material' (ekstra dokument med samme latex template). All informasjon går i supplementary material dokument.}
-	
 	\section{Future work}
 	\label{sec:FW}
 	
-	Though our gradient mesh tool offers opportunities to work with non-rectangular gradient meshes, it is not an full experience graphical design software application. Future work will be to rewrite our tool as a plug-in for the Adobe Illustrator. This presents several issues, as the underlying mesh representation in Illustrator differs from ours. One approach can be to take use of Pixar's OpenSubdiv library (http://graphics.pixar.com/opensubdiv/ (make hyperlink, disabled due to crash)) to integrating our solution with Illustrators SDK.
+	Though our gradient mesh tool offers opportunities to work with non-rectangular gradient meshes, it is not an full experience graphical design software application. Future work will be to rewrite our tool as a plug-in for the Adobe Illustrator. This presents several issues, as the underlying mesh representation in Illustrator differs from ours. One approach can be to take use of Pixar's OpenSubdiv library (\url{http://graphics.pixar.com/opensubdiv/}) to integrating our solution with Illustrators SDK.
 	
 	\section{Conclusion}
 	
