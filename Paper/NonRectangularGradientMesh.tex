@@ -20,7 +20,6 @@
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usepackage{hyperref}
 
 \newcommand{\added}[1]{{\color{Red}\textbf{#1}}} % do not need this probably
 \newcommand{\note}[3]{{\color{#2}\textbf{#1: #3}}}
@@ -97,8 +96,8 @@
 	
 	\begin{figure}[t]
 		\centering
-		\includegraphics[scale=0.2]{pentagonMesh.png}
-		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point \henrik{(green edges)}.  The two control meshes show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality (a T-junction and a high-valence vertex).
+		\includegraphics[scale=0.2]{pentagonCombined.png}
+		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). The two control meshes show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality (a T-junction and a high-valence vertex).
 		}
 		\label{fig:adHocPentagon}
 	\end{figure}
