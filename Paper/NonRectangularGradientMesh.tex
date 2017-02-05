@@ -97,7 +97,7 @@
 	\begin{figure}[t]
 		\centering
 		\includegraphics[scale=0.2]{pentagonCombined.png}
-		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). The two control meshes show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality (a T-junction and a high-valence vertex).
+		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). The two control meshes show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality. Left: A T-junction. Right: A high-valence vertex.
 		}
 		\label{fig:adHocPentagon}
 	\end{figure}
@@ -126,7 +126,7 @@
 	
 %	Our tool was implemented in C++ with use of the libraries Qt (\url{https://www.qt.io/}) and OpenMesh (\url{http://www.openmesh.org/}). OpenMesh provides an generic and efficient way to store the mesh with the half-edge data structure, which supports arbitrary topology. The mesh is interpolated by employing the technique of Lieng et. al-~\cite{Lieng:2016}, as previously mentioned~\ref{sec:intro}. \john{Ha med mer her? Skrive om?}
 	
-	We preformed an informal user study where five subjects were tested: two professional designers and three art students. The subjects were given two task (creating one baseline rectangular mesh and one non-rectangular mesh), each completed with our tool and with Adobe Illustrator's gradient mesh tool. The tests were complemented with an user survey. The full results of the study will be made publicly available. For the baseline test, all subjects were able to create a regular mesh. The data from this test suggest that Adobe Illustrator either provides a generally better user interface (with operations like undo) or because users are already familiar with Illustrator it is easier for them to work with it over our tool. For the non-regular mesh, users preferred our tool over Illustrator's. The subjects praised our tool for enabling face-specific manipulation capabilities such as face deletion.
+	We preformed an informal user study where five subjects were tested: two professional designers and three art students. The subjects were given two task (creating one baseline rectangular mesh and one non-rectangular mesh), each completed with our tool and with Adobe Illustrator's gradient mesh tool. The tests were complemented with an user survey. The full results of the study will be made publicly available. For the baseline test, all subjects were able to create a regular mesh. The data from this test suggest that Adobe Illustrator either provides a generally better user interface (with operations like undo), or because users are already familiar with Illustrator it is easier for them to work with it over our tool. For the non-regular mesh, users preferred our tool over Illustrator's. The subjects praised our tool for enabling face-specific manipulation capabilities such as face deletion.
 	
 	\section{Future work}
 	\label{sec:FW}
