@@ -3,9 +3,9 @@ An improved gradient mesh tool (working title)
 This is a private research project at HiOA.
 Current major goals:
 
-* Implement a basic user interface for creating and manipulating 2D gradient meshes [ ]
-* Implement functionality for creating gradient meshes from photographs [ ]
-* Multi-resolution editing capabilities [ ]
+* Implement a basic user interface for creating and manipulating 2D gradient meshes [x]
+* Implement functionality for creating gradient meshes from photographs [x]
+* Multi-resolution editing capabilities [x]
 
 Implementation details
 -----------
@@ -17,3 +17,8 @@ Required libraries:
 
 * Qt 5.6
 * OpenMesh 6.1
+
+Future work (major)
+-----------
+* Better support for color points
+* Rewrite program/Optimization of current code
