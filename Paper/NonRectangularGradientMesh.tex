@@ -55,8 +55,8 @@
 	
 	\teaser{
 		\centering
-		\includegraphics[width=0.7\linewidth]{teaserCombined.png}
-		\caption{Our gradient mesh tool (left) supports meshes of arbitrary topology, enabling users to create complex colour gradients (right) with shapes such as glasses.}
+		\includegraphics[width=0.63\linewidth]{teaserCombined.png}
+		\caption{Our gradient mesh tool (left) enables the user to create complex colour gradients with arbitrary topology (right).}
 		\label{fig:teaser}
 	 }
 	
@@ -76,7 +76,7 @@
 	
 	In vector graphics design, working with complex colour functions is challenging. The restrictions of the linear gradient tool is one reason designers turn to pixel-based tools, like Adobe Photoshop, when the design turns complicated. This issue has been acknowledged in the research community and a wide range of different approaches have been proposed to make the design of colour gradients more effortless \cite{Orzan:2008,Lopez-Moreno:2013, Vergne:2012, Shao:2012}.
 	
-	The gradient mesh tool, found in vector graphics packages like Adobe Illustrator, Corel CorelDraw and Inkspace, is a popular tool for complex colour gradient design. It is useful in scenarios where the linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh which the user interacts with must be of rectangular topology. In this paper, we propose a new tool for gradient mesh editing where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.~\ref{fig:teaser}. Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
+	The gradient mesh tool, found in graphics packages like Adobe Illustrator and Corel CorelDraw, is a popular tool for complex colour gradient design. It is useful in scenarios where the linear gradient tool does not suffice. However, it does not support non-rectangular gradients: the control mesh which the user interacts with must be of rectangular topology. In this paper, we propose a new tool for gradient mesh editing where the user can create and manipulate non-rectangular colour gradients, like the one shown in Fig.~\ref{fig:teaser}. Our approach takes advantage of a recent gradient mesh interpolation technique that supports arbitrary mesh topology~\cite{Lieng:2016}. Being able to model non-rectangular gradient meshes provides significant practical advantages, especially for vector shapes with holes.
 	
 %	\begin{figure}
 %		\includegraphics[]{illustratorVsOur.jpg}
@@ -96,7 +96,7 @@
 	
 	\begin{figure}[t]
 		\centering
-		\includegraphics[scale=0.18]{pentagonWControlMesh.png}
+		\includegraphics[scale=0.2]{pentagonWControlMesh.png}
 		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). This figure show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality. Top left: Control mesh before interaction. Middle: A T-junction. Right: A high-valence vertex. Concerned vertices are marked with a red disk.
 		}
 		\label{fig:adHocPentagon}
@@ -115,7 +115,7 @@
 	
 	\begin{figure}[t]
 		\centering
-		\includegraphics[scale=0.165]{HoleAndNonManifoldMesh.png}
+		\includegraphics[scale=0.181]{HoleAndNonManifoldMesh.png}
 		\caption{A non-manifold mesh with internal holes. Top: Faces are added iteratively. Bottom left: The inner faces have been removed.  Bottom right: The control mesh.}
 		\label{fig:nonManifoldHoleMesh}
 	\end{figure}
