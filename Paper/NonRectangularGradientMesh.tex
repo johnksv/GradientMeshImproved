@@ -87,7 +87,7 @@
 	\begin{figure}[t]
 		\centering
 		\includegraphics[scale=0.2]{pentagonWControlMesh.png}
-		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new vertex is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). This figure show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality. Top left: Control mesh before interaction. Middle: A T-junction. Right: A high-valence vertex. Concerned vertices are marked with a red disk.
+		\caption{The current point-and-click interface gives rise to ambiguous cases for irregular meshes. A new control point is inserted at the location where the user clicks (red point). New edges are inserted from this point (green edges). This figure show two possible solutions for mesh alteration at the irregular face (the pentagon). Both options give rise to a poor mesh quality. Top left: Gradient mesh before interaction. Middle: A T-junction. Right: A high-valence control point. Concerned control points are marked with a red disk.
 		}
 		\label{fig:adHocPentagon}
 	\end{figure}
@@ -97,15 +97,15 @@
 	
 	Our approach takes inspiration from the pen tool found in SketchUp. Our tool provide operations such as edge split and face deletion. Code and a demonstration video of the tool will be made available upon publication.
 	
-	In the following, we describe typical interactions with our tool to create and refine gradient meshes. The user create initial meshes \textit{face-by-face}, which can later be refined and manipulated. Our \textbf{line tool} enables the user to create single polygonal faces of arbitrary topology. The mesh is expanded by iteratively adding faces to it. To add a face, the user selects an existing mesh vertex and place new control points on the canvas. The face is closed by clicking on an existing mesh vertex. If the initial vertex closes the face, a non-manifold mesh can be achieved as shown in Fig.~\ref{fig:nonManifoldHoleMesh}.
+	In the following, we describe typical interactions with our tool to create and refine gradient meshes. The user create initial meshes \textit{face-by-face}, which can later be refined and manipulated. Our \textbf{line tool} enables the user to create single polygonal faces of arbitrary topology. The mesh is expanded by iteratively adding faces to it. To add a face, the user selects an existing control point and place new ones on the canvas. The face is closed by clicking on an existing control point. A non-manifold mesh can be achieved if the initial control point closes the face, as shown in Fig.~\ref{fig:nonManifoldHoleMesh}.
 	
-	The user can further locally edit and refine the control mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges. The constraint control the local influence of the colour of the control point. Such gradient constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of new control points are calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig.~\ref{fig:nonManifoldHoleMesh}). We also support alterations at finer levels, using the multi-resolution adjustments of Lieng et al. \cite{Lieng:2016}.
+	The user can further locally edit and refine the gradient mesh. The \textbf{edge split tool} splits a selected edge into two pieces. The inserted control point should then be connected to another mesh point to avoid valence-2 control points. Note that edges are modelled as cubic Bezier curves: each control point is associated with a gradient constraint for each of its edges. The constraint control the local influence of the colour of the control point. Such constraints is a standard feature of gradient meshes. To ensure that the curve of the edge is maintained when the edge is split, the position of new control points are calculated using De Casteljau's algorithm. Finally, adjacent edges can be collapsed for mesh simplification and faces can be removed to introduce holes (Fig.~\ref{fig:nonManifoldHoleMesh}). We also support alterations at finer levels, using the multi-resolution adjustments of Lieng et al. \cite{Lieng:2016}.
 	
 	
 	\begin{figure}[t]
 		\centering
 		\includegraphics[scale=0.181]{HoleAndNonManifoldMesh.png}
-		\caption{A non-manifold mesh with internal holes. Top: Faces are added iteratively. Bottom left: The inner faces have been removed.  Bottom right: The control mesh.}
+		\caption{A non-manifold mesh with internal holes. Top: Faces are added iteratively. Bottom left: The inner faces have been removed.  Bottom right: The gradient mesh.}
 		\label{fig:nonManifoldHoleMesh}
 	\end{figure}
 	
