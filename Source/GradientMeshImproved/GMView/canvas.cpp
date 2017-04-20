@@ -40,6 +40,7 @@ void GMCanvas::initGMCanvas()
     opengl_->setPos(0,0);
     openglWidget->setRenderMode(renderModeOpenGL::viewportRender);
     opengl_->setZValue(-1);
+    opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
     CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
     layers_.push_back(layer);
