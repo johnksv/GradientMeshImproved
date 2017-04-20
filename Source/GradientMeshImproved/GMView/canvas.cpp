@@ -37,9 +37,9 @@ void GMCanvas::initGMCanvas()
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
     opengl_->setPos(0,0);
-    openglWidget->setRenderMode(renderModeOpenGL::boundingRect);
+    openglWidget->setRenderMode(renderModeOpenGL::viewportRender);
     opengl_->setZValue(-1);
-
+    opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
     CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
     layers_.push_back(layer);
@@ -734,9 +734,13 @@ void GMCanvas::autoRenderOnMeshChanged()
 
 void GMCanvas::resizeOpenGLWidget()
 {
-    QRectF rect = currentLayer()->boundingRect();
+    //QRectF rect = currentLayer()->boundingRect();
+    QGraphicsView * view = views().first();
+    QRectF rect         = view->rect();
+    QPointF point = view->mapToScene(rect.topLeft().toPoint());
+
     opengl_->widget()->setFixedSize(rect.size().toSize());
-    opengl_->setPos(rect.topLeft());
+    opengl_->setPos(point);
 }
 
 void GMCanvas::setItemPointColorFromImage()
