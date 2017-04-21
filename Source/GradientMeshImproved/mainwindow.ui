@@ -871,10 +871,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Insert Vertex on Edge</string>
+    <string>Edge split tool</string>
    </property>
    <property name="toolTip">
-    <string>Insert Vertex on Edge</string>
+    <string>Split edge by inserting control point on edge</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
