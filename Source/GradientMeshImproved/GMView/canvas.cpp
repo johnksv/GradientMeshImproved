@@ -145,7 +145,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         if (currentMeshHandler()->numberOfFaces() > 0)
         {
             QString message("Import of file will clean current mesh. Proceed?");
-            QMessageBox::StandardButton response = QMessageBox::question(nullptr, "Multi resh mesh", message);
+            QMessageBox::StandardButton response = QMessageBox::question(nullptr, "Import file", message);
             if (response == QMessageBox::Yes)
             {
                 importFile(location);
@@ -155,6 +155,7 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         {
             importFile(location);
         }
+        QMessageBox::information(nullptr, "Import file","File imported! Hit 'Render mesh' for first subdivision");
     }
     else
     {
