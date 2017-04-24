@@ -53,3 +53,10 @@ void CustomGraphicsView::resizeEvent(QResizeEvent *event)
 {
     static_cast<GMCanvas *> (scene())->resizeOpenGLWidget();
 }
+
+void CustomGraphicsView::scrollContentsBy(int dx, int dy)
+{
+    QGraphicsView::scrollContentsBy(dx, dy);
+    static_cast<GMCanvas *> (scene())->resizeOpenGLWidget();
+}
+

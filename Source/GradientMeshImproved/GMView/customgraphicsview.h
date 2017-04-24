@@ -13,6 +13,7 @@ public:
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void scrollContentsBy(int dx, int dy) override;
 
 private:
     qreal zoomValue_ = 250;
