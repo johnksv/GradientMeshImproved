@@ -42,6 +42,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initLayoutContainer();
 
     initColorSelector();
+
+    ui->graphicsView->setFocus();
 }
 MainWindow::~MainWindow()
 {
