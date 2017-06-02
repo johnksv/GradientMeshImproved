@@ -11,7 +11,7 @@ class CanvasItemFace : public QGraphicsItem
 {
 public:
     CanvasItemFace(QGraphicsItem *parent = Q_NULLPTR);
-    CanvasItemFace(QGraphicsItem *parent, int faceIdx);
+    CanvasItemFace(QGraphicsItem *parent, int faceIdx, unsigned char layerId);
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -24,6 +24,10 @@ public:
 
     vector<CanvasItemLine *> &edgesInFace();
 
+    unsigned char layerId() const;
+
+    void setLayerId(unsigned char layerId);
+
 protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event) override;
 
@@ -32,6 +36,7 @@ private:
     vector<QPointF> subdivedLines_;
     vector<bool> reverseEdge_;
     int faceIdx_;
+    unsigned char layerId_;
 };
 
 }// end of namespace GMView

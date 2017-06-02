@@ -11,7 +11,7 @@ CanvasItemFace::CanvasItemFace(QGraphicsItem *parent) : QGraphicsItem(parent)
 {   
 }
 
-CanvasItemFace::CanvasItemFace(QGraphicsItem *parent, int faceIdx): QGraphicsItem(parent), faceIdx_(faceIdx)
+CanvasItemFace::CanvasItemFace(QGraphicsItem *parent, int faceIdx, unsigned char layerId): QGraphicsItem(parent), faceIdx_(faceIdx), layerId_{layerId}
 {
 }
 
@@ -213,4 +213,14 @@ void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
         canvas->constructGuiFromMeshHandler();
         canvas->autoRenderOnMeshChanged();
     }
+}
+
+unsigned char CanvasItemFace::layerId() const
+{
+    return layerId_;
+}
+
+void CanvasItemFace::setLayerId(unsigned char layerId)
+{
+    layerId_ = layerId;
 }

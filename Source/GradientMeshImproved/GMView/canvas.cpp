@@ -1081,7 +1081,7 @@ void GMCanvas::mouseRectangleTool(QGraphicsSceneMouseEvent *event)
 
 void GMCanvas::addEdgesToCanvasFace(const vector<int> &vertsToAddFaceIdx, int faceIdx)
 {
-    CanvasItemFace * face = new CanvasItemFace(currentLayer(), faceIdx);
+    CanvasItemFace * face = new CanvasItemFace(currentLayer(), faceIdx, currLayerIndex_);
     currentLayer()->addToFacesVector(face);
 
     vector<CanvasItemLine *> canvasEdges;
@@ -1210,8 +1210,11 @@ bool GMCanvas::addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint 
             {
                 QList<QGraphicsItem *> collidingItems = itemPoint->collidingItems();
                 for (int j = 0; j < collidingItems.size(); ++j) {
-                    if(dynamic_cast<CanvasItemFace*>(collidingItems.at(j)))
+                    CanvasItemFace* collidingFace = dynamic_cast<CanvasItemFace*>(collidingItems.at(j));
+                    if(collidingFace)
                     {
+                        if(collideFace->layerId() != currLayerIndex_) continue;
+
                         showMessage(tr("Illegal. Some vertices are added outside, some within face. Line 640"),true);
                         return false;
                     }
