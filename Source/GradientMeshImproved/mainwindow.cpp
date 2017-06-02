@@ -197,7 +197,7 @@ void MainWindow::on_actionMesh_Rectangle_Tool_triggered()
 void MainWindow::on_actionExport_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
-                                                    "", tr("OFF file (*.off)"));
+                                                    "","OFF file (*.off);;PNG (*.png)");
     scene_->handleFileDialog(filename, false);
 }
 

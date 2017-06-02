@@ -12,6 +12,7 @@
 #include <QGraphicsview>
 #include <QRect>
 #include "undoCommands/guichange.h"
+#include <QImage>
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = true;
@@ -160,7 +161,22 @@ void GMCanvas::handleFileDialog(QString location, bool import)
     else
     {
         updateVertexConstraints();
-        currentMeshHandler()->prepareMeshForSubd(true, location);
+        QString format = location.split(".").back();
+        if(QString::compare(format, "png", Qt::CaseInsensitive) == 0)
+        {
+            clearSelection();
+            QImage image(itemsBoundingRect().size().toSize(), QImage::Format_ARGB32);
+            image.fill(Qt::transparent);
+            QPainter painter(&image);
+            painter.setRenderHint(QPainter::Antialiasing);
+
+            opengl_->widget()->render(&painter);
+            image.save(location);
+        }
+        else if ( QString::compare(format, "off", Qt::CaseInsensitive) == 0)
+        {
+            currentMeshHandler()->prepareMeshForSubd(true, location);
+        }
     }
 }
 
