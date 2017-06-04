@@ -1213,7 +1213,7 @@ bool GMCanvas::addFaceToOpnMesh(vector<int> &vertsToAddFaceIdx, CanvasItemPoint 
                     CanvasItemFace* collidingFace = dynamic_cast<CanvasItemFace*>(collidingItems.at(j));
                     if(collidingFace)
                     {
-                        if(collideFace->layerId() != currLayerIndex_) continue;
+                        if(collidingFace->layerId() != currLayerIndex_) continue;
 
                         showMessage(tr("Illegal. Some vertices are added outside, some within face. Line 640"),true);
                         return false;
