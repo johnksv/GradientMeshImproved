@@ -50,6 +50,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::layerModelAppendLastSceneLayer()
+{
+    layerModel_->appendRow(scene_->layers().back());
+}
+
 void MainWindow::initWindowAction()
 {
     ui->menuWindow->addAction(ui->renderWidget->toggleViewAction());
@@ -261,7 +266,7 @@ void MainWindow::on_layerDelete_clicked()
 void MainWindow::on_layerNew_clicked()
 {
     scene_->addLayer(QString("Layer " + QString::number(layerModel_->rowCount() + 1)));
-    layerModel_->appendRow(scene_->layers().back());
+    layerModelAppendLastSceneLayer();
 }
 
 void MainWindow::on_layer_listView_clicked(const QModelIndex &index)

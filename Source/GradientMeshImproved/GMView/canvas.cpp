@@ -13,6 +13,8 @@
 #include <QRect>
 #include "undoCommands/guichange.h"
 #include <QImage>
+#include <QPushButton>
+#include "mainwindow.h"
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = true;
@@ -146,15 +148,28 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         if (currentMeshHandler()->numberOfFaces() > 0)
         {
             QString message("Import of file will clean current mesh. Proceed?");
-            QMessageBox::StandardButton response = QMessageBox::question(nullptr, "Import file", message);
-            if (response == QMessageBox::Yes)
-            {
-                importFile(location);
+            QMessageBox msgBox;
+            msgBox.setText("Import file");
+            msgBox.setInformativeText(message);
+            QPushButton *clear = msgBox.addButton("Clear layer", QMessageBox::YesRole);
+            QPushButton *asLayer = msgBox.addButton("As layer", QMessageBox::NoRole);
+            QPushButton *none = msgBox.addButton("Cancel", QMessageBox::RejectRole);
+            msgBox.setIcon(QMessageBox::Question);
+            msgBox.exec();
+
+            if (msgBox.clickedButton() == clear){
+                importFileClean(location);
+            }else if(msgBox.clickedButton() == asLayer){
+                importFileLayer(location);
+            }else{
+                delete clear, asLayer, none;
+                return;
             }
+            delete clear, asLayer, none;
         }
         else
         {
-            importFile(location);
+            importFileClean(location);
         }
         QMessageBox::information(nullptr, "Import file","File imported! Hit 'Render mesh' for first subdivision");
     }
@@ -175,17 +190,28 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         }
         else if ( QString::compare(format, "off", Qt::CaseInsensitive) == 0)
         {
-            currentMeshHandler()->prepareMeshForSubd(true, location);
+            for(int i = 0; i < meshHandlers_.size(); i++){
+                meshHandlers_.at(i)->prepareMeshForSubd(true, i + location);
+            }
+            //currentMeshHandler()->prepareMeshForSubd(true, location);
         }
     }
 }
 
-void GMCanvas::importFile(QString location)
+void GMCanvas::importFileClean(QString location)
 {
     clearAllCurrLayer();
     currentMeshHandler()->importMesh(location, renderAutoUpdate_);
     constructGuiFromMeshHandler();
     views().first()->ensureVisible(itemsBoundingRect());
+}
+
+void GMCanvas::importFileLayer(QString location)
+{
+    addLayer("Imported layer");
+    setActiveLayer(layers_.size()-1);
+    (static_cast<MainWindow*>(parent()))->layerModelAppendLastSceneLayer();
+    importFileClean(location);
 }
 
 void GMCanvas::handleImageFileDialog(QString location, bool import)

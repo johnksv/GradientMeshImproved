@@ -17,6 +17,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void layerModelAppendLastSceneLayer();
 
 private slots:
     void on_actionRender_constraints_handlers_triggered();
