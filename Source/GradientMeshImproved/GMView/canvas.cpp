@@ -141,7 +141,7 @@ void GMCanvas::resetLineStartEnd()
     currentLayer()->resetPointsHighlighted();
 }
 
-void GMCanvas::handleFileDialog(QString location, bool import)
+void GMCanvas::handleFileDialog(const QString location, bool import)
 {
     if(import)
     {
@@ -190,8 +190,11 @@ void GMCanvas::handleFileDialog(QString location, bool import)
         }
         else if ( QString::compare(format, "off", Qt::CaseInsensitive) == 0)
         {
+            //Save layers with index numbers
             for(int i = 0; i < meshHandlers_.size(); i++){
-                meshHandlers_.at(i)->prepareMeshForSubd(true, i + location);
+                QString loc{location};
+                loc.insert(loc.size()-4,QString::number(i));
+                meshHandlers_.at(i)->prepareMeshForSubd(true, loc);
             }
             //currentMeshHandler()->prepareMeshForSubd(true, location);
         }

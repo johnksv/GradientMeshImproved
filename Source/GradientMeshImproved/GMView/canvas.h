@@ -45,7 +45,7 @@ public:
      * \param location the location of the file to import/export
      * \param import if the mesh should be imported or exported. True for import. False for export.
      */
-    void handleFileDialog(QString location, bool import);
+    void handleFileDialog(const QString location, bool import);
     void importFileClean(QString location);
     void importFileLayer(QString location);
     //If import = false, then image will be removed
