@@ -206,7 +206,7 @@ void GMCanvas::importFileClean(QString location)
     clearAllCurrLayer();
     currentMeshHandler()->importMesh(location, renderAutoUpdate_);
     constructGuiFromMeshHandler();
-    views().first()->ensureVisible(itemsBoundingRect());
+    views().first()->fitInView(itemsBoundingRect(),Qt::KeepAspectRatio);
 }
 
 void GMCanvas::importFileLayer(QString location)

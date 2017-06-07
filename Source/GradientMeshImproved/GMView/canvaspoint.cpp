@@ -228,7 +228,7 @@ void CanvasItemPoint::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     QAction *selectedAction = menu.exec(event->screenPos());
     if(selectedAction == chooseColorAction)
     {
-        QColor chosenColor = QColorDialog::getColor();
+        QColor chosenColor = QColorDialog::getColor(color_);
         if(chosenColor.isValid())
         {
             QList<QGraphicsItem *> items = canvas->selectedItems();
