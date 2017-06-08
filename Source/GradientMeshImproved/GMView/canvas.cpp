@@ -218,9 +218,8 @@ void GMCanvas::importFileClean(QString location)
 
 void GMCanvas::importFileLayer(QString location)
 {
-    addLayer("Imported layer");
+    addLayer("Layer " + QString::number(layers_.size() + 1));
     setActiveLayer(layers_.size()-1);
-    (static_cast<MainWindow*>(parent()))->layerModelAppendLastSceneLayer();
     importFileClean(location);
 }
 
@@ -362,11 +361,40 @@ bool GMCanvas::renderConstraintHandlers() const
     return renderConstraintHandlers_;
 }
 
+void GMCanvas::setLayerModel(QStandardItemModel *model)
+{
+    layerModel_ = model;
+    for(GMView::CanvasItemGroup *item : layers_)
+    {
+        layerModel_->appendRow(item);
+    }
+}
+
 
 void GMCanvas::setDrawingMode(drawModeCanvas drawMode)
 {
     resetLineStartEnd();
     this->drawMode_ = drawMode;
+}
+
+void GMCanvas::setActiveLayerBack()
+{
+    setActiveLayer(layers_.size()-1);
+}
+
+void GMCanvas::setActiveLayer(unsigned char index)
+{
+    //Disable other layers for editing when active layer is changed.
+    if(currLayerIndex_ < layers_.size()) currentLayer()->QGraphicsItem::setEnabled(false);
+    if(index < 0 || index >= layers_.size())
+    {
+        currLayerIndex_ = 0;
+    }
+    else
+    {
+        currLayerIndex_ = index;
+    }
+    currentLayer()->QGraphicsItem::setEnabled(true);
 }
 
 vector<CanvasItemGroup *> GMCanvas::layers()
@@ -396,25 +424,16 @@ vector<GUILogic::MeshHandler *> *GMCanvas::multiResMeshHandlers()
     return &multiRes_meshHandlers_;
 }
 
-void GMCanvas::setActiveLayer(unsigned char index)
+void GMCanvas::addLayer()
 {
-    //Disable other layers for editing when active layer is changed.
-    if(currLayerIndex_ < layers_.size()) currentLayer()->QGraphicsItem::setEnabled(false);
-    if(index < 0 || index >= layers_.size())
-    {
-        currLayerIndex_ = 0;
-    }
-    else
-    {
-        currLayerIndex_ = index;
-    }
-    currentLayer()->QGraphicsItem::setEnabled(true);
+    addLayer(QString("Layer " + QString::number(layers_.size() + 1)));
 }
 
 void GMCanvas::addLayer(QString name)
 {
     layers_.push_back(new CanvasItemGroup(name));
     addItem(layers_.back());
+    layerModel_->appendRow(layers_.back());
     meshHandlers_.push_back(new GUILogic::MeshHandler);
 }
 
@@ -807,6 +826,16 @@ void GMCanvas::setItemPointColorFromImage()
         QColor newColor(image.pixel(position.toPoint()));
         point->setColor(newColor, false);
     }
+}
+
+void GMCanvas::newDocument()
+{
+   clear();
+   layerModel_->clear();
+   for(GMView::CanvasItemGroup *item : layers_)
+   {
+       layerModel_->appendRow(item);
+   }
 }
 
 void GMCanvas::mouseCollapseEdge(QGraphicsSceneMouseEvent *mouseEvent)

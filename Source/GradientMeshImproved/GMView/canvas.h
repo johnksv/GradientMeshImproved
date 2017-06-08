@@ -52,6 +52,7 @@ public:
     QGraphicsPixmapItem *imageItem();
 
     void setDrawingMode(drawModeCanvas);
+    void setActiveLayerBack();
     void setActiveLayer(unsigned char index);
     void setDrawColorVertex(QColor pointColor);
     void setRenderConstraintHandlers(bool value);
@@ -62,7 +63,7 @@ public:
     drawModeCanvas drawingMode() const;
     bool renderConstraintHandlers() const;
 
-
+    void setLayerModel(QStandardItemModel* model);
 
     vector<CanvasItemGroup *> layers();
     CanvasItemGroup *currentLayer();
@@ -70,6 +71,7 @@ public:
     GUILogic::MeshHandler *currentMeshHandler();
     vector<GUILogic::MeshHandler *> *multiResMeshHandlers();
 
+    void addLayer();
     void addLayer(QString name);
     void deleteLayer(int index);
     void toogleLayerVisibility(int index);
@@ -92,6 +94,9 @@ public:
     void resizeOpenGLWidget();
 
     void setItemPointColorFromImage();
+
+    void newDocument();
+
 protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
@@ -119,6 +124,8 @@ private:
 
     QGraphicsPixmapItem *imageItem_ = nullptr;
     QGraphicsRectItem *rectItem_ = nullptr;
+
+    QStandardItemModel* layerModel_;
 
 
     /*! Adds an CanvasItemPoint to this GMCanvas graphics scene, and updates the necessary dependencies.

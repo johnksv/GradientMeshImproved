@@ -51,11 +51,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::layerModelAppendLastSceneLayer()
-{
-    layerModel_->appendRow(scene_->layers().back());
-}
-
 void MainWindow::initWindowAction()
 {
     ui->menuWindow->addAction(ui->renderWidget->toggleViewAction());
@@ -91,15 +86,10 @@ void MainWindow::initActionGroups()
 
 void MainWindow::initLayoutContainer()
 {
-    layerModel_ = new QStandardItemModel;
-    ui->layer_listView->setModel(layerModel_);
+    QStandardItemModel *layerModel = new QStandardItemModel;
+    scene_->setLayerModel(layerModel);
+    ui->layer_listView->setModel(layerModel);
     ui->layer_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-    vector<GMView::CanvasItemGroup *> canvasLayers = scene_->layers();
-    for(GMView::CanvasItemGroup *item : canvasLayers)
-    {
-        layerModel_->appendRow(item);
-    }
 }
 
 void MainWindow::initColorSelector()
@@ -275,18 +265,18 @@ void MainWindow::on_layerDelete_clicked()
     //TODO: Update List.
     if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
     {
-        if(layerModel_->rowCount() == 1 )
-        {
-            QMessageBox msgBox;
-            msgBox.setText("Can not delete base layer");
-            msgBox.exec();
-        }
-        else
-        {
-            int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
-            scene_->deleteLayer(currentIndex);
-            layerModel_->removeRow(currentIndex);
-        }
+                if(ui->layer_listView->model()->rowCount() == 1 )
+                {
+                    QMessageBox msgBox;
+                    msgBox.setText("Can not delete base layer");
+                    msgBox.exec();
+                }
+                else
+                {
+                    int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
+                    scene_->deleteLayer(currentIndex);
+                    qDebug() << "Deletion OK";
+                }
     }
     else
     {
@@ -298,8 +288,8 @@ void MainWindow::on_layerDelete_clicked()
 
 void MainWindow::on_layerNew_clicked()
 {
-    scene_->addLayer(QString("Layer " + QString::number(layerModel_->rowCount() + 1)));
-    layerModelAppendLastSceneLayer();
+    scene_->addLayer();
+    scene_->setActiveLayerBack();
 }
 
 void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
@@ -406,13 +396,7 @@ void MainWindow::on_imageOpacity_valueChanged(int value)
 
 void MainWindow::on_action_New_triggered()
 {
-   scene_->clear();
-   layerModel_->clear();
-   vector<GMView::CanvasItemGroup *> canvasLayers = scene_->layers();
-   for(GMView::CanvasItemGroup *item : canvasLayers)
-   {
-       layerModel_->appendRow(item);
-   }
+   scene_->newDocument();
 }
 
 void MainWindow::on_renderSpinBox_valueChanged(int value)
