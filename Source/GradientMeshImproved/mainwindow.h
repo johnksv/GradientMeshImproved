@@ -26,7 +26,9 @@ private slots:
 
     void on_actionRender_auto_toggled(bool checked);
 
-    void on_actionExport_triggered();
+    void on_actionSave_layer_triggered();
+
+    void on_actionSave_all_layers_triggered();
 
     void on_actionMesh_Line_tool_triggered();
 
@@ -89,7 +91,6 @@ private slots:
     void on_glRenderButton_viewport_clicked();
 
     void on_glRenderButton_boundingRect_clicked();
-
 
 
 private:

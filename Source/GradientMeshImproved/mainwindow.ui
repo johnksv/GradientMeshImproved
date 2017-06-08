@@ -64,7 +64,8 @@
     <addaction name="action_New"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
-    <addaction name="actionExport"/>
+    <addaction name="actionSave_all_layers"/>
+    <addaction name="actionSave_layer"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
@@ -711,12 +712,12 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionExport">
+  <action name="actionSave_layer">
    <property name="text">
-    <string>Export/save</string>
+    <string>Save current layer</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -931,6 +932,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="actionSave_all_layers">
+   <property name="text">
+    <string>Save all layers</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
  </widget>

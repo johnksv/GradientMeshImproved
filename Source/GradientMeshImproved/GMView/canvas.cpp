@@ -141,65 +141,72 @@ void GMCanvas::resetLineStartEnd()
     currentLayer()->resetPointsHighlighted();
 }
 
-void GMCanvas::handleFileDialog(const QString location, bool import)
+void GMCanvas::saveViewportToPNG(const QString &location)
 {
-    if(import)
-    {
-        if (currentMeshHandler()->numberOfFaces() > 0)
-        {
-            QString message("Import of file will clean current mesh. Proceed?");
-            QMessageBox msgBox;
-            msgBox.setText("Import file");
-            msgBox.setInformativeText(message);
-            QPushButton *clear = msgBox.addButton("Clear layer", QMessageBox::YesRole);
-            QPushButton *asLayer = msgBox.addButton("As layer", QMessageBox::NoRole);
-            QPushButton *none = msgBox.addButton("Cancel", QMessageBox::RejectRole);
-            msgBox.setIcon(QMessageBox::Question);
-            msgBox.exec();
+    updateVertexConstraints();
+    clearSelection();
+    QImage image(itemsBoundingRect().size().toSize(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    QPainter painter(&image);
+    painter.setRenderHint(QPainter::Antialiasing);
 
-            if (msgBox.clickedButton() == clear){
-                importFileClean(location);
-            }else if(msgBox.clickedButton() == asLayer){
-                importFileLayer(location);
-            }else{
-                delete clear, asLayer, none;
-                return;
-            }
-            delete clear, asLayer, none;
-        }
-        else
-        {
+    opengl_->widget()->render(&painter);
+    image.save(location);
+}
+
+void GMCanvas::saveLayerToOFF(const QString &location)
+{
+    updateVertexConstraints();
+    currentMeshHandler()->prepareMeshForSubd(true, location);
+}
+
+void GMCanvas::saveAllLayersToOFF(const QString &location)
+{
+    updateVertexConstraints();
+    for(int i = 0; i < meshHandlers_.size(); i++){
+        QString loc{location};
+        loc.insert(loc.size()-4,QString::number(i));
+        meshHandlers_.at(i)->prepareMeshForSubd(true, loc);
+    }
+}
+
+bool GMCanvas::importFile(const QString &location, const bool firstOfMultipleFiles)
+{
+    QString message;
+    if(firstOfMultipleFiles) {
+        message = "It is already control points on this layer. How do you want to insert the first file?";
+    }else{
+        message = "It is already control points on this layer. How do you want to insert the file?";
+    }
+    if (currentMeshHandler()->numberOfFaces() > 0)
+    {
+        QMessageBox msgBox;
+        msgBox.setText("Import file");
+        msgBox.setInformativeText(message);
+        QPushButton *clear = msgBox.addButton("Clear layer", QMessageBox::YesRole);
+        QPushButton *asLayer = msgBox.addButton("As new layer", QMessageBox::NoRole);
+        QPushButton *none = msgBox.addButton("Cancel import", QMessageBox::RejectRole);
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == clear){
             importFileClean(location);
+        }else if(msgBox.clickedButton() == asLayer){
+            importFileLayer(location);
+        }else{
+            delete clear, asLayer, none;
+            return false;
         }
-        QMessageBox::information(nullptr, "Import file","File imported! Hit 'Render mesh' for first subdivision");
+        delete clear, asLayer, none;
     }
     else
     {
-        updateVertexConstraints();
-        QString format = location.split(".").back();
-        if(QString::compare(format, "png", Qt::CaseInsensitive) == 0)
-        {
-            clearSelection();
-            QImage image(itemsBoundingRect().size().toSize(), QImage::Format_ARGB32);
-            image.fill(Qt::transparent);
-            QPainter painter(&image);
-            painter.setRenderHint(QPainter::Antialiasing);
-
-            opengl_->widget()->render(&painter);
-            image.save(location);
-        }
-        else if ( QString::compare(format, "off", Qt::CaseInsensitive) == 0)
-        {
-            //Save layers with index numbers
-            for(int i = 0; i < meshHandlers_.size(); i++){
-                QString loc{location};
-                loc.insert(loc.size()-4,QString::number(i));
-                meshHandlers_.at(i)->prepareMeshForSubd(true, loc);
-            }
-            //currentMeshHandler()->prepareMeshForSubd(true, location);
-        }
+        importFileClean(location);
     }
+    return true;
 }
+
+
 
 void GMCanvas::importFileClean(QString location)
 {

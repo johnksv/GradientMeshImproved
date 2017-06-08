@@ -9,6 +9,7 @@
 #include <QImageReader>
 #include <QByteArrayList>
 #include <QDebug>
+#include <QStringList>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -199,18 +200,50 @@ void MainWindow::on_actionMesh_Rectangle_Tool_triggered()
     scene_->setDrawingMode(GMView::drawModeCanvas::rectangleTool);
 }
 
-void MainWindow::on_actionExport_triggered()
+void MainWindow::on_actionSave_layer_triggered()
+{
+    //For PNG filter use OFF file (*.off);;PNG (*.png)
+    QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
+                                                    "","OFF file (*.off)");
+
+    QString format = filename.split(".").back();
+    if ( QString::compare(format, "off", Qt::CaseInsensitive) == 0)
+    {
+        scene_->saveLayerToOFF(filename);
+    }
+}
+
+void MainWindow::on_actionSave_all_layers_triggered()
 {
     QString filename = QFileDialog::getSaveFileName(this,tr("Export as file"),
-                                                    "","OFF file (*.off);;PNG (*.png)");
-    scene_->handleFileDialog(filename, false);
+                                                    "","OFF file (*.off)");
+    if(filename == "") return;
+    scene_->saveAllLayersToOFF(filename);
 }
 
 void MainWindow::on_actionImport_triggered()
 {
-    QString filename = QFileDialog::getOpenFileName(this,tr("Import file"),
+    QStringList filenames = QFileDialog::getOpenFileNames(this,tr("Import file"),
                                                     "", tr("OFF file (*.off)"));
-    scene_->handleFileDialog(filename,true);
+    if(filenames.isEmpty()) return;
+    bool sucsess = false;
+    if(filenames.size() == 1){
+        sucsess = scene_->importFile(filenames.first());
+
+    }else{
+        sucsess = scene_->importFile(filenames.first());
+        if(!sucsess) return;
+
+        for(int i =1; i < filenames.size(); i++){
+            scene_->importFileLayer(filenames.at(i));
+        }
+    }
+
+
+    if(sucsess){
+        QString msg("File imported! Hit 'Render mesh' to subdivied mesh");
+        QMessageBox::information(nullptr, "Import file", msg);
+    }
 }
 
 

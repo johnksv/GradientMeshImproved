@@ -41,11 +41,10 @@ public:
     void resetToBeFaceVector();
     void resetLineStartEnd();
 
-    /*! Handel action from File Dialog related to the mesh, such as import and export.
-     * \param location the location of the file to import/export
-     * \param import if the mesh should be imported or exported. True for import. False for export.
-     */
-    void handleFileDialog(const QString location, bool import);
+    void saveViewportToPNG(const QString &location);
+    void saveLayerToOFF(const QString &location);
+    void saveAllLayersToOFF(const QString &location);
+    bool importFile(const QString &location, const bool firstOfMultipleFiles = false);
     void importFileClean(QString location);
     void importFileLayer(QString location);
     //If import = false, then image will be removed
