@@ -146,7 +146,6 @@ vector<CanvasItemLine *> &CanvasItemFace::edgesInFace()
 
 void CanvasItemFace::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
-        qDebug() << faceIdx_;
     GMCanvas* canvas = static_cast <GMCanvas*> (scene());
     GUILogic::MeshHandler *meshhandler =   canvas->currentMeshHandler();
 
