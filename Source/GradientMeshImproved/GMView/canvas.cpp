@@ -454,6 +454,7 @@ void GMCanvas::deleteLayer(int index)
         delete meshHandlers_.at(index);
         meshHandlers_.erase(meshHandlers_.begin()+index);
         setActiveLayer(layers_.size()-1);
+        layerModel_->removeRow(index);
     }
 }
 
