@@ -5,7 +5,8 @@
 #-------------------------------------------------
 
 #ENTER YOUR PATH TO OPENMESH INSTALLATION ( http://www.openmesh.org/ )
-OPENMESH = $$PWD/../OpenMesh/lib
+#Required: OpenMesh 6.1
+OPENMESH = "D:/Program Files/OpenMesh"
 
 QT       += core gui
 
@@ -54,21 +55,21 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OPENMESH/ -lOpenMeshCore
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OPENMESH/ -lOpenMeshCored
+win32:CONFIG(release, debug|release): LIBS += -L$$OPENMESH/lib/ -lOpenMeshCore
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OPENMESH/lib/ -lOpenMeshCored
 
-INCLUDEPATH += $$PWD/../OpenMesh/include
-DEPENDPATH += $$PWD/../OpenMesh/include
+INCLUDEPATH += $$OPENMESH/include
+DEPENDPATH += $$OPENMESH/include
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/libOpenMeshCore.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/libOpenMeshCored.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/OpenMeshCore.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/OpenMeshCored.lib
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/libOpenMeshCore.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/libOpenMeshCored.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/OpenMeshCore.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/OpenMeshCored.lib
 
-win32:CONFIG(release, debug|release): LIBS += -L$$OPENMESH/ -lOpenMeshTools
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$OPENMESH/ -lOpenMeshToolsd
+win32:CONFIG(release, debug|release): LIBS += -L$$OPENMESH/lib/ -lOpenMeshTools
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$OPENMESH/lib/ -lOpenMeshToolsd
 
-win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/libOpenMeshTools.a
-else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/libOpenMeshToolsd.a
-else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/OpenMeshTools.lib
-else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/OpenMeshToolsd.lib
+win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/libOpenMeshTools.a
+else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/libOpenMeshToolsd.a
+else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/OpenMeshTools.lib
+else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OPENMESH/lib/OpenMeshToolsd.lib
