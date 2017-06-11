@@ -460,6 +460,20 @@ void GMCanvas::deleteLayer(int index)
     }
 }
 
+void GMCanvas::moveLayerUp(int indexToMove)
+{
+    layers_.swap();
+    layerModel_->removeRow(indexToMove);
+    layerModel_->insertRow(indexToMove-1);
+}
+
+voud GMCanvas::moveLayerDown(int indexToMove)
+{
+    layers_.swap();
+    layerModel_->removeRow(indexToMove);
+    layerModel_->insertRow(indexToMove+1);
+}
+
 void GMCanvas::toogleLayerVisibility(int index)
 {
     CanvasItemGroup *selectedLayer = multiRes_layers_.empty() ? layers_.at(index) : multiRes_layers_.at(index);
