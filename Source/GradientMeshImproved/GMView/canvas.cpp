@@ -439,7 +439,9 @@ void GMCanvas::addLayer(QString name)
 
 void GMCanvas::deleteLayer(int index)
 {
-    if(layers_.size() > 1)
+    //If the user click the delete button multiple times after each other
+    //this check needs to be done
+    if(layers_.size() > 1 && index < layers_.size())
     {
         CanvasItemGroup *group = layers_.at(index);
         QList<QGraphicsItem*> children = group->childItems();

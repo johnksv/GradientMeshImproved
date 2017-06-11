@@ -275,7 +275,6 @@ void MainWindow::on_layerDelete_clicked()
                 {
                     int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
                     scene_->deleteLayer(currentIndex);
-                    qDebug() << "Deletion OK";
                 }
     }
     else
