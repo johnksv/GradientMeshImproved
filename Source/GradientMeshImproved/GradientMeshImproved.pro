@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 #ENTER YOUR PATH TO OPENMESH INSTALLATION ( http://www.openmesh.org/ )
-#Required: OpenMesh 6.1
+#Required: OpenMesh 6.3
 OPENMESH = "D:/Program Files/OpenMesh"
 
 QT       += core gui
