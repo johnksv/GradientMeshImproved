@@ -15,6 +15,7 @@
 #include <QImage>
 #include <QPushButton>
 #include "mainwindow.h"
+#include <algorithm>
 
 using namespace GMView;
 bool GMView::drawCanvasItemFaces = true;
@@ -462,16 +463,18 @@ void GMCanvas::deleteLayer(int index)
 
 void GMCanvas::moveLayerUp(int indexToMove)
 {
-    layers_.swap();
-    layerModel_->removeRow(indexToMove);
-    layerModel_->insertRow(indexToMove-1);
+    auto iter = layers_.begin();
+    iter_swap(iter+indexToMove,iter+indexToMove-1);
+    auto row = layerModel_->takeRow(indexToMove);
+    layerModel_->insertRow(indexToMove-1, row);
 }
 
-voud GMCanvas::moveLayerDown(int indexToMove)
+void GMCanvas::moveLayerDown(int indexToMove)
 {
-    layers_.swap();
-    layerModel_->removeRow(indexToMove);
-    layerModel_->insertRow(indexToMove+1);
+    auto iter = layers_.begin();
+    iter_swap(iter+indexToMove,iter+indexToMove+1);
+    auto row = layerModel_->takeRow(indexToMove);
+    layerModel_->insertRow(indexToMove+1, row);
 }
 
 void GMCanvas::toogleLayerVisibility(int index)
