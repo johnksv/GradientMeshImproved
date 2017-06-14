@@ -288,8 +288,9 @@ void MainWindow::on_layerNew_clicked()
 {
     scene_->addLayer();
     scene_->setActiveLayerBack();
-    ui->layerMoveDown->setEnabled(false);
-    ui->layerMoveUp->setEnabled(false);
+    int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
+    layerMoveButtonsUpdate(currentIndex);
+
 }
 
 void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
@@ -303,8 +304,9 @@ void MainWindow::on_layerMoveUp_clicked()
 {
     if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
     {
-        int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
-        scene_->moveLayerUp(currentIndex);
+        QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
+        scene_->moveLayerUp(index.row());
+        ui->layer_listView->setCurrentIndex(index);
     }
     else
     {
@@ -318,9 +320,9 @@ void MainWindow::on_layerMoveDown_clicked()
 {
     if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
     {
-        int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
-        scene_->moveLayerDown(currentIndex);
-
+        QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
+        scene_->moveLayerDown(index.row());
+        ui->layer_listView->setCurrentIndex(index);
     }
     else
     {
@@ -342,9 +344,9 @@ void MainWindow::layerMoveButtonsUpdate(const int index)
     int rowCount = ui->layer_listView->model()->rowCount();
     if(rowCount == 1){
         enableDown = enableUp = false;
-    }else if(index == 0){
+    }else if(index <= 0){
         enableUp = false;
-    }else if(index + 1 == rowCount){
+    }else if(index + 1 >= rowCount){
         enableDown = false;
     }
     ui->layerMoveDown->setEnabled(enableDown);
