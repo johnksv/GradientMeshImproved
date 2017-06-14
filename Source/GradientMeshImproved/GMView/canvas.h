@@ -74,6 +74,8 @@ public:
     void addLayer();
     void addLayer(QString name);
     void deleteLayer(int index);
+    void moveLayerUp(int indexToMove);
+    void moveLayerDown(int indexToMove);
     void toogleLayerVisibility(int index);
 
     void drawOpenGlOnCanvas(bool drawOnCanvas);

@@ -45,6 +45,12 @@ private slots:
 
     void on_layer_listView_clicked(const QModelIndex &index);
 
+    void on_layerMoveUp_clicked();
+
+    void on_layerMoveDown_clicked();
+
+    void on_layer_listView_activated(const QModelIndex &index);
+
     void on_colorRepresentation_clicked();
 
     void on_actionRender_in_split_window_changed();
@@ -91,7 +97,6 @@ private slots:
 
     void on_glRenderButton_boundingRect_clicked();
 
-
 private:
     Ui::MainWindow *ui;
     QActionGroup *renderModeGroup_;
@@ -107,6 +112,7 @@ private:
 
     // 1 for pirmary, 2 for secondary, 3 for tertiary
     void handleColorButtonClick(int color);
+    void layerMoveButtonsUpdate(const int index);
 };
 
 #endif // MAINWINDOW_H

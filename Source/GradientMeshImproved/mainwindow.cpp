@@ -249,7 +249,7 @@ void MainWindow::on_layerToogleView_clicked()
     {
         QModelIndex currentIndex  = ui->layer_listView->selectionModel()->currentIndex();
         scene_->toogleLayerVisibility(currentIndex.row());
-        //TODO: Change name on layer / feedback that it is hidden/visible
+        //TODO: feedback that it is hidden/visible
     }
     else
     {
@@ -261,8 +261,6 @@ void MainWindow::on_layerToogleView_clicked()
 
 void MainWindow::on_layerDelete_clicked()
 {
-    //TODO: If only one layer
-    //TODO: Update List.
     if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
     {
                 if(ui->layer_listView->model()->rowCount() == 1 )
@@ -275,6 +273,7 @@ void MainWindow::on_layerDelete_clicked()
                 {
                     int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
                     scene_->deleteLayer(currentIndex);
+                    layerMoveButtonsUpdate(currentIndex);
                 }
     }
     else
@@ -289,13 +288,70 @@ void MainWindow::on_layerNew_clicked()
 {
     scene_->addLayer();
     scene_->setActiveLayerBack();
+    int currentIndex  = ui->layer_listView->selectionModel()->currentIndex().row();
+    layerMoveButtonsUpdate(currentIndex);
+
 }
 
 void MainWindow::on_layer_listView_clicked(const QModelIndex &index)
 {
     scene_->setActiveLayer(index.row());
+    //Update move up and down layer
+    layerMoveButtonsUpdate(index.row());
 }
 
+void MainWindow::on_layerMoveUp_clicked()
+{
+    if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
+    {
+        QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
+        scene_->moveLayerUp(index.row());
+        ui->layer_listView->setCurrentIndex(index);
+    }
+    else
+    {
+        QMessageBox msgBox;
+            msgBox.setText("No layers are selected. ");
+            msgBox.exec();
+    }
+}
+
+void MainWindow::on_layerMoveDown_clicked()
+{
+    if(! ui->layer_listView->selectionModel()->selectedIndexes().isEmpty())
+    {
+        QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
+        scene_->moveLayerDown(index.row());
+        ui->layer_listView->setCurrentIndex(index);
+    }
+    else
+    {
+        QMessageBox msgBox;
+            msgBox.setText("No layers are selected. ");
+            msgBox.exec();
+    }
+}
+
+void MainWindow::on_layer_listView_activated(const QModelIndex &index)
+{
+    layerMoveButtonsUpdate(index.row());
+}
+
+void MainWindow::layerMoveButtonsUpdate(const int index)
+{
+    bool enableDown = true;
+    bool enableUp = true;
+    int rowCount = ui->layer_listView->model()->rowCount();
+    if(rowCount == 1){
+        enableDown = enableUp = false;
+    }else if(index <= 0){
+        enableUp = false;
+    }else if(index + 1 >= rowCount){
+        enableDown = false;
+    }
+    ui->layerMoveDown->setEnabled(enableDown);
+    ui->layerMoveUp->setEnabled(enableUp);
+}
 
 void MainWindow::on_actionRender_in_split_window_changed()
 {
