@@ -18,7 +18,7 @@
 #include <algorithm>
 
 using namespace GMView;
-bool GMView::drawCanvasItemFaces = true;
+bool GMView::drawCanvasItemFaces = false;
 
 GMCanvas::GMCanvas(QObject * parent):
     QGraphicsScene(parent)

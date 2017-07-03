@@ -89,11 +89,9 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>Other</string>
     </property>
-    <addaction name="actionHow_to"/>
     <addaction name="separator"/>
-    <addaction name="actionAbout"/>
     <addaction name="actionHelpAbout_Qt"/>
    </widget>
    <widget class="QMenu" name="menuRendering">
@@ -106,7 +104,6 @@
     <addaction name="actionRender_auto"/>
     <addaction name="actionRender_in_split_window"/>
     <addaction name="separator"/>
-    <addaction name="actionRender_multi_res_mesh"/>
    </widget>
    <widget class="QMenu" name="menuWindow">
     <property name="title">
@@ -914,7 +911,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Face overlay</string>

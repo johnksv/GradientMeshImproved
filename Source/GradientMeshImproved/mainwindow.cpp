@@ -57,6 +57,7 @@ void MainWindow::initWindowAction()
     ui->menuWindow->addAction(ui->toolsWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->colorEasyWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->colorWidget->toggleViewAction());
+    ui->imageWidget->setHidden(true);
     ui->menuWindow->addAction(ui->imageWidget->toggleViewAction());
     ui->menuWindow->addAction(ui->splitWidget->toggleViewAction());
 
@@ -307,6 +308,7 @@ void MainWindow::on_layerMoveUp_clicked()
         QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
         scene_->moveLayerUp(index.row());
         ui->layer_listView->setCurrentIndex(index);
+        scene_->setActiveLayer(index.row());
     }
     else
     {
