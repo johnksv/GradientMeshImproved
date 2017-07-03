@@ -41,7 +41,7 @@ void GMOpenGLWidget::paintGL()
     vector<GUILogic::MeshHandler *> meshHandlers;
     if (scene_->multiResMeshHandlers()->empty())
     {
-        meshHandlers = *scene_->meshHandlers();
+        meshHandlers = scene_->meshHandlers();
     }
     else
     {
