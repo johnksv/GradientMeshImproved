@@ -67,9 +67,9 @@ public:
 
     vector<CanvasItemGroup *> layers();
     CanvasItemGroup *currentLayer();
-    vector<GUILogic::MeshHandler *> *meshHandlers();
+    vector<GUILogic::MeshHandler *> meshHandlers();
     GUILogic::MeshHandler *currentMeshHandler();
-    vector<GUILogic::MeshHandler *> *multiResMeshHandlers();
+    vector<GUILogic::MeshHandler *> multiResMeshHandlers();
 
     void addLayer();
     void addLayer(QString name);
@@ -104,12 +104,8 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent * mouseEvent) override;
 
 private:
-    vector<GUILogic::MeshHandler*> meshHandlers_;
-    vector<CanvasItemGroup*> layers_;
-
-
-    vector<GUILogic::MeshHandler*> multiRes_meshHandlers_;
-    vector<CanvasItemGroup*> multiRes_layers_;
+    vector<std::pair<CanvasItemGroup*, GUILogic::MeshHandler*>> layersAndMeshHandlers_;
+    vector<std::pair<CanvasItemGroup*, GUILogic::MeshHandler*>> multiResLayersAndMeshHandlers_;
 
     QGraphicsProxyWidget *opengl_;
     QColor pointColor_;

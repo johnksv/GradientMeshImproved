@@ -325,6 +325,7 @@ void MainWindow::on_layerMoveDown_clicked()
         QModelIndex index  = ui->layer_listView->selectionModel()->currentIndex();
         scene_->moveLayerDown(index.row());
         ui->layer_listView->setCurrentIndex(index);
+        scene_->setActiveLayer(index.row());
     }
     else
     {

@@ -29,15 +29,13 @@ GMCanvas::GMCanvas(QObject * parent):
 
 GMCanvas::~GMCanvas()
 {
-    for(GUILogic::MeshHandler *mesh : meshHandlers_)
-    {
-        delete mesh;
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        delete layersAndMeshHandlers_.at(i).second;
     }
 }
 
 void GMCanvas::initGMCanvas()
 {
-    meshHandlers_.push_back(new GUILogic::MeshHandler);
     GMOpenGLWidget *openglWidget = new GMOpenGLWidget(this, nullptr);
     opengl_ = addWidget(openglWidget);
     opengl_->setPos(0,0);
@@ -46,29 +44,29 @@ void GMCanvas::initGMCanvas()
     opengl_->setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 
     CanvasItemGroup *layer = new CanvasItemGroup("Layer 1");
-    layers_.push_back(layer);
+
+    layersAndMeshHandlers_.push_back(std::make_pair(layer, new GUILogic::MeshHandler));
     addItem(layer);
 }
 
 void GMCanvas::clear()
 {
     QGraphicsScene::clear();
-    for (int i = 0; i < meshHandlers_.size(); ++i)
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i)
     {
-         delete meshHandlers_.at(i);
+         delete layersAndMeshHandlers_.at(i).second;
     }
-    layers_.erase(layers_.begin(),layers_.end());
-    meshHandlers_.erase(meshHandlers_.begin(), meshHandlers_.end());
+    layersAndMeshHandlers_.erase(layersAndMeshHandlers_.begin(),layersAndMeshHandlers_.end());
 
 
-    if(!multiRes_meshHandlers_.empty())
+    if(!multiResLayersAndMeshHandlers_.empty())
     {
-        for (int i = 0; i < multiRes_meshHandlers_.size(); ++i) {
-            delete multiRes_meshHandlers_.at(i);
-            delete multiRes_layers_.at(i);
+        for (int i = 0; i < multiResLayersAndMeshHandlers_.size(); ++i) {
+            auto pair = multiResLayersAndMeshHandlers_.at(i);
+            delete pair.first;
+            delete pair.second;
         }
-        multiRes_meshHandlers_.clear();
-        multiRes_layers_.clear();
+        multiResLayersAndMeshHandlers_.clear();
     }
 
     initGMCanvas();
@@ -164,10 +162,10 @@ void GMCanvas::saveLayerToOFF(const QString &location)
 void GMCanvas::saveAllLayersToOFF(const QString &location)
 {
     updateVertexConstraints();
-    for(int i = 0; i < meshHandlers_.size(); i++){
+    for(int i = 0; i < layersAndMeshHandlers_.size(); i++){
         QString loc{location};
         loc.insert(loc.size()-4,QString::number(i));
-        meshHandlers_.at(i)->prepareMeshForSubd(true, loc);
+        layersAndMeshHandlers_.at(i).second->prepareMeshForSubd(true, loc);
     }
 }
 
@@ -219,8 +217,8 @@ void GMCanvas::importFileClean(QString location)
 
 void GMCanvas::importFileLayer(QString location)
 {
-    addLayer("Layer " + QString::number(layers_.size() + 1));
-    setActiveLayer(layers_.size()-1);
+    addLayer("Layer " + QString::number(layersAndMeshHandlers_.size() + 1));
+    setActiveLayer(layersAndMeshHandlers_.size()-1);
     importFileClean(location);
 }
 
@@ -336,8 +334,8 @@ void GMCanvas::setRenderConstraintHandlers(bool value)
 
 void GMCanvas::setRenderVertsEdges(bool renderVertsEdges)
 {
-    for(CanvasItemGroup* itemGroup : layers_)
-    {
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        CanvasItemGroup *itemGroup = layersAndMeshHandlers_.at(i).first;
         itemGroup->setVisible(renderVertsEdges);
     }
 }
@@ -365,8 +363,8 @@ bool GMCanvas::renderConstraintHandlers() const
 void GMCanvas::setLayerModel(QStandardItemModel *model)
 {
     layerModel_ = model;
-    for(GMView::CanvasItemGroup *item : layers_)
-    {
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        CanvasItemGroup *item = layersAndMeshHandlers_.at(i).first;
         layerModel_->appendRow(item);
     }
 }
@@ -380,90 +378,102 @@ void GMCanvas::setDrawingMode(drawModeCanvas drawMode)
 
 void GMCanvas::setActiveLayerBack()
 {
-    setActiveLayer(layers_.size()-1);
+    setActiveLayer(layersAndMeshHandlers_.size()-1);
 }
 
 void GMCanvas::setActiveLayer(unsigned char index)
 {
     //Disable other layers for editing when active layer is changed.
-    if(currLayerIndex_ < layers_.size()) currentLayer()->QGraphicsItem::setEnabled(false);
-    if(index < 0 || index >= layers_.size())
-    {
-        currLayerIndex_ = 0;
+    for(int i = 0; i < layersAndMeshHandlers_.size(); i++){
+        layersAndMeshHandlers_.at(i).first->QGraphicsItem::setEnabled(false);
     }
-    else
-    {
-        currLayerIndex_ = index;
+    for(int i = 0; i < multiResLayersAndMeshHandlers_.size(); i++){
+        multiResLayersAndMeshHandlers_.at(i).first->QGraphicsItem::setEnabled(false);
     }
+
+    currLayerIndex_ = index;
+
     currentLayer()->QGraphicsItem::setEnabled(true);
 }
 
 vector<CanvasItemGroup *> GMCanvas::layers()
 {
-    return layers_;
+    vector<CanvasItemGroup *> groups;
+    for(auto &item : layersAndMeshHandlers_){
+        groups.push_back(item.first);
+    }
+    return groups;
 }
 
 CanvasItemGroup *GMCanvas::currentLayer()
 {
-    if(multiRes_meshHandlers_.empty()) return layers_.at(currLayerIndex_);
-    return multiRes_layers_.at(currLayerIndex_);
+    if(multiResLayersAndMeshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).first;
+    return multiResLayersAndMeshHandlers_.at(currLayerIndex_).first;
 }
 
-vector<GUILogic::MeshHandler *> *GMCanvas::meshHandlers()
+vector<GUILogic::MeshHandler *> GMCanvas::meshHandlers()
 {
-    return &meshHandlers_;
+    vector<GUILogic::MeshHandler *> handlers;
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        handlers.push_back(layersAndMeshHandlers_.at(i).second);
+    }
+    return handlers;
 }
 
 GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
 {
-    if(multiRes_meshHandlers_.empty()) return meshHandlers_.at(currLayerIndex_);
-    return multiRes_meshHandlers_.at(currLayerIndex_);
+    if(multiResLayersAndMeshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).second;
+    return multiResLayersAndMeshHandlers_.at(currLayerIndex_).second;
 }
 
-vector<GUILogic::MeshHandler *> *GMCanvas::multiResMeshHandlers()
+vector<GUILogic::MeshHandler *> GMCanvas::multiResMeshHandlers()
 {
-    return &multiRes_meshHandlers_;
+    vector<GUILogic::MeshHandler *> handlers;
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        handlers.push_back(layersAndMeshHandlers_.at(i).second);
+    }
+    return handlers;
 }
 
 void GMCanvas::addLayer()
 {
-    addLayer(QString("Layer " + QString::number(layers_.size() + 1)));
+    addLayer(QString("Layer " + QString::number(layersAndMeshHandlers_.size() + 1)));
 }
 
 void GMCanvas::addLayer(QString name)
 {
-    layers_.push_back(new CanvasItemGroup(name));
-    addItem(layers_.back());
-    layerModel_->appendRow(layers_.back());
-    meshHandlers_.push_back(new GUILogic::MeshHandler);
+    CanvasItemGroup * layer = new CanvasItemGroup(name);
+    addItem(layer);
+    layerModel_->appendRow(layer);
+
+    layersAndMeshHandlers_.push_back(std::make_pair(layer,new GUILogic::MeshHandler));
 }
 
 void GMCanvas::deleteLayer(int index)
 {
     //If the user click the delete button multiple times after each other
     //this check needs to be done
-    if(layers_.size() > 1 && index < layers_.size())
+    if(layersAndMeshHandlers_.size() > 1 && index < layersAndMeshHandlers_.size())
     {
-        CanvasItemGroup *group = layers_.at(index);
+        CanvasItemGroup *group = layersAndMeshHandlers_.at(index).first;
         QList<QGraphicsItem*> children = group->childItems();
         for(int i = 0; i < children.size(); i++)
         {
             //QT handels deletion of each object.
             removeItem(children.at(i));
         }
-        layers_.erase(layers_.begin()+index);
+        delete layersAndMeshHandlers_.at(index).second;
+        layersAndMeshHandlers_.erase(layersAndMeshHandlers_.begin()+index);
         removeItem(group);
 
-        delete meshHandlers_.at(index);
-        meshHandlers_.erase(meshHandlers_.begin()+index);
-        setActiveLayer(layers_.size()-1);
+        setActiveLayer(layersAndMeshHandlers_.size()-1);
         layerModel_->removeRow(index);
     }
 }
 
 void GMCanvas::moveLayerUp(int indexToMove)
 {
-    auto iter = layers_.begin();
+    auto iter = layersAndMeshHandlers_.begin();
     iter_swap(iter+indexToMove,iter+indexToMove-1);
     auto row = layerModel_->takeRow(indexToMove);
     layerModel_->insertRow(indexToMove-1, row);
@@ -471,7 +481,7 @@ void GMCanvas::moveLayerUp(int indexToMove)
 
 void GMCanvas::moveLayerDown(int indexToMove)
 {
-    auto iter = layers_.begin();
+    auto iter = layersAndMeshHandlers_.begin();
     iter_swap(iter+indexToMove,iter+indexToMove+1);
     auto row = layerModel_->takeRow(indexToMove);
     layerModel_->insertRow(indexToMove+1, row);
@@ -479,7 +489,7 @@ void GMCanvas::moveLayerDown(int indexToMove)
 
 void GMCanvas::toogleLayerVisibility(int index)
 {
-    CanvasItemGroup *selectedLayer = multiRes_layers_.empty() ? layers_.at(index) : multiRes_layers_.at(index);
+    CanvasItemGroup *selectedLayer = multiResLayersAndMeshHandlers_.empty() ? layersAndMeshHandlers_.at(index).first : multiResLayersAndMeshHandlers_.at(index).first;
 
     if(selectedLayer->isVisible())
     {
@@ -503,8 +513,17 @@ void GMCanvas::prepareRendering()
     updateVertexConstraints();
     vector<GUILogic::MeshHandler*> tempMeshHandler;
 
-    if(multiRes_meshHandlers_.empty()) tempMeshHandler = meshHandlers_;
-    else tempMeshHandler = multiRes_meshHandlers_;
+    if(multiResLayersAndMeshHandlers_.empty())
+    {
+        for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+            tempMeshHandler.push_back(layersAndMeshHandlers_.at(i).second);
+        }
+    }
+    else {
+        for (int i = 0; i < multiResLayersAndMeshHandlers_.size(); ++i) {
+            tempMeshHandler.push_back(multiResLayersAndMeshHandlers_.at(i).second);
+        }
+    }
 
     for (int i = 0; i < tempMeshHandler.size(); ++i) {
         tempMeshHandler.at(i)->prepareMeshForSubd();
@@ -517,26 +536,27 @@ void GMView::GMCanvas::multiResFirstStepMesh()
 {
     //Make sure the mesh is up to date (unnecessary if "auto render" is turned on)
     prepareRendering();
-    for(int i = 0; i < meshHandlers_.size(); i++)
+    for(int i = 0; i < layersAndMeshHandlers_.size(); i++)
     {
         //Execute render.
-        meshHandlers_.at(i)->prepareMeshForSubd();
+        layersAndMeshHandlers_.at(i).second->prepareMeshForSubd();
 
         //Load mesh (which is x step subdivided) into openMesh
-        GUILogic::MeshHandler *multiresMesh = meshHandlers_.at(i)->meshXStepSubdivided();
+        GUILogic::MeshHandler *multiresMesh = layersAndMeshHandlers_.at(i).second->meshXStepSubdivided();
 
         //Add first step subdivided mesh to containers.
         CanvasItemGroup *guiRepresentation = new CanvasItemGroup("subdivieded mesh");
-        multiRes_layers_.push_back(guiRepresentation);
         addItem(guiRepresentation);
-        multiRes_meshHandlers_.push_back(multiresMesh);
+
+        auto pair = std::make_pair(guiRepresentation, multiresMesh);
+        multiResLayersAndMeshHandlers_.push_back(pair);
 
         //Hide "Orginal layer"
-        if(!layers_.at(currLayerIndex_)->isVisible())
+        if(!layersAndMeshHandlers_.at(currLayerIndex_).first->isVisible())
         {
-             multiRes_layers_.back()->hide();
+             multiResLayersAndMeshHandlers_.back().first->hide();
         }
-        layers_.at(currLayerIndex_)->setVisible(false);
+        layersAndMeshHandlers_.at(currLayerIndex_).first->setVisible(false);
 
         constructGuiFromMeshHandler(true, i);
     }
@@ -544,14 +564,14 @@ void GMView::GMCanvas::multiResFirstStepMesh()
 
 void GMCanvas::resetMultiResMesh()
 {
-    for(int i = 0; i < multiRes_meshHandlers_.size(); i++)
+    for(int i = 0; i < multiResLayersAndMeshHandlers_.size(); i++)
     {
-        delete multiRes_meshHandlers_.at(i);
-        delete multiRes_layers_.at(i);
-        layers().at(i)->setVisible(false);
+        auto pair = multiResLayersAndMeshHandlers_.at(i);
+        delete pair.first;
+        delete pair.second;
+        layersAndMeshHandlers_.at(i).first->setVisible(false);
     }
-    multiRes_meshHandlers_.clear();
-    multiRes_layers_.clear();
+    multiResLayersAndMeshHandlers_.clear();
 }
 
 void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiResLayer)
@@ -560,8 +580,8 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
     CanvasItemGroup *layer;
     if(fromMultiRes)
     {
-        meshhandler = multiRes_meshHandlers_.at(indexOfMultiResLayer);
-        layer = multiRes_layers_.at(indexOfMultiResLayer);
+        meshhandler = multiResLayersAndMeshHandlers_.at(indexOfMultiResLayer).second;
+        layer = multiResLayersAndMeshHandlers_.at(indexOfMultiResLayer).first;
     }
     else
     {
@@ -852,8 +872,8 @@ void GMCanvas::newDocument()
 {
    clear();
    layerModel_->clear();
-   for(GMView::CanvasItemGroup *item : layers_)
-   {
+   for(int i = 0; i < layersAndMeshHandlers_.size(); i++){
+       GMView::CanvasItemGroup * item = layersAndMeshHandlers_.at(i).first;
        layerModel_->appendRow(item);
    }
 }
