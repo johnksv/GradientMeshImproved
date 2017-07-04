@@ -86,9 +86,9 @@ void GMOpenGLWidget::paintGL()
     glOrtho(boundingRect.left(),boundingRect.right() ,boundingRect.bottom(),boundingRect.top(), -1.0, 1.0);
 
     // draw stuff
-    for (int i = 0; i < meshHandlers.size(); ++i)
+    for (auto ite = meshHandlers.rbegin(); ite != meshHandlers.rend(); ++ite)
     {
-        meshHandlers.at(i)->drawGLMesh(this);
+        (*ite)->drawGLMesh(this);
     }
 
     /******* Start painting with Qt ***********/
