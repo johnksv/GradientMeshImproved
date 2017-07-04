@@ -59,14 +59,14 @@ void GMCanvas::clear()
     layersAndMeshHandlers_.erase(layersAndMeshHandlers_.begin(),layersAndMeshHandlers_.end());
 
 
-    if(!multiRes_meshHandlers_.empty())
+    if(!multiResLayersAndMeshHandlers_.empty())
     {
-        for (int i = 0; i < multiRes_meshHandlers_.size(); ++i) {
-            delete multiRes_meshHandlers_.at(i);
-            delete multiRes_layers_.at(i);
+        for (int i = 0; i < multiResLayersAndMeshHandlers_.size(); ++i) {
+            auto pair = multiResLayersAndMeshHandlers_.at(i);
+            delete pair.first;
+            delete pair.second;
         }
-        multiRes_meshHandlers_.clear();
-        multiRes_layers_.clear();
+        multiResLayersAndMeshHandlers_.clear();
     }
 
     initGMCanvas();
@@ -407,8 +407,8 @@ vector<CanvasItemGroup *> GMCanvas::layers()
 
 CanvasItemGroup *GMCanvas::currentLayer()
 {
-    if(multiRes_meshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).first;
-    return multiRes_layers_.at(currLayerIndex_);
+    if(multiResLayersAndMeshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).first;
+    return multiResLayersAndMeshHandlers_.at(currLayerIndex_).first;
 }
 
 vector<GUILogic::MeshHandler *> GMCanvas::meshHandlers()
@@ -422,13 +422,17 @@ vector<GUILogic::MeshHandler *> GMCanvas::meshHandlers()
 
 GUILogic::MeshHandler *GMCanvas::currentMeshHandler()
 {
-    if(multiRes_meshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).second;
-    return multiRes_meshHandlers_.at(currLayerIndex_);
+    if(multiResLayersAndMeshHandlers_.empty()) return layersAndMeshHandlers_.at(currLayerIndex_).second;
+    return multiResLayersAndMeshHandlers_.at(currLayerIndex_).second;
 }
 
-vector<GUILogic::MeshHandler *> *GMCanvas::multiResMeshHandlers()
+vector<GUILogic::MeshHandler *> GMCanvas::multiResMeshHandlers()
 {
-    return &multiRes_meshHandlers_;
+    vector<GUILogic::MeshHandler *> handlers;
+    for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
+        handlers.push_back(layersAndMeshHandlers_.at(i).second);
+    }
+    return handlers;
 }
 
 void GMCanvas::addLayer()
@@ -485,7 +489,7 @@ void GMCanvas::moveLayerDown(int indexToMove)
 
 void GMCanvas::toogleLayerVisibility(int index)
 {
-    CanvasItemGroup *selectedLayer = multiRes_layers_.empty() ? layersAndMeshHandlers_.at(index).first : multiRes_layers_.at(index);
+    CanvasItemGroup *selectedLayer = multiResLayersAndMeshHandlers_.empty() ? layersAndMeshHandlers_.at(index).first : multiResLayersAndMeshHandlers_.at(index).first;
 
     if(selectedLayer->isVisible())
     {
@@ -509,13 +513,17 @@ void GMCanvas::prepareRendering()
     updateVertexConstraints();
     vector<GUILogic::MeshHandler*> tempMeshHandler;
 
-    if(multiRes_meshHandlers_.empty())
+    if(multiResLayersAndMeshHandlers_.empty())
     {
         for (int i = 0; i < layersAndMeshHandlers_.size(); ++i) {
             tempMeshHandler.push_back(layersAndMeshHandlers_.at(i).second);
         }
     }
-    else tempMeshHandler = multiRes_meshHandlers_;
+    else {
+        for (int i = 0; i < multiResLayersAndMeshHandlers_.size(); ++i) {
+            tempMeshHandler.push_back(multiResLayersAndMeshHandlers_.at(i).second);
+        }
+    }
 
     for (int i = 0; i < tempMeshHandler.size(); ++i) {
         tempMeshHandler.at(i)->prepareMeshForSubd();
@@ -538,14 +546,15 @@ void GMView::GMCanvas::multiResFirstStepMesh()
 
         //Add first step subdivided mesh to containers.
         CanvasItemGroup *guiRepresentation = new CanvasItemGroup("subdivieded mesh");
-        multiRes_layers_.push_back(guiRepresentation);
         addItem(guiRepresentation);
-        multiRes_meshHandlers_.push_back(multiresMesh);
+
+        auto pair = std::make_pair(guiRepresentation, multiresMesh);
+        multiResLayersAndMeshHandlers_.push_back(pair);
 
         //Hide "Orginal layer"
         if(!layersAndMeshHandlers_.at(currLayerIndex_).first->isVisible())
         {
-             multiRes_layers_.back()->hide();
+             multiResLayersAndMeshHandlers_.back().first->hide();
         }
         layersAndMeshHandlers_.at(currLayerIndex_).first->setVisible(false);
 
@@ -555,14 +564,14 @@ void GMView::GMCanvas::multiResFirstStepMesh()
 
 void GMCanvas::resetMultiResMesh()
 {
-    for(int i = 0; i < multiRes_meshHandlers_.size(); i++)
+    for(int i = 0; i < multiResLayersAndMeshHandlers_.size(); i++)
     {
-        delete multiRes_meshHandlers_.at(i);
-        delete multiRes_layers_.at(i);
-        layers().at(i)->setVisible(false);
+        auto pair = multiResLayersAndMeshHandlers_.at(i);
+        delete pair.first;
+        delete pair.second;
+        layersAndMeshHandlers_.at(i).first->setVisible(false);
     }
-    multiRes_meshHandlers_.clear();
-    multiRes_layers_.clear();
+    multiResLayersAndMeshHandlers_.clear();
 }
 
 void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiResLayer)
@@ -571,8 +580,8 @@ void GMCanvas::constructGuiFromMeshHandler(bool fromMultiRes, int indexOfMultiRe
     CanvasItemGroup *layer;
     if(fromMultiRes)
     {
-        meshhandler = multiRes_meshHandlers_.at(indexOfMultiResLayer);
-        layer = multiRes_layers_.at(indexOfMultiResLayer);
+        meshhandler = multiResLayersAndMeshHandlers_.at(indexOfMultiResLayer).second;
+        layer = multiResLayersAndMeshHandlers_.at(indexOfMultiResLayer).first;
     }
     else
     {

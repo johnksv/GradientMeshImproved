@@ -39,13 +39,13 @@ void GMOpenGLWidget::paintGL()
 {
 
     vector<GUILogic::MeshHandler *> meshHandlers;
-    if (scene_->multiResMeshHandlers()->empty())
+    if (scene_->multiResMeshHandlers().empty())
     {
         meshHandlers = scene_->meshHandlers();
     }
     else
     {
-        meshHandlers = *scene_->multiResMeshHandlers();
+        meshHandlers = scene_->multiResMeshHandlers();
     }
     QRectF boundingRect;
 

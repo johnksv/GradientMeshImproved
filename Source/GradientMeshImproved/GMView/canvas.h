@@ -69,7 +69,7 @@ public:
     CanvasItemGroup *currentLayer();
     vector<GUILogic::MeshHandler *> meshHandlers();
     GUILogic::MeshHandler *currentMeshHandler();
-    vector<GUILogic::MeshHandler *> *multiResMeshHandlers();
+    vector<GUILogic::MeshHandler *> multiResMeshHandlers();
 
     void addLayer();
     void addLayer(QString name);
@@ -105,10 +105,7 @@ protected:
 
 private:
     vector<std::pair<CanvasItemGroup*, GUILogic::MeshHandler*>> layersAndMeshHandlers_;
-
-
-    vector<GUILogic::MeshHandler*> multiRes_meshHandlers_;
-    vector<CanvasItemGroup*> multiRes_layers_;
+    vector<std::pair<CanvasItemGroup*, GUILogic::MeshHandler*>> multiResLayersAndMeshHandlers_;
 
     QGraphicsProxyWidget *opengl_;
     QColor pointColor_;
