@@ -384,15 +384,15 @@ void GMCanvas::setActiveLayerBack()
 void GMCanvas::setActiveLayer(unsigned char index)
 {
     //Disable other layers for editing when active layer is changed.
-    if(currLayerIndex_ < layersAndMeshHandlers_.size()) currentLayer()->QGraphicsItem::setEnabled(false);
-    if(index < 0 || index >= layersAndMeshHandlers_.size())
-    {
-        currLayerIndex_ = 0;
+    for(int i = 0; i < layersAndMeshHandlers_.size(); i++){
+        layersAndMeshHandlers_.at(i).first->QGraphicsItem::setEnabled(false);
     }
-    else
-    {
-        currLayerIndex_ = index;
+    for(int i = 0; i < multiResLayersAndMeshHandlers_.size(); i++){
+        multiResLayersAndMeshHandlers_.at(i).first->QGraphicsItem::setEnabled(false);
     }
+
+    currLayerIndex_ = index;
+
     currentLayer()->QGraphicsItem::setEnabled(true);
 }
 
