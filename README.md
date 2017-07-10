@@ -7,9 +7,11 @@ Major goals:
 * Multi-resolution editing capabilities [x]
 
 ## Our work has been accepted to [SIGGRAPH 2017](s2017.siggraph.org/)
-- Link to ACM Digital library (abstract, poster and supplementary material) will come here
+- [Paper](https://svergja.no/wp-content/uploads/2017/07/GradientMeshTool.pdf)
+- [Poster](https://svergja.no/wp-content/uploads/2017/07/Poster.pdf)
 - [Video](https://www.youtube.com/watch?v=N3q8WE9iYZ4)
-- Link to additional data from User Study will come here[]()
+- [Informal user study](https://svergja.no/wp-content/uploads/2017/07/Informal-user-study.pdf)
+- Link to ACM Digital library will come here
 
 ## Implementation details
 This is a C++ project using Qt 5.6 Widgets.
