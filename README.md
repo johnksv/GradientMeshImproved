@@ -1,10 +1,5 @@
 # A Gradient Mesh Tool for Non-Rectangular Gradient Meshes
-
-This is a research project at HiOA.
-Major goals:
-* Implement a basic user interface for creating and manipulating 2D gradient meshes [x]
-* Implement functionality for creating gradient meshes from photographs [x]
-* Multi-resolution editing capabilities [x]
+This is a research project at HiOA (Oslo and Akershus University College of Applied Sciences).
 
 ## Our work has been accepted to [SIGGRAPH 2017](s2017.siggraph.org/)
 - [Paper](https://svergja.no/wp-content/uploads/2017/07/GradientMeshTool.pdf)
