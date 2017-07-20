@@ -1,7 +1,7 @@
 # A Gradient Mesh Tool for Non-Rectangular Gradient Meshes
 This is a research project at HiOA (Oslo and Akershus University College of Applied Sciences).
 
-## Our work has been accepted to [SIGGRAPH 2017](s2017.siggraph.org/)
+## Our work has been accepted to [SIGGRAPH 2017](http://s2017.siggraph.org/)
 - [Paper](https://svergja.no/wp-content/uploads/2017/07/GradientMeshTool.pdf)
 - [Poster](https://svergja.no/wp-content/uploads/2017/07/Poster.pdf)
 - [Video](https://www.youtube.com/watch?v=N3q8WE9iYZ4)
