@@ -33,6 +33,7 @@ SOURCES += main.cpp\
     undoCommands/guichange.cpp
 
 
+
 HEADERS  += mainwindow.h \
     subdivMesh/mesh.h \
     subdivMesh/point_3d.h \
@@ -80,11 +81,13 @@ test {
     TARGET = GradientMeshImproved-Test
     SOURCES -= main.cpp
 
-    #HEADERS += \
+    HEADERS += \
+        test/testcanvas.h
 
 
-    SOURCES += test/main.cpp
+    SOURCES += test/main.cpp \
+            test/testcanvas.cpp
 
 
-   message(Test build)
+   message(Builded test-config)
 }
