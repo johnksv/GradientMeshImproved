@@ -1,12 +1,12 @@
 # A Gradient Mesh Tool for Non-Rectangular Gradient Meshes
 This is a research project at HiOA (Oslo and Akershus University College of Applied Sciences).
 
-## Our work has been accepted to [SIGGRAPH 2017](http://s2017.siggraph.org/)
+## Our work has been accepted to [ACM SIGGRAPH 2017](http://s2017.siggraph.org/)
+- ACM Digital Library: [doi 10.1145/3102163.3102172 ](https://doi.org/10.1145/3102163.3102172)
 - [Paper](https://svergja.no/wp-content/uploads/2017/07/GradientMeshTool.pdf)
 - [Poster](https://svergja.no/wp-content/uploads/2017/07/Poster.pdf)
 - [Video](https://www.youtube.com/watch?v=N3q8WE9iYZ4)
 - [Informal user study](https://svergja.no/wp-content/uploads/2017/07/Informal-user-study.pdf)
-- Link to ACM Digital library will come here
 
 ## Implementation details
 This is a C++ project using Qt 5.6 Widgets.
