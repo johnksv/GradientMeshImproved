@@ -8,6 +8,9 @@ This is a research project at HiOA (Oslo and Akershus University College of Appl
 - [Video](https://www.youtube.com/watch?v=N3q8WE9iYZ4)
 - [Informal user study](https://svergja.no/wp-content/uploads/2017/07/Informal-user-study.pdf)
 
+## Executable
+[Windows](https://github.com/johnksv/GradientMeshImproved/releases)
+
 ## Implementation details
 This is a C++ project using Qt 5.6 Widgets.
 The project is coded with the QtCreator IDE (project file included).
